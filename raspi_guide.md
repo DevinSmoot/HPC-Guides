@@ -107,10 +107,16 @@ Expand the filesystem (_**Option 1**_)
 
 Setup Internationalization Options (_**Option 3**_)
 
+
 * Set Locale (_**Option I1**_)
 	* Unselect _**en_GB**_
 	* Select _**en_US ISO-8859-1**_
 	* Select _**en_US**_
+
+
+* Set TimeZone (_**Option I2**_)
+	* Select _**America**_
+	* Select _**Chicago**_
 
 
 * Set TimeZone (_**Option I2**_)
@@ -126,8 +132,25 @@ Setup Internationalization Options (_**Option 3**_)
 	* Select _**No**_
 
 
+* Set Keyboard Layout (_**Option I3**_)
+	* Use the default selected Keyboard
+	* Select _**English (US)**_
+	* Use the default keyboard Layout
+	* Select _**No compose key**_
+	* Select _**No**_
+
+
 * Set Wi-Fi country (_**Option I4**_)
 	* Select _**US United States**_
+
+
+* Set Wi-Fi country (_**Option I4**_)
+	* Select _**US United States**_
+
+
+* Set Hostname (_**Option 7**_)
+	*	Set _Hostname_ (_**Option A2**_)
+	* Enter _**head**_
 
 
 * Set Hostname (_**Option 7**_)
@@ -187,7 +210,6 @@ psk="<network password>"
 }
 ```
 
-
 ##### Setup SSH service:
 
 Enable SSH service:
@@ -223,6 +245,21 @@ sudo iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
 
 sudo bash -c "iptables-save > /etc/iptables.rules"
 ```
+Disable IPv6:
+
+``sudo nano /etc/sysctl.conf``
+
+Add the following lines to the end of the file:
+
+```
+net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+net.ipv6.conf.lo.disable_ipv6 = 1
+```
+
+Update the configuration files:
+
+``sudo sysctl -p``
 
 Add settings to _/etc/network/interfaces_:
 
@@ -231,6 +268,17 @@ Add settings to _/etc/network/interfaces_:
 Add the following line at the end of the wlan0 section under wpa-conf line to make the changes persistent:
 
 ``pre-up iptables-restore < /etc/iptables.rules``
+
+<<<<<<< HEAD
+=======
+Update _etc/hosts_ file:
+
+Add the following to the end of the file:
+
+```
+192.168.10.5		head
+192.168.10.100	node1
+```
 
 > ##### Step 6 - Update and upgrade
 
@@ -241,7 +289,6 @@ Update all packages:
 Reboot:
 
 ``sudo reboot``
-
 
 > ##### Step 7- Setup SSH and keys
 
@@ -380,17 +427,118 @@ At this point you will want to save an image of the head node. This will give yo
 
 Using the same guide as described in the beginning you will want to reverse the process of writing an image to the SD and _read_ an image from the SD and save that image to your PC. Now you have saved your SD like a checkpoint.
 
----
-
 ## Create Node image
 
 This will be a repeatable process when completed. You will setup an initial _Compute Node_ image using your saved _Head Node_ image. You will go in and change specific settings to _generic settings_. Doing this will allow you to always access your _generic Compute Node_ image at the same IP address and hostname. You will then be able to set up the compute node image to a specific IP address and hostname. Following this process will allow for prompt and efficient deployment of a cluster.
 
-
-
+[Raspbian Install Guides](https://www.raspberrypi.org/documentation/installation/installing-images/)
 
 ---
-## Install Slurm
+
+## Create Generic Node image
+
+This will be a repeatable process when completed. You will setup an initial _Compute Node_ image using your saved _Head Node_ image. You will go in and change specific settings to _generic settings_. Doing this will allow you to always access your _generic Compute Node_ image at the same IP address and hostname. You will then be able to set up the compute node image to a specific IP address and hostname. Following this process will allow for prompt and efficient deployment of a cluster.
+
+> ##### Step 1 - Boot image and login
+
+Log in with username: **pi** and password **raspberry**
+
+> ##### Step 2 - Enter a generic ip address
+
+``sudo nano /etc/dhcpcd.conf``
+
+Change the _eth0_ ip address from:
+
+``static ip_address=192.168.10.5``
+
+To:
+
+``static ip_address=192.168.10.3``
+
+Save and exit
+
+> ##### Step 3 - Enter a generic hostname
+
+``sudo nano /etc/hostname``
+
+Change:
+
+``head``
+
+To:
+
+``nodeX``
+
+Save and exit
+
+> ##### Step 4 - Shutdown and create a new image of the SD
+
+``sudo shutdown -h now``
+
+Now you will go back to WinDiskImager32 and save the image as a node image. This is a generic node image that you can quickly deploy and use to set up your cluster with.
+
+---
+## Setup Generic Node image
+
+[Raspbian Install Guides](https://www.raspberrypi.org/documentation/installation/installing-images/)
+
+> ##### Step 1 - Copy generic node image created earlier to an SD card using WinDiskImager32.
+
+> ##### Step 2 - Boot and login to your system
+
+Log in with username: **pi** and password **raspberry**
+
+> ##### Step 3 - Adjust _/etc/hostname_ file
+
+``sudo nano /etc/hostname``
+
+Change:
+
+``nodeX``
+
+To:
+
+``node1``
+
+Save and exit
+
+_**Note:**_ This number will increment by one each time you add a node and must be unique on your cluster.
+
+> ##### Step 4 - Adjust _/etc/dhcpcd.conf_
+
+``sudo nano /etc/dhcpcd.conf``
+
+Change the _eth0_ ip address from:
+
+``static ip_address=192.168.10.3``
+
+To:
+
+``static ip_address=192.168.10.100``
+
+Save and exit
+
+_**Note:**_ This number will increment by one each time you add a node and must be unique on your cluster.
+
+> ##### Step 5 - Update hosts file on head node
+
+**On _head node_**
+
+``sudo nano /etc/hosts``
+
+Add the ip address and hostname of the node you just added above.
+
+``192.168.10.100		node1``
+
+Copy to the other node:
+
+``sudo cat /etc/hosts | ssh pi@node1 "cat >> /etc/hosts"``
+
+Your node is now setup. Just repeat this process making sure to increment the ip address and hostname with each node added.
+Using the above sample just change node1 to the node number you are setting up.
+
+---
+## Install Slurm on Head Node
 
 > ##### Step 1 - Install Slurm
 
@@ -461,7 +609,7 @@ SlurmdLogFile=/var/log/slurm/slurmd.log
 # COMPUTE NODES
 NodeName=head NodeAddr=192.168.10.5
 NodeName=node1 NodeAddr=192.168.1.100
-PartitionName=All Default=yes Nodes=head,node1 State=UP
+PartitionName=raspi Default=yes Nodes=head,node1 State=UP
 ```
 
 _**Note:**_ Any nodes added to the cluster need to be added to the bottom of this file with a _NodeName_ entry.
@@ -499,6 +647,52 @@ Will return feedback to the screen. Verify _Active_ line is _**active (running)*
 ``sudo adduser pi slurm``
 
 > ##### Step 6 - Add and take ownership of Slurm log folder
+
+```
+sudo mkdir -p /var/log/slurm/accounting
+
+sudo chown -R slurm:slurm /var/log/slurm
+```
+
+## Install Slurm on Compute Node
+
+> ##### Step 1 - Copy Slurm configuration and Munge files from _Head Node_
+
+**On _head node_**
+
+``sudo cat /etc/munge/munge.key | ssh pi@node1 "cat >> ~/munge.key"``
+
+``sudo cat /etc/slurm-llnl/slurm.conf | ssh pi@node1 "cat >> ~/slurm.conf"``
+
+> ##### Step 2 - Install Slurm daemon
+
+**On _node1 node_**
+
+```
+sudo apt-get install slurmd slurm-client
+sudo ln -s /var/lib/slurm-llnl /var/lib/slurm-llnl
+```
+
+Copy Slurm configuration file and Munge key file to proper location:
+
+``sudo cp ~/slurm.conf /etc/slurm-llnl/``
+
+``sudo cp ~/munge.key /etc/munge/``
+
+Finish install and start Slurm and Munge:
+
+```
+sudo systemctl enable slurmd.service
+sudo systemctl restart slurmd.service
+sudo systemctl enable munge.service
+sudo systemctl restart munge.service
+sudo systemctl status slurmd.service
+```
+> ##### Step 3 - Add user to Slurm group
+
+``sudo adduser pi slurm``
+
+> ##### Step 4 - Add and take ownership of Slurm log folder
 
 ```
 sudo mkdir -p /var/log/slurm/accounting
