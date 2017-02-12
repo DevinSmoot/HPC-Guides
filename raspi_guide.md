@@ -40,10 +40,14 @@ https://github.com/davidsblog/rCPU
 
 https://raseshmori.wordpress.com/2012/10/14/install-hadoop-nextgen-yarn-multi-node-cluster/
 
+---
+## Considerations to Consider before starting
 
+* SD card size
+	* If your SD card size will vary you will want to build the head node using the smallest size of SD card. This will ensure that the image for that SD card will ALWAYS be able to be written to a similar sized SD or larger. If you start with a 64GB SD card you will not be able to write the image to a 16GB SD card.
 ---
 
-## Head Node Setup
+## Head Node
 
 ##### Hardware:
 *	Raspberry Pi board x 1
@@ -53,7 +57,7 @@ https://raseshmori.wordpress.com/2012/10/14/install-hadoop-nextgen-yarn-multi-no
 *	HDMI cable x 1
 *	Power cable mini-USB x 1
 
-### Compute nodes
+## Compute nodes
 
 ##### Hardware:
 *	Raspberry Pi board x 7
@@ -61,22 +65,24 @@ https://raseshmori.wordpress.com/2012/10/14/install-hadoop-nextgen-yarn-multi-no
 *	Ethernet cable x 1
 *	Power cable mini-USB x 1
 
-##### Additional Hardware
+## Additional Hardware
 
 *	10 Port USB hub
 *	16 Port gigabit switch                           
 
 ---
 
-### Setup, Installation, and Testing
+## Setup, Installation, and Testing
 
 > ##### Step 1 - Install operating systems
 
-*	Install Raspbian Lite on SD card for head unit(s) and each compute node
+Install Raspbian Lite on SD card for head unit(s) and each compute node
 
 [Raspbian Install Guides](https://www.raspberrypi.org/documentation/installation/installing-images/)
 
 > ##### Step 2 - Update Raspberry Pi firmware before starting
+
+The _rpi-update_ package is used to update the Raspberry Pi firmware. This will ensure we have the latest firmware and there will be as few issues as possible once we start pushing the hardware.
 
 Install _rpi-update_ package:
 
@@ -84,8 +90,11 @@ Install _rpi-update_ package:
 
 > ##### Step 3 - Configure head node settings
 
-*	Configure Locale
-	*	Log in with username: **pi** and password **raspberry**
+Setup the locale settings to make sure the correct keyboard, language, timezone, etc are set. This will ensure we are able to enter the correct symbols while working on the command line.
+
+Configure Locale:
+
+Log in with username: **pi** and password **raspberry**
 
 ```
 sudo -s
@@ -94,43 +103,47 @@ sudo raspi-config
 ```
 
 Expand the filesystem (_**Option 1**_)
+* Select _**Yes**_
 
 Setup Internationalization Options (_**Option 3**_)
 
-
-Set Locale (_**Option I1**_)
-* Unselect _**en_GB**_
-* Select _**en_US ISO-8859-1**_
-* Select _**en_US**_
-
-
-Set TimeZone (_**Option I2**_)
-* Select _**America**_
-* Select _**Chicago**_
+* Set Locale (_**Option I1**_)
+	* Unselect _**en_GB**_
+	* Select _**en_US ISO-8859-1**_
+	* Select _**en_US**_
 
 
-Set Keyboard Layout (_**Option I3**_)
-* Use the default selected Keyboard
-* Select _**English (US)**_
-* Use the default keyboard Layout
-* Select _**No compose key**_
-* Select _**No**_
+* Set TimeZone (_**Option I2**_)
+	* Select _**America**_
+	* Select _**Chicago**_
 
 
-Set Wi-Fi country (_**Option I4**_)
-* Select _**US United States**_
+* Set Keyboard Layout (_**Option I3**_)
+	* Use the default selected Keyboard
+	* Select _**English (US)**_
+	* Use the default keyboard Layout
+	* Select _**No compose key**_
+	* Select _**No**_
 
 
-Set Hostname (_**Option 7**_)
-*	Set _Hostname_ (_**Option A2**_)
-* Enter _**head**_
+* Set Wi-Fi country (_**Option I4**_)
+	* Select _**US United States**_
 
 
-Set Memory Split (_**Option 7**_)
-* Set _Memory Split_ (_**Option A3**_)
-* Enter _**16**_
+* Set Hostname (_**Option 7**_)
+	*	Set _Hostname_ (_**Option A2**_)
+	* Enter _**head**_
+
+
+* Set Memory Split (_**Option 7**_)
+	* Set _Memory Split_ (_**Option A3**_)
+	* Enter _**16**_
 
 > ##### Step 4 - Configure head node network
+
+Set a static address for the cluster facing network interface connection _etho0_. Turn on wireless and setup wireless connection on network interface connection _wlan0_. Turn on SSH service and then reboot the head node.
+
+##### Setup _eth0_:
 
 Edit _/etc/dhcpcd.conf_:
 
@@ -144,7 +157,7 @@ static ip_address=192.168.10.5
 static domain_name_servers=8.8.8.8
 ```
 
-Turn on DHCP on _wlan0_.
+##### Setup _wlan0_:
 
 Edit _/etc/network/interfaces_:
 
@@ -159,7 +172,7 @@ To:
 ``iface wlan0 inet dhcp``
 
 
-Add wireless network credentials.
+Add wireless network credentials:
 
 Edit _/etc/wpa_supplicant/wpa_supplicant.conf_:
 
@@ -175,32 +188,28 @@ psk="<network password>"
 ```
 
 
-###### Turn on SSH service:
+##### Setup SSH service:
+
+Enable SSH service:
 
 ``raspi-config``
 
 * Select _**Interfacing Options**_ (_**Option 5**_)
-* Select _**SSH**_ (_**Option P2**_)
-* Select _**Yes**_
-* Select _**Ok**_
+	* Select _**SSH**_ (_**Option P2**_)
+	* Select _**Yes**_
+	* Select _**Ok**_
 
 
-Reboot:
+##### Reboot:
 
 ``sudo reboot``
 
 
-> ##### Step 5: Configure compute node.
+> ##### Step 5 - IP forwarding for nodes to access internet
+
+Setup IP forwarding so that all compute nodes will have access to the internet for package installation and to download any needed materials on later use.
 
 Log in with username: **pi** and password **raspberry**
-
-```
-sudo -s
-
-sudo raspi-config
-```
-
-> ##### Step 6 - IP forwarding for nodes to access internet
 
 Enable traffic forwarding and make it permanent:
 
@@ -223,7 +232,7 @@ Add the following line at the end of the wlan0 section under wpa-conf line to ma
 
 ``pre-up iptables-restore < /etc/iptables.rules``
 
-> ##### Step 7 - Update and upgrade
+> ##### Step 6 - Update and upgrade
 
 Update all packages:
 
@@ -234,7 +243,9 @@ Reboot:
 ``sudo reboot``
 
 
-> ##### Step 8 - Setup SSH and keys
+> ##### Step 7- Setup SSH and keys
+
+Setup an SSH key that will be used by the entire cluster to eliminate the need to sign in to each node individually while setting up and using the cluster.
 
 **_Note:_ MAKE SURE TO EXIT OUT OF ROOT ACCESS IF YOU ARE IN IT BEFORE STARTING THE NEXT PART**
 
@@ -259,6 +270,8 @@ Copy SSH keys to _authorized_keys_ file:
 
 ## Install MPICH3
 
+Install prerequisite _Fortran_ which wil be required for compiling MPICH. All other dependencies are already installed.
+
 > ##### Step 1 - Install Fortran
 
 ```
@@ -270,6 +283,8 @@ mkdir /home/pi/fortran
 
 Execute from command line:
 
+Create folder structure for _MPICH3_.
+
 ```
 cd ~
 
@@ -277,21 +292,33 @@ mkdir mpich3
 
 cd mpich3
 mkdir build install
+```
 
+Download MPICH3 and untar:
+
+```
 wget http://www.mpich.org/static/downloads/3.2/mpich-3.2.tar.gz
 tar xvfz mpich-3.2.tar.gz
+```
 
+Compile and install _MPICH3_
+
+```
 cd build
 
 /home/pi/mpich3/mpich-3.2/configure --prefix=/home/pi/mpich3/install
 
 make
 make install
+```
 
+Activate environment variable:
+
+```
 export PATH=$PATH:/home/pi/mpich3/install/bin
 ```
 
-Add path to environment variables:
+Add path to environment variables for persistance:
 
 ``sudo nano /home/pi/.bashrc``
 
@@ -303,6 +330,8 @@ export PATH="$PATH:/home/pi/mpich3/install/bin"
 ```
 
 > ##### Step 3 - Create list of nodes for MPI:
+
+This list of nodes will need to be updated as you add nodes later. Initially you will only have the head node.
 
 Create node list:
 
@@ -344,6 +373,21 @@ Process 1 of 2 is on head
 pi is approximately 3.1415926544231318, Error is 0.0000000008333387
 wall clock time = 0.003250
 ```
+---
+## Save SD Image
+
+At this point you will want to save an image of the head node. This will give you a fall back point if you make mistakes moving forward. You will also use this image to begin your node image.
+
+Using the same guide as described in the beginning you will want to reverse the process of writing an image to the SD and _read_ an image from the SD and save that image to your PC. Now you have saved your SD like a checkpoint.
+
+---
+
+## Create Node image
+
+This will be a repeatable process when completed. You will setup an initial _Compute Node_ image using your saved _Head Node_ image. You will go in and change specific settings to _generic settings_. Doing this will allow you to always access your _generic Compute Node_ image at the same IP address and hostname. You will then be able to set up the compute node image to a specific IP address and hostname. Following this process will allow for prompt and efficient deployment of a cluster.
+
+
+
 
 ---
 ## Install Slurm
