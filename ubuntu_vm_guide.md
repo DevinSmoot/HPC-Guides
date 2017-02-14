@@ -265,7 +265,7 @@ Add the following line to the end of the file:
 
 ``pre-up iptables-restore < /etc/iptables.rules``
 
-Save and exit
+Save and exit.
 
 Now reboot the system:
 
@@ -308,17 +308,13 @@ ssh-add
 
 ##### Step 1 - Install Java 8
 
-Remove OpenJDK:
-
-``sudo apt-get remove openjdk*``
-
 Add the PPA key:
 
 ``sudo apt-key adv --recv-key --keyserver keyserver.ubuntu.com EEA14886``
 
 Add sources to */etc/apt/sources.list*:
 
-``sudo nano /etc/apt/source.list``
+``sudo nano /etc/apt/sources.list``
 
 Add the source links to the end of the file:
 
@@ -327,12 +323,12 @@ deb http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main
 deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main
 ```
 
-Save and close
+Save and exit.
 
 Update sources and install Java 8:
 
 ```
-sudo apt-get Update
+sudo apt-get update
 
 sudo apt-get install oracle-java8-installer
 ```
@@ -354,10 +350,6 @@ Should return the most current version of the Java 8 compilers
 At the time of this guide it is *1.8.0_121*
 
 ##### Step 3 - Set Java environment variables
-
-Execute:
-
-``sudo apt-get install oracle-java8-set-default``
 
 Verify settings by checking */etc/profile.d/jdk.sh* using the following command:
 
@@ -426,8 +418,15 @@ Change to *build* directory to begin building the install:
 
 ``cd build``
 
+Configure the install:
+
 ```
-/home/<username>/mpich3/mpich-3.2/configure CC=gcc --prefix=/home/<username>/mpich3/install
+/home/<username>/mpich3/mpich-3.2/configure  --prefix=/home/<username>/mpich3/install
+```
+
+Compile the install:
+
+```
 make
 make install
 ```
@@ -454,8 +453,10 @@ Create a list of nodes for MPI to use:
 
 ```
 cd ~
-nano nodelist
+sudo nano nodelist
 ```
+Save and exit.
+
 
 Add the *head node* ip address to the file:
 
