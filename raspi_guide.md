@@ -221,11 +221,9 @@ Enable SSH service:
 	* Select _**Yes**_
 	* Select _**Ok**_
 
-
 ##### Reboot:
 
 ``sudo reboot``
-
 
 > ##### Step 5 - IP forwarding for nodes to access internet
 
@@ -269,8 +267,6 @@ Add the following line at the end of the wlan0 section under wpa-conf line to ma
 
 ``pre-up iptables-restore < /etc/iptables.rules``
 
-<<<<<<< HEAD
-=======
 Update _etc/hosts_ file:
 
 Add the following to the end of the file:
