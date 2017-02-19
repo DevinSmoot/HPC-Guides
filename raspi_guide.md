@@ -1,4 +1,5 @@
 # Raspberry Pi Cluster Setup Guide
+## Using Raspbian Jessie Lite 2016-11-25
 
 ---
 
@@ -41,10 +42,12 @@ https://github.com/davidsblog/rCPU
 https://raseshmori.wordpress.com/2012/10/14/install-hadoop-nextgen-yarn-multi-node-cluster/
 
 ---
+
 ## Considerations to Consider before starting
 
 * SD card size
 	* If your SD card size will vary you will want to build the head node using the smallest size of SD card. This will ensure that the image for that SD card will ALWAYS be able to be written to a similar sized SD or larger. If you start with a 64GB SD card you will not be able to write the image to a 16GB SD card.
+
 ---
 
 ## Head Node
@@ -80,15 +83,7 @@ Install Raspbian Lite on SD card for head unit(s) and each compute node
 
 [Raspbian Install Guides](https://www.raspberrypi.org/documentation/installation/installing-images/)
 
-> ##### Step 2 - Update Raspberry Pi firmware before starting
-
-The _rpi-update_ package is used to update the Raspberry Pi firmware. This will ensure we have the latest firmware and there will be as few issues as possible once we start pushing the hardware.
-
-Install _rpi-update_ package:
-
-``sudo apt-get update rpi-update``
-
-> ##### Step 3 - Configure head node settings
+> ##### Step 2 - Configure head node settings
 
 Setup the locale settings to make sure the correct keyboard, language, timezone, etc are set. This will ensure we are able to enter the correct symbols while working on the command line.
 
@@ -97,8 +92,6 @@ Configure Locale:
 Log in with username: **pi** and password **raspberry**
 
 ```
-sudo -s
-
 sudo raspi-config
 ```
 
@@ -138,8 +131,16 @@ Setup Internationalization Options (_**Option 3**_)
 * Set Memory Split (_**Option 7**_)
 	* Set _Memory Split_ (_**Option A3**_)
 	* Enter _**16**_
+* ##### Setup SSH service:
 
-> ##### Step 4 - Configure head node network
+* Select _**Interfacing Options**_ (_**Option 7**_)
+	* Select _**SSH**_ (_**Option P2**_)
+	* Select _**Yes**_
+	* Select _**Ok**_
+
+Select _Finish_ and _Yes_ to reboot
+
+> ##### Step 3 - Configure head node network
 
 Set a static address for the cluster facing network interface connection _etho0_. Turn on wireless and setup wireless connection on network interface connection _wlan0_. Turn on SSH service and then reboot the head node.
 
@@ -159,26 +160,13 @@ static domain_name_servers=8.8.8.8
 
 ##### Setup _wlan0_:
 
-Edit _/etc/network/interfaces_:
-
-``sudo nano /etc/network/interfaces``
-
-Change:
-
-``iface wlan0 inet manual``
-
-To:
-
-``iface wlan0 inet dhcp``
-
-
 Add wireless network credentials:
 
 Edit _/etc/wpa_supplicant/wpa_supplicant.conf_:
 
 ``sudo nano /etc/wpa_supplicant/wpa_supplicant.conf``
 
-Add to the end of the file:
+For connecting to a secure network add the following to the end of the file:
 
 ```
 network={
@@ -186,24 +174,26 @@ ssid="<network name>"
 psk="<network password>"
 }
 ```
+For connecting to an unsecure network add the following to the end of the file:
 
+```
+network={
+ssid="<network name>"
+key_mgmt=NONE
+}
+```
 
-##### Setup SSH service:
-
-Enable SSH service:
-
-``raspi-config``
-
-* Select _**Interfacing Options**_ (_**Option 5**_)
-	* Select _**SSH**_ (_**Option P2**_)
-	* Select _**Yes**_
-	* Select _**Ok**_
-
-
-##### Reboot:
+Reboot:
 
 ``sudo reboot``
 
+> ##### Step 4 - Update the system
+
+``sudo apt-get update && sudo apt-get upgrade -y``
+
+Reboot:
+
+``sudo reboot``
 
 > ##### Step 5 - IP forwarding for nodes to access internet
 
@@ -223,21 +213,6 @@ sudo iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
 
 sudo bash -c "iptables-save > /etc/iptables.rules"
 ```
-Disable IPv6:
-
-``sudo nano /etc/sysctl.conf``
-
-Add the following lines to the end of the file:
-
-```
-net.ipv6.conf.all.disable_ipv6 = 1
-net.ipv6.conf.default.disable_ipv6 = 1
-net.ipv6.conf.lo.disable_ipv6 = 1
-```
-
-Update the configuration files:
-
-``sudo sysctl -p``
 
 Add settings to _/etc/network/interfaces_:
 
@@ -247,48 +222,46 @@ Add the following line at the end of the wlan0 section under wpa-conf line to ma
 
 ``pre-up iptables-restore < /etc/iptables.rules``
 
+Save and exit
+
+Disable IPv6:
+
+``sudo nano /etc/sysctl.conf``
+
+Add the following lines to the end of the file (this includes the IP forwarding rule from above):
+
+```
+# Disable IPv6
+net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+net.ipv6.conf.lo.disable_ipv6 = 1
+```
+
+Save and exit
+
+Update the configuration files:
+
+``sudo sysctl -p``
+
 Update _etc/hosts_ file:
 
 Add the following to the end of the file:
 
+_**Note:**_ At this point you want to assign and name all of your nodes that **WILL** be in your cluster and enter them in the hosts file. Below is an example of a 6 node cluster including the head node as one of the six. This file will be copied with the image to the compute nodes and will save you a step of developing and deploying the hosts file later.
+
 ```
+192.168.10.3		nodeX
 192.168.10.5		head
-192.168.10.100	node1
+192.168.10.100	node0
+192.168.10.101	node1
+192.168.10.102	node2
+192.168.10.103	node3
+192.168.10.104	node4
 ```
-
-> ##### Step 6 - Update and upgrade
-
-Update all packages:
-
-``sudo apt-get update && sudo apt-get upgrade -y``
 
 Reboot:
 
 ``sudo reboot``
-
-
-> ##### Step 7- Setup SSH and keys
-
-Setup an SSH key that will be used by the entire cluster to eliminate the need to sign in to each node individually while setting up and using the cluster.
-
-**_Note:_ MAKE SURE TO EXIT OUT OF ROOT ACCESS IF YOU ARE IN IT BEFORE STARTING THE NEXT PART**
-
-Generate SSH key:
-
-```
-cd ~
-
-ssh-keygen -t rsa -C "raspi2@swosubta"
-```
-
-_**Enter**_ to select default location
-_**Enter**_ to leave passphrase blank
-_**Enter**_ to confirm blank passphrase
-
-Copy SSH keys to _authorized_keys_ file:
-
-``cat /home/pi/.ssh/id_rsa.pub >> /home/pi/.ssh/authorized_keys``
-
 
 ---
 
@@ -377,7 +350,7 @@ _**Note:**_ Anytime you need to add a node to the cluster make sure to add it he
 ```
 cd ~
 
-mpiexec -f nodelist Hostname
+mpiexec -f nodelist hostname
 ```
 
 Should return:
@@ -388,7 +361,6 @@ Should return:
 
 ``mpiexec -f nodelist -n 2 ~/mpich3/build/examples/cpi``
 
-
 Should return similar:
 
 ```
@@ -397,12 +369,27 @@ Process 1 of 2 is on head
 pi is approximately 3.1415926544231318, Error is 0.0000000008333387
 wall clock time = 0.003250
 ```
+
 ---
+
 ## Save SD Image
 
 At this point you will want to save an image of the head node. This will give you a fall back point if you make mistakes moving forward. You will also use this image to begin your node image.
 
 Using the same guide as described in the beginning you will want to reverse the process of writing an image to the SD and _read_ an image from the SD and save that image to your PC. Now you have saved your SD like a checkpoint.
+
+## Create Node image
+
+The overview of this process:
+
+1. Save image of _head node_.
+2. On a new SD card write the _head node_ image you just saved.
+3. Boot the second SD you just created from the head node and make the following changes for "Creating a Generic Node Image".
+4. Save image of newly created _generic compute node_.
+
+At this point you have a copy of both the _head node_ and _generic comput node_ at the MPI stage. This is a checkpoint that you can fall back to if there are errors after this point.
+
+This will be a repeatable process when completed. You will setup an initial _Compute Node_ image using your saved _Head Node_ image. You will go in and change specific settings to _generic settings_. Doing this will allow you to always access your _generic Compute Node_ image at the same IP address and hostname. You will then be able to set up the compute node image to a specific IP address and hostname. Following this process will allow for prompt and efficient deployment of a cluster.
 
 [Raspbian Install Guides](https://www.raspberrypi.org/documentation/installation/installing-images/)
 
@@ -428,6 +415,10 @@ To:
 
 ``static ip_address=192.168.10.3``
 
+Also add to the end of the file:
+
+``static routers=192.168.10.5``
+
 Save and exit
 
 > ##### Step 3 - Enter a generic hostname
@@ -450,7 +441,10 @@ Save and exit
 
 Now you will go back to WinDiskImager32 and save the image as a node image. This is a generic node image that you can quickly deploy and use to set up your cluster with.
 
+Sample name for SD image: ``head_node_mpi_stage_2017_01_03``
+
 ---
+
 ## Setup Generic Node image
 
 [Raspbian Install Guides](https://www.raspberrypi.org/documentation/installation/installing-images/)
@@ -471,7 +465,7 @@ Change:
 
 To:
 
-``node1``
+``node0``
 
 Save and exit
 
@@ -491,24 +485,7 @@ To:
 
 Save and exit
 
-_**Note:**_ This number will increment by one each time you add a node and must be unique on your cluster.
-
-> ##### Step 5 - Update hosts file on head node
-
-**On _head node_**
-
-``sudo nano /etc/hosts``
-
-Add the ip address and hostname of the node you just added above.
-
-``192.168.10.100		node1``
-
-Copy to the other node:
-
-``sudo cat /etc/hosts | ssh pi@node1 "cat >> /etc/hosts"``
-
-Your node is now setup. Just repeat this process making sure to increment the ip address and hostname with each node added.
-Using the above sample just change node1 to the node number you are setting up.
+_**Note:**_ At this point you will just do this once to develop a compute node image with Slurm installed. After that is complete you will create a new generic image of the compute node. Once that is complete you can use that image to finish deploying your compute nodes for the rest of your cluster.
 
 ---
 ## Install Slurm on Head Node
@@ -518,10 +495,6 @@ Using the above sample just change node1 to the node number you are setting up.
 ``sudo apt-get install slurm-wlm slurmctld slurmd``
 
 > ##### Step 2 - Add configuration file
-
-Delete the current Slurm configuration:
-
-``rm /etc/slurm-llnl/slurm.conf``
 
 Create the new Slurm configuration file _/etc/slurm-llnl/slurm.conf_:
 
@@ -581,8 +554,12 @@ SlurmdLogFile=/var/log/slurm/slurmd.log
 #
 # COMPUTE NODES
 NodeName=head NodeAddr=192.168.10.5
-NodeName=node1 NodeAddr=192.168.1.100
-PartitionName=raspi Default=yes Nodes=head,node1 State=UP
+NodeName=node0 NodeAddr=192.168.10.100
+NodeName=node1 NodeAddr=192.168.10.101
+NodeName=node2 NodeAddr=192.168.10.102
+NodeName=node3 NodeAddr=192.168.10.103
+NodeName=node4 NodeAddr=192.168.10.104
+PartitionName=raspi2 Default=yes Nodes=head,node0,node1,node2,node3,node4 State=UP
 ```
 
 _**Note:**_ Any nodes added to the cluster need to be added to the bottom of this file with a _NodeName_ entry.
@@ -605,13 +582,20 @@ Agree to overwrite.
 
 ```
 sudo systemctl enable slurmctld.service
-sudo ln -s /var/lib/slurm-llnl /var/lib/slurm-llnl
+sudo ln -s /var/lib/slurm-llnl /var/lib/slurm
 sudo systemctl start slurmctld.service
+sudo systemctl enable munge.service
 ```
 
 Verify Slurm controller is running:
 
 ``sudo systemctl status slurmctld.service``
+
+Will return feedback to the screen. Verify _Active_ line is _**active (running)**_.
+
+Verify Munge is running:
+
+``sudo systemctl status munge.service``
 
 Will return feedback to the screen. Verify _Active_ line is _**active (running)**_.
 
@@ -626,24 +610,26 @@ sudo mkdir -p /var/log/slurm/accounting
 
 sudo chown -R slurm:slurm /var/log/slurm
 ```
-
+sinfo
 ## Install Slurm on Compute Node
 
 > ##### Step 1 - Copy Slurm configuration and Munge files from _Head Node_
 
 **On _head node_**
 
-``sudo cat /etc/munge/munge.key | ssh pi@node1 "cat >> ~/munge.key"``
+``sudo cat /etc/munge/munge.key | ssh pi@node0 "cat >> ~/munge.key"``
 
-``sudo cat /etc/slurm-llnl/slurm.conf | ssh pi@node1 "cat >> ~/slurm.conf"``
+``sudo cat /etc/slurm-llnl/slurm.conf | ssh pi@node0 "cat >> ~/slurm.conf"``
 
 > ##### Step 2 - Install Slurm daemon
 
-**On _node1 node_**
+**On _node0 node_**
+
+SSH into _node0_
 
 ```
 sudo apt-get install slurmd slurm-client
-sudo ln -s /var/lib/slurm-llnl /var/lib/slurm-llnl
+sudo ln -s /var/lib/slurm-llnl /var/lib/slurm
 ```
 
 Copy Slurm configuration file and Munge key file to proper location:
@@ -661,6 +647,19 @@ sudo systemctl enable munge.service
 sudo systemctl restart munge.service
 sudo systemctl status slurmd.service
 ```
+
+Verify Slurm daemon is running:
+
+``sudo systemctl status slurmd.service``
+
+Will return feedback to the screen. Verify _Active_ line is _**active (running)**_.
+
+Verify Munge is running:
+
+``sudo systemctl status munge.service``
+
+Will return feedback to the screen. Verify _Active_ line is _**active (running)**_.
+
 > ##### Step 3 - Add user to Slurm group
 
 ``sudo adduser pi slurm``
@@ -672,3 +671,51 @@ sudo mkdir -p /var/log/slurm/accounting
 
 sudo chown -R slurm:slurm /var/log/slurm
 ```
+
+> ##### Step 5 - Setup SSH and keys
+
+**On each compute node**
+
+Generate SSH key:
+
+```
+cd ~
+
+ssh-keygen -t rsa -C "raspi2@swosubta"
+```
+
+_**Enter**_ to select default location
+_**Enter**_ to leave passphrase blank
+_**Enter**_ to confirm blank passphrase
+
+**On head node**
+
+Setup an SSH key that will be used by the entire cluster to eliminate the need to sign in to each node individually while setting up and using the cluster.
+
+**_Note:_ MAKE SURE TO EXIT OUT OF ROOT ACCESS IF YOU ARE IN IT BEFORE STARTING THE NEXT PART**
+
+Generate SSH key:
+
+```
+cd ~
+
+ssh-keygen -t rsa -C "raspi2@swosubta"
+```
+
+_**Enter**_ to select default location
+_**Enter**_ to leave passphrase blank
+_**Enter**_ to confirm blank passphrase
+
+Copy SSH keys to _authorized_keys_ file:
+
+``cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys``
+
+Copy _authorized_keys_ file to all nodes:
+
+``sudo cat ~/.ssh/authorized_keys | ssh pi@node0 "cat >> ~/.ssh/authorized_keys"``
+
+---
+
+## Deploying the Rest of the Cluster
+
+By now you have developed a head node image that contains both MPI and Slurm. You have also developed a compute node image that contains both MPI and Slurm as well. Now you should go back to the instructions for "Create Node Image" to save both images and then use the compute node image to finish deploying your cluster. Saving these images at each stage gives you different configurations that you can easily deploy in the future and also allows you to have a checkpoint in case something goes wrong. You can write the saved node image to your SD and start from that point rather then starting from the beginning.
