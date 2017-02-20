@@ -279,7 +279,7 @@ Now reboot the system:
 
 ##### Step 11 - Set up SSH keys
 
-** \*\* VERIFY AT THE COMMAND PROMPT THAT YOU ARE UNDER YOUR USER ACCOUNT AND NOT EXECUTING CODE AS SUPER USER OR ROOT \*\* **
+**VERIFY AT THE COMMAND PROMPT THAT YOU ARE UNDER YOUR USER ACCOUNT AND NOT EXECUTING CODE AS SUPER USER OR ROOT**
 
 Generate an SSH key:
 ```
@@ -295,12 +295,6 @@ Press ``Enter`` to confirm blank passphrase
 Copy SSH keys to authorized keys:
 
 ``cat /home/<username>/.ssh/id_rsa.pub >> /home/<username>/.ssh/authorized_keys``
-
-Turn on SSH agent and add SSH key:
-```
-ssh-agent bash
-ssh-add
-```
 
 ---
 
