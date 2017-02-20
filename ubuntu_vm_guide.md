@@ -229,6 +229,18 @@ network 192.168.10.0
 ```
 Save and exit
 
+Edit the hosts file:
+
+``sudo nano /etc/hosts``
+
+Add to the end of the file:
+
+```
+192.168.10.5    head
+192.168.10.100  node1
+```
+
+Save and exit
 
 ##### Step 9 - Set up IPv4 Traffic Forwarding
 Enable traffic forwarding and make it permanent:
@@ -421,7 +433,6 @@ Configure the install:
 Compile the install:
 
 ```
->>>>>>> ubuntu_vm_guide-dev:ubuntu_vm_guide.md
 make
 make install
 ```
@@ -437,7 +448,7 @@ Make the PATH change permanent by adding it to the profile file:
 Add the following to the end of the file:
 
 ```
-export PATH=$PATH:/home/<username>/mpich3/install/bin
+export PATH="$PATH:/home/<username>/mpich3/install/bin"
 ```
 
 Save and exit
@@ -448,11 +459,8 @@ Create a list of nodes for MPI to use:
 
 ```
 cd ~
-<<<<<<< HEAD:ubuntu_vm_guide.md
-nano nodelist
-=======
+
 sudo nano nodelist
->>>>>>> ubuntu_vm_guide-dev:ubuntu_vm_guide.md
 ```
 Save and exit.
 
@@ -617,6 +625,23 @@ Save and exit
 
 
 ##### Step 7 - Test MPI
+
+**Test 1**
+On the *Head Node* enter:
+
+```
+cd ~
+mpiexec -f nodelist hostname
+```
+
+You should get an output similar to the following:
+
+```
+head
+node1
+```
+
+**Test 2**
 
 On the *Head Node* enter:
 
@@ -846,9 +871,15 @@ _**Note:**_ The _systemctl enable munge_ may show a failed notification but its 
 
 ``sudo systemctl enable slurmctld``
 
-##### Step 7 - Set permissions on Slurm folder
+Complete the automatic install:
 
-``sudo chown -R slurm:slurm /var/lib/slurmd``
+``sudo apt-get upgrade -y``
+
+##### Step 7 - Set create and set permissions on Slurm folder
+
+```
+sudo chown -R slurm:slurm /var/lib/slurmd
+```
 
 Reboot:
 
@@ -920,6 +951,10 @@ _**Note:**_ The _systemctl enable munge_ may show a failed notification but its 
 ##### Step 5 - Enable Slurm daemon
 
 ``sudo systemctl enable slurmd``
+
+Complete Slurm daemon auto install:
+
+``sudo apt-get upgrade -y``
 
 ##### Step 6 - Set Slurm folder permissions
 
