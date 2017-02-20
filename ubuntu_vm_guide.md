@@ -229,6 +229,18 @@ network 192.168.10.0
 ```
 Save and exit
 
+Edit the hosts file:
+
+``sudo nano /etc/hosts``
+
+Add to the end of the file:
+
+```
+192.168.10.5    head
+192.168.10.100  node1
+```
+
+Save and exit
 
 ##### Step 9 - Set up IPv4 Traffic Forwarding
 Enable traffic forwarding and make it permanent:
@@ -368,54 +380,6 @@ Should show:
 ### MPI
 
 ##### Step 1 - Create Directories
-<<<<<<< HEAD:ubuntu_vm_guide.md
-
-Install some required compilers and packages:
-
-``sudo apt-get install make build-essential``
-
-Change to *home* directory and create *mpich3* directory:
-
-```
-cd ~
-mkdir mpich3
-```
-
-Change to the *mpich3* directory and create *build* and *install* directories:
-
-```
-cd mpich3
-mkdir build install
-```
-
-##### Step 2 - Download and install
-
-Install Fortran which is requred by MPICH3:
-
-``sudo apt-get install gfortran``
-
-Make a directory for Fortran code:
-
-``mkdir /home/<username>/fortran``
-
-Download MPICH3 package and install:
-http://www.mpich.org/downloads/
-
-```
-wget http://www.mpich.org/static/downloads/3.2/mpich-3.2.tar.gz
-```
-
-Untar the package:
-
-``tar xvfz mpich-3.2.tar.gz``
-
-Change to *build* directory to begin building the install:
-
-``cd build``
-
-```
-/home/<username>/mpich3/mpich-3.2/configure CC=gcc --prefix=/home/<username>/mpich3/install
-=======
 
 Install some required compilers and packages:
 
@@ -469,7 +433,6 @@ Configure the install:
 Compile the install:
 
 ```
->>>>>>> ubuntu_vm_guide-dev:ubuntu_vm_guide.md
 make
 make install
 ```
@@ -485,7 +448,7 @@ Make the PATH change permanent by adding it to the profile file:
 Add the following to the end of the file:
 
 ```
-export PATH=$PATH:/home/<username>/mpich3/install/bin
+export PATH="$PATH:/home/<username>/mpich3/install/bin"
 ```
 
 Save and exit
@@ -496,18 +459,12 @@ Create a list of nodes for MPI to use:
 
 ```
 cd ~
-<<<<<<< HEAD:ubuntu_vm_guide.md
-nano nodelist
-=======
+
 sudo nano nodelist
->>>>>>> ubuntu_vm_guide-dev:ubuntu_vm_guide.md
 ```
+
 Save and exit.
 
-<<<<<<< HEAD:ubuntu_vm_guide.md
-=======
-
->>>>>>> ubuntu_vm_guide-dev:ubuntu_vm_guide.md
 Add the *head node* ip address to the file:
 
 ``192.168.10.5``
@@ -669,6 +626,23 @@ Save and exit
 
 
 ##### Step 7 - Test MPI
+
+**Test 1**
+On the *Head Node* enter:
+
+```
+cd ~
+mpiexec -f nodelist hostname
+```
+
+You should get an output similar to the following:
+
+```
+head
+node1
+```
+
+**Test 2**
 
 On the *Head Node* enter:
 
@@ -898,9 +872,15 @@ _**Note:**_ The _systemctl enable munge_ may show a failed notification but its 
 
 ``sudo systemctl enable slurmctld``
 
-##### Step 7 - Set permissions on Slurm folder
+Complete the automatic install:
 
-``sudo chown -R slurm:slurm /var/lib/slurmd``
+``sudo apt-get upgrade -y``
+
+##### Step 7 - Set create and set permissions on Slurm folder
+
+```
+sudo chown -R slurm:slurm /var/lib/slurmd
+```
 
 Reboot:
 
@@ -972,6 +952,10 @@ _**Note:**_ The _systemctl enable munge_ may show a failed notification but its 
 ##### Step 5 - Enable Slurm daemon
 
 ``sudo systemctl enable slurmd``
+
+Complete Slurm daemon auto install:
+
+``sudo apt-get upgrade -y``
 
 ##### Step 6 - Set Slurm folder permissions
 
