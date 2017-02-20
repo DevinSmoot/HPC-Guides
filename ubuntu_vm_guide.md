@@ -876,7 +876,7 @@ Complete the automatic install:
 
 ``sudo apt-get upgrade -y``
 
-##### Step 7 - Set create and set permissions on Slurm folder
+##### Step 7 - Set permissions on Slurm folder
 
 ```
 sudo chown -R slurm:slurm /var/lib/slurmd
