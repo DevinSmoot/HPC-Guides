@@ -421,6 +421,7 @@ Configure the install:
 Compile the install:
 
 ```
+>>>>>>> ubuntu_vm_guide-dev:ubuntu_vm_guide.md
 make
 make install
 ```
@@ -447,10 +448,13 @@ Create a list of nodes for MPI to use:
 
 ```
 cd ~
+<<<<<<< HEAD:ubuntu_vm_guide.md
+nano nodelist
+=======
 sudo nano nodelist
+>>>>>>> ubuntu_vm_guide-dev:ubuntu_vm_guide.md
 ```
 Save and exit.
-
 
 Add the *head node* ip address to the file:
 
