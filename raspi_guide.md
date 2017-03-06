@@ -95,71 +95,41 @@ Log in with username: **pi** and password **raspberry**
 sudo raspi-config
 ```
 
-Expand the filesystem (_**Option 1**_)
+Select _Expand Filesystem_
 * Select _**Yes**_
 
-Setup Internationalization Options (_**Option 3**_)
+Select _Internationalization Options_
 
-
-* Set Locale (_**Option I1**_)
+* Select _Change Locale_
 	* Unselect _**en_GB**_
 	* Select _**en_US ISO-8859-1**_
 	* Select _**en_US**_
 
+* Select _Change TimeZone_
+	* Select _**US**_
+	* Select _**Central**_
 
-* Set TimeZone (_**Option I2**_)
-	* Select _**America**_
-	* Select _**Chicago**_
-
-
-* Set TimeZone (_**Option I2**_)
-	* Select _**America**_
-	* Select _**Chicago**_
-
-
-* Set Keyboard Layout (_**Option I3**_)
+* Select _Change Keyboard Layout_
 	* Use the default selected Keyboard
+	* Select _**Other**_
 	* Select _**English (US)**_
+	* Select _**English (US)**_ again
 	* Use the default keyboard Layout
 	* Select _**No compose key**_
-	* Select _**No**_
 
-
-* Set Keyboard Layout (_**Option I3**_)
-	* Use the default selected Keyboard
-	* Select _**English (US)**_
-	* Use the default keyboard Layout
-	* Select _**No compose key**_
-	* Select _**No**_
-
-
-* Set Wi-Fi country (_**Option I4**_)
+* Select _Change Wi-fi Country_
 	* Select _**US United States**_
 
+Select _Advanced Options_
 
-* Set Wi-Fi country (_**Option I4**_)
-	* Select _**US United States**_
-
-
-* Set Hostname (_**Option 7**_)
-	*	Set _Hostname_ (_**Option A2**_)
+*	Select _Hostname_
 	* Enter _**head**_
 
-
-* Set Hostname (_**Option 7**_)
-	*	Set _Hostname_ (_**Option A2**_)
-	* Enter _**head**_
-
-
-* Set Memory Split (_**Option 7**_)
-	* Set _Memory Split_ (_**Option A3**_)
+* Select _Memory Split_
 	* Enter _**16**_
-* ##### Setup SSH service:
 
-* Select _**Interfacing Options**_ (_**Option 7**_)
-	* Select _**SSH**_ (_**Option P2**_)
-	* Select _**Yes**_
-	* Select _**Ok**_
+* Select _SSH_
+	* Select _Yes_
 
 Select _Finish_ and _Yes_ to reboot
 
@@ -226,11 +196,35 @@ Log in with username: **pi** and password **raspberry**
 
 Enable traffic forwarding and make it permanent:
 
+Execute the forwarding command:
+
+``sudo sysctl -w net.ipv4.ip_forward=1``
+
+Edit system file:
+
+``sudo nano /etc/sysctl.conf``
+
+Add the following lines to the end of the file (this includes the IP forwarding rule from above):
+
 ```
-sudo sysctl -w net.ipv4.ip_forward=1
+# Enable IPv4 forwarding
+net.ipv4.ip_forward = 1
 
-sudo sed -i "s/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/g" /etc/sysctl.conf
+# Disable IPv6
+net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+net.ipv6.conf.lo.disable_ipv6 = 1
+```
 
+Save and exit
+
+Enter the following command to initiate the changes:
+
+``sudo sysctl -p``
+
+Create persistant rules for forwarding:
+
+```
 sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 sudo iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
 
@@ -246,25 +240,6 @@ Add the following line at the end of the wlan0 section under wpa-conf line to ma
 ``pre-up iptables-restore < /etc/iptables.rules``
 
 Save and exit
-
-Disable IPv6:
-
-``sudo nano /etc/sysctl.conf``
-
-Add the following lines to the end of the file (this includes the IP forwarding rule from above):
-
-```
-# Disable IPv6
-net.ipv6.conf.all.disable_ipv6 = 1
-net.ipv6.conf.default.disable_ipv6 = 1
-net.ipv6.conf.lo.disable_ipv6 = 1
-```
-
-Save and exit
-
-Update the configuration files:
-
-``sudo sysctl -p``
 
 Update _etc/hosts_ file:
 
@@ -655,7 +630,7 @@ sudo mkdir -p /var/log/slurm/accounting
 
 sudo chown -R slurm:slurm /var/log/slurm
 ```
-sinfo
+
 ## Install Slurm on Compute Node
 
 > ##### Step 1 - Copy Slurm configuration and Munge files from _Head Node_
@@ -700,7 +675,7 @@ Verify Slurm daemon is running:
 Will return feedback to the screen. Verify _Active_ line is _**active (running)**_.
 
 Verify Munge is running:
-
+dir
 ``sudo systemctl status munge.service``
 
 Will return feedback to the screen. Verify _Active_ line is _**active (running)**_.

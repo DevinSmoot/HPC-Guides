@@ -286,7 +286,7 @@ Now reboot the system:
 
 ##### Step 10 - Update the system packages and kernel
 
-``sudo apt-get udpate && sudo apt-get upgrade -y && sudo apt-get dist-upgrade -y``
+``sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get dist-upgrade -y``
 
 
 ##### Step 11 - Set up SSH keys
