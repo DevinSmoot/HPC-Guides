@@ -344,6 +344,13 @@ Process 1 of 2 is on head
 pi is approximately 3.1415926544231318, Error is 0.0000000008333387
 wall clock time = 0.003250
 ```
+---
+## Prepare for cloning
+
+Shutdown the head node:
+
+``sudo shutdown -h now``
+
 
 ---
 ## Install Slurm
