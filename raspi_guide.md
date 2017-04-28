@@ -833,27 +833,6 @@ Setup an SSH key that will be used by the entire cluster to eliminate the need t
 
 **_Note:_ MAKE SURE TO EXIT OUT OF ROOT ACCESS IF YOU ARE IN IT BEFORE STARTING THE NEXT PART**
 
-Generate SSH key:
-
-```
-cd ~
-
-ssh-keygen -t rsa -C "raspi2@swosubta"
-```
-
-_**Enter**_ to select default location
-_**Enter**_ to leave passphrase blank
-_**Enter**_ to confirm blank passphrase
-
-Copy SSH keys to _authorized_keys_ file:
-
-``cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys``
-
-Copy _authorized_keys_ file to all nodes:
-
-``sudo cat ~/.ssh/authorized_keys | ssh pi@node0 "cat >> ~/.ssh/authorized_keys"``
-
----
 
 ## Deploying the Rest of the Cluster
 
