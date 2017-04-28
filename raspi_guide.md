@@ -41,6 +41,7 @@ https://github.com/davidsblog/rCPU
 
 https://raseshmori.wordpress.com/2012/10/14/install-hadoop-nextgen-yarn-multi-node-cluster/
 
+https://www.packtpub.com/hardware-and-creative/raspberry-pi-super-cluster
 ---
 
 ## Considerations to Consider before starting
@@ -273,57 +274,81 @@ Install prerequisite _Fortran_ which wil be required for compiling MPICH. All ot
 
 ```
 sudo apt-get install gfortran
-mkdir /home/pi/fortran
 ```
 
 > ##### Step 2 - Install and Setup MPICH3
 
-Execute from command line:
+Create hpc group:
 
-Create folder structure for _MPICH3_.
+``sudo groupadd hpc``
+
+
+Add pi user to hpc group:
+
+``sudo usermod -aG hpc pi``
+
+
+Create hpc directory in root:
 
 ```
-cd ~
+sudo mkdir /hpc
 
-mkdir mpich3
+cd /hpc
+```
+
+Create mpich3 directory:
+
+```
+sudo mkdir mpich3
 
 cd mpich3
-mkdir build install
 ```
 
-Download MPICH3 and untar:
+Create build and install directory inside mpich3 directory:
+
+``sudo mkdir build install``
+
+
+Take ownership of /hpc:
+
+``sudo chown -R pi:hpc /hpc``
+
+
+Download mpich3 and untar:
 
 ```
 wget http://www.mpich.org/static/downloads/3.2/mpich-3.2.tar.gz
+
 tar xvfz mpich-3.2.tar.gz
 ```
 
-Compile and install _MPICH3_
+Compile and install mpich3:
 
 ```
 cd build
 
-/home/pi/mpich3/mpich-3.2/configure --prefix=/home/pi/mpich3/install
+/hpc/mpich3/mpich-3.2/configure --prefix=/hpc/mpich3/install
 
 make
+
 make install
 ```
 
 Activate environment variable:
 
-```
-export PATH=$PATH:/home/pi/mpich3/install/bin
-```
+``export PATH=$PATH:/hpc/mpich3/install/bin``
+
 
 Add path to environment variables for persistance:
 
-``sudo nano /home/pi/.bashrc``
+``sudo nano /etc/profile``
+
 
 Add the following to the end of the file:
 
 ```
 # MPI
-export PATH="$PATH:/home/pi/mpich3/install/bin"
+export PATH="$PATH:/hpc/mpich3/install/bin"
 ```
 
 > ##### Step 3 - Create list of nodes for MPI:
@@ -369,6 +394,31 @@ Process 1 of 2 is on head
 pi is approximately 3.1415926544231318, Error is 0.0000000008333387
 wall clock time = 0.003250
 ```
+
+> ##### Step 5 - Setup SSH keys
+
+*_Note:_ Must be executed from head node as pi user*
+
+Generate SSH key:
+
+```
+cd ~
+
+ssh-keygen -t rsa -C "<username>@swosubta"
+```
+
+Press 'Enter' for file to save key
+
+Press 'Enter' for passphrase
+
+Press 'Enter' for same passphrase
+
+Transfer the key to the authorized_keys file:
+
+```
+cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+```
+
 ---
 ## Prepare for cloning
 
@@ -493,6 +543,88 @@ To:
 Save and exit
 
 _**Note:**_ At this point you will just do this once to develop a compute node image with Slurm installed. After that is complete you will create a new generic image of the compute node. Once that is complete you can use that image to finish deploying your compute nodes for the rest of your cluster.
+
+---
+## Install NFS on Head Node
+
+Purge nfs-kernel-server before starting:
+
+```
+sudo apt-get purge rpcbind
+
+sudo apt-get install nfs-kernel-server
+```
+
+
+Install required packages:
+
+``sudo apt-get install nfs-kernel-server``
+
+
+Create share folder in 'pi' home directory:
+
+```
+mkdir /home/pi/cloud
+
+Take ownership of the folder:
+
+sudo chown pi:pi /home/pi/cloud
+```
+
+
+Add the directory to the /etc/exports file:
+
+``sudo nano /etc/exports``
+
+Add to the end of the file:
+
+``/home/pi/cloud		192.168.10.0/24(rw,sync,no_root_squash,no_subtree_check)``
+
+
+Initiate the filesystem with the server:
+
+``sudo exportfs -a``
+
+
+Restart the server:
+
+``sudo service nfs-kernel-server restart``
+
+## Install NFS on compute Node
+
+Install required packages:
+
+``sudo apt-get install nfs-common``
+
+
+Create a directory to mount the share to:
+
+``mkdir /home/pi/cloud``
+
+
+Mount the shared directory:
+
+``sudo mount -t nfs head:/home/pi/cloud ~/cloud``
+
+
+Verify the mounted directory:
+
+``df -h``
+
+Should show:
+
+```
+Filesystem           Size  Used Avail Use% Mounted on
+head:/home/pi/cloud   15G  1.5G   13G  11% /home/pi/cloud
+```
+
+Make mount persistent through reboots:
+
+``sudo nano /etc/fstab``
+
+Add to end of the file:
+
+``head:/home/pi/cloud /home/pi/cloud nfs``
 
 ---
 ## Install Slurm on Head Node
