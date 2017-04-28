@@ -82,6 +82,8 @@ https://www.packtpub.com/hardware-and-creative/raspberry-pi-super-cluster
 
 Install Raspbian Lite on SD card for head unit(s) and each compute node
 
+[Raspbian Lite](https://www.raspberrypi.org/downloads/raspbian/)
+
 [Raspbian Install Guides](https://www.raspberrypi.org/documentation/installation/installing-images/)
 
 > ##### Step 2 - Configure head node settings
