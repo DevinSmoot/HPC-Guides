@@ -125,6 +125,7 @@ Click **Create**
 ![Step 4](https://github.com/swosu/MAPSS/blob/dev/WinterCamp/Ubuntu%20Cluster%20Guide/images/part1step4.png)
 
 ##### Step 5 - Set Processors and Network Adapters
+
 Right click the VM for *Head Node* in the left column of VirtualBox and click on **Settings**
 
 Click **System** and select the **Processor** tab
@@ -296,7 +297,7 @@ Now reboot the system:
 Generate an SSH key:
 ```
 cd ~
-ssh-keygen -t rsa -C "cluster@swosu"
+ssh-keygen -t rsa -C "vmcluster@swosu"
 ```
 Press ``Enter`` to select default install location
 
@@ -487,6 +488,10 @@ Should give an output similar to the following:
 [image]
 
 ![Step 4](https://github.com/swosu/MAPSS/blob/dev/WinterCamp/Ubuntu%20Cluster%20Guide/images/part2step4.png)
+
+Shutdown and get ready to clone:
+
+``sudo shutdown -h now``
 
 ---
 
