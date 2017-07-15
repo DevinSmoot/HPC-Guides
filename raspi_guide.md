@@ -101,7 +101,7 @@ sudo raspi-config
 Expand the filesystem (_**Option 1**_)
 * Select _**Yes**_
 
-Setup Internationalization Options (_**Option 3**_)
+Setup Localisation Options (_**Option 3**_)
 
 * Set Locale (_**Option I1**_)
 	* Unselect _**en_GB**_
@@ -134,6 +134,8 @@ Setup Internationalization Options (_**Option 3**_)
 * Set Memory Split (_**Option 7**_)
 	* Set _Memory Split_ (_**Option A3**_)
 	* Enter _**16**_
+
+
 * ##### Setup SSH service:
 
 * Select _**Interfacing Options**_ (_**Option 7**_)
