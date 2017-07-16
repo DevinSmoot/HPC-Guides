@@ -388,7 +388,7 @@ Should return:
 
 ###### Test 2 - Calculate Pi
 
-``mpiexec -f nodelist -n 2 ~/mpich3/build/examples/cpi``
+``mpiexec -f nodelist -n 2 /hpc/mpich3/build/examples/cpi``
 
 Should return similar:
 
@@ -438,6 +438,8 @@ Shutdown the head node:
 At this point you will want to save an image of the head node. This will give you a fall back point if you make mistakes moving forward. You will also use this image to begin your node image.
 
 Using the same guide as described in the beginning you will want to reverse the process of writing an image to the SD and _read_ an image from the SD and save that image to your PC. Now you have saved your SD like a checkpoint.
+
+Sample name for SD image: ``compute_node_mpi_stage_2017_01_03``
 
 ## Create Node image
 
@@ -502,7 +504,7 @@ Save and exit
 
 Now you will go back to WinDiskImager32 and save the image as a node image. This is a generic node image that you can quickly deploy and use to set up your cluster with.
 
-Sample name for SD image: ``head_node_mpi_stage_2017_01_03``
+Sample name for SD image: ``compute_node_mpi_stage_2017_01_03``
 
 ---
 
@@ -546,35 +548,34 @@ To:
 
 Save and exit
 
+---
+
+## Deploy Head Node SSH Keyboard
+
+Issue the following command for each node:
+
+``ssh-copy-id node0``
+
+
 _**Note:**_ At this point you will just do this once to develop a compute node image with Slurm installed. After that is complete you will create a new generic image of the compute node. Once that is complete you can use that image to finish deploying your compute nodes for the rest of your cluster.
 
 ---
 ## Install NFS on Head Node
 
-Purge nfs-kernel-server before starting:
-
-```
-sudo apt-get purge rpcbind
-
-sudo apt-get install nfs-kernel-server
-```
-
+Reference:
+https://www.htpcguides.com/configure-nfs-server-and-nfs-client-raspberry-pi/
 
 Install required packages:
 
 ``sudo apt-get install nfs-kernel-server``
 
-
 Create share folder in 'pi' home directory:
 
-```
-mkdir /home/pi/cloud
+``sudo mkdir /hpc/users``
 
 Take ownership of the folder:
 
-sudo chown pi:pi /home/pi/cloud
-```
-
+``sudo chown pi:hpc /hpc/users``
 
 Add the directory to the /etc/exports file:
 
@@ -582,17 +583,24 @@ Add the directory to the /etc/exports file:
 
 Add to the end of the file:
 
-``/home/pi/cloud		192.168.10.0/24(rw,sync,no_root_squash,no_subtree_check)``
-
+``/hpc/users		192.168.10.0/24(rw,sync,no_root_squash,no_subtree_check)``
 
 Initiate the filesystem with the server:
 
+==POSSIBLE CHANGES==
+``sudo exportfs``
+==END CHANGES==
+
 ``sudo exportfs -a``
 
+Restart the server and rpcbind service:
 
-Restart the server:
+```
+sudo service nfs-kernel-server restart
+sudo update-rc.d rpcbind enable
+sudo service rpcbind restart
+```
 
-``sudo service nfs-kernel-server restart``
 
 ## Install NFS on compute Node
 
@@ -600,16 +608,17 @@ Install required packages:
 
 ``sudo apt-get install nfs-common``
 
-
 Create a directory to mount the share to:
 
-``mkdir /home/pi/cloud``
+``sudo mkdir /hpc/users``
 
+Take ownership of the folder:
+
+``sudo chown -R pi:hpc /hpc/users``
 
 Mount the shared directory:
 
-``sudo mount -t nfs head:/home/pi/cloud ~/cloud``
-
+``sudo mount -t nfs head:/hpc/users /hpc/users``
 
 Verify the mounted directory:
 
@@ -628,7 +637,63 @@ Make mount persistent through reboots:
 
 Add to end of the file:
 
-``head:/home/pi/cloud /home/pi/cloud nfs``
+``head:/hpc/users /hpc/users 		nfs		rw  0  0``
+
+---
+
+## Install NTP on Head Node
+Reference:
+http://raspberrypi.tomasgreno.cz/ntp-client-and-server.html
+http://www.pool.ntp.org/zone/north-america
+
+
+Install NTP:
+
+``sudo apt-get install ntp``
+
+Edit the _/etc/ntp.conf_:
+
+``sudo nano /etc/ntp.conf``
+
+Change:
+
+```
+server 0.debian.pool.ntp.org iburst
+server 1.debian.pool.ntp.org iburst
+server 2.debian.pool.ntp.org iburst
+server 3.debian.pool.ntp.org iburst
+```
+
+To:
+
+```
+server 0.north-america.pool.ntp.org
+server 1.north-america.pool.ntp.org
+server 2.north-america.pool.ntp.org
+server 3.north-america.pool.ntp.org
+```
+
+Restart NTP:
+
+``sudo /etc/init.d/ntp restart``
+
+Setup Head Node as NTP server:
+
+Under ``restrict ::1`` add:
+
+``restrict 192.168.10.0 mask 255.255.255.0``
+
+Change:
+
+``#broadcast 192.168.123.255``
+
+To:
+
+``broadcast 192.168.10.255``
+
+Restart NTP service:
+
+``sudo /etc/init.d/ntp restart``
 
 ---
 ## Install Slurm on Head Node
@@ -753,7 +818,11 @@ sudo mkdir -p /var/log/slurm/accounting
 
 sudo chown -R slurm:slurm /var/log/slurm
 ```
-sinfo
+
+``sinfo``
+
+---
+
 ## Install Slurm on Compute Node
 
 > ##### Step 1 - Copy Slurm configuration and Munge files from _Head Node_
@@ -788,7 +857,6 @@ sudo systemctl enable slurmd.service
 sudo systemctl restart slurmd.service
 sudo systemctl enable munge.service
 sudo systemctl restart munge.service
-sudo systemctl status slurmd.service
 ```
 
 Verify Slurm daemon is running:
@@ -815,28 +883,15 @@ sudo mkdir -p /var/log/slurm/accounting
 sudo chown -R slurm:slurm /var/log/slurm
 ```
 
-> ##### Step 5 - Setup SSH and keys
+Execute for all nodes including head:
 
-**On each compute node**
+``sudo scontrol update nodename="head" state=resume``
 
-Generate SSH key:
+Execute:
 
-```
-cd ~
+``sinfo``
 
-ssh-keygen -t rsa -C "raspi2@swosubta"
-```
-
-_**Enter**_ to select default location
-_**Enter**_ to leave passphrase blank
-_**Enter**_ to confirm blank passphrase
-
-**On head node**
-
-Setup an SSH key that will be used by the entire cluster to eliminate the need to sign in to each node individually while setting up and using the cluster.
-
-**_Note:_ MAKE SURE TO EXIT OUT OF ROOT ACCESS IF YOU ARE IN IT BEFORE STARTING THE NEXT PART**
-
+This should show all nodes in an idle state.
 
 ## Deploying the Rest of the Cluster
 
