@@ -161,8 +161,6 @@ Save and exit
 ##### Step 3 - Set up IPv4 Traffic Forwarding
 Enable traffic forwarding and make it permanent:
 
-``sudo sysctl -w net.ipv4.ip_forward=1``
-
 ``sudo nano /etc/sysctl.conf``
 
 Add the following to the end of the file:
@@ -178,6 +176,12 @@ net.ipv6.conf.lo.disable_ipv6 = 1
 ```
 
 Save and exit
+
+Apply those changes:
+
+``sudo sysctl -p``
+
+Apply routing to iptables:
 
 ```
 sudo iptables -t nat -A POSTROUTING -o enp0s3 -j MASQUERADE
@@ -205,7 +209,7 @@ Now reboot the system:
 ``sudo apt-get udpate && sudo apt-get upgrade -y && sudo apt-get dist-upgrade -y``
 
 
-##### Step 5 - Set up SSH keys
+##### Step 5 - Set up SSH key
 
 ** \*\* VERIFY AT THE COMMAND PROMPT THAT YOU ARE UNDER YOUR USER ACCOUNT AND NOT EXECUTING CODE AS SUPER USER OR ROOT \*\* **
 
@@ -224,87 +228,6 @@ Copy SSH keys to authorized keys:
 
 ``cat /home/<username>/.ssh/id_rsa.pub >> /home/<username>/.ssh/authorized_keys``
 
-Turn on SSH agent and add SSH key:
-```
-ssh-agent bash
-ssh-add
-```
-
----
-
-### Java
-
-##### Step 1 - Install Java 8
-
-Remove OpenJDK:
-
-``sudo apt-get remove openjdk*``
-
-Add the PPA key:
-
-``sudo apt-key adv --recv-key --keyserver keyserver.ubuntu.com EEA14886``
-
-Add sources to */etc/apt/sources.list*:
-
-``sudo nano /etc/apt/source.list``
-
-Add the source links to the end of the file:
-
-```
-deb http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main
-deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main
-```
-
-Save and close
-
-Update sources and install Java 8:
-
-```
-sudo apt-get Update
-
-sudo apt-get install oracle-java8-installer
-```
-
-##### Step 2 - Verify Java install
-
-Execute:
-
-``java -version``
-
-Should return the most current version of Java 8
-At the time of this guide it is *1.8.0_121*
-
-Execute:
-
-``javac -version``
-
-Should return the most current version of the Java 8 compilers
-At the time of this guide it is *1.8.0_121*
-
-##### Step 3 - Set Java environment variables
-
-Execute:
-
-``sudo apt-get install oracle-java8-set-default``
-
-Verify settings by checking */etc/profile.d/jdk.sh* using the following command:
-
-``cat /etc/profile.d/jdk.sh``
-
-It should display 5 export commands
-
-Execute a shell script to make environment variables take effect:
-
-``source /etc/profile``
-
-Verify:
-
-``echo $JAVA_HOME``
-
-Should show:
-
-``/usr/lib/jvm/java-8-oracle``
-
 ---
 
 ### MPI
@@ -315,18 +238,34 @@ Install some required compilers and packages:
 
 ``sudo apt-get install make build-essential``
 
-Change to *home* directory and create *mpich3* directory:
+Create hpc directory for multiple users:
+
+``sudo mkdir /hpc``
+
+Create hpc user group:
+
+``sudo groupadd hpc``
+
+Add user to hpc user group:
+
+``sudo usermod -aG hpc <username>``
+
+Take ownership of */hpc*:
+
+``sudo chgrp -R hpc /hpc``
+
+Change to *hpc* directory and create *mpich3* directory:
 
 ```
-cd ~
-mkdir mpich3
+cd /hpc
+sudo mkdir mpich3
 ```
 
 Change to the *mpich3* directory and create *build* and *install* directories:
 
 ```
 cd mpich3
-mkdir build install
+sudo mkdir build install
 ```
 
 ##### Step 2 - Download and install
@@ -335,34 +274,30 @@ Install Fortran which is requred by MPICH3:
 
 ``sudo apt-get install gfortran``
 
-Make a directory for Fortran code:
-
-``mkdir /home/<username>/fortran``
-
 Download MPICH3 package and install:
 http://www.mpich.org/downloads/
 
 ```
-wget http://www.mpich.org/static/downloads/3.2/mpich-3.2.tar.gz
+sudo wget http://www.mpich.org/static/downloads/3.2/mpich-3.2.tar.gz
 ```
 
 Untar the package:
 
-``tar xvfz mpich-3.2.tar.gz``
+``sudo tar xvfz mpich-3.2.tar.gz``
 
 Change to *build* directory to begin building the install:
 
 ``cd build``
 
 ```
-/home/<username>/mpich3/mpich-3.2/configure CC=gcc --prefix=/home/<username>/mpich3/install
+/hpc/mpich3/mpich-3.2/configure  --prefix=/hpc/mpich3/install
 make
 make install
 ```
 
 Add MPI location to system environment variable PATH:
 
-``export PATH=$PATH:/home/<username>/mpich3/install/bin``
+``export PATH=$PATH:/hpc/mpich3/install/bin``
 
 Make the PATH change permanent by adding it to the profile file:
 
@@ -371,7 +306,7 @@ Make the PATH change permanent by adding it to the profile file:
 Add the following to the end of the file:
 
 ```
-export PATH=$PATH:/home/<username>/mpich3/install/bin
+export PATH="$PATH:/hpc/mpich3/install/bin"
 ```
 
 Save and exit
@@ -381,7 +316,7 @@ Save and exit
 Create a list of nodes for MPI to use:
 
 ```
-cd ~
+cd /hpc
 nano nodelist
 ```
 
@@ -391,8 +326,6 @@ Add the *head node* ip address to the file:
 
 ##### Step 4 - Test MPI
 
-``cd ~``
-
 **Test 1**
 
 ``mpiexec -f nodelist hostname``
@@ -401,12 +334,16 @@ Should return **head** on the next line
 
 **Test 2**
 
-``mpiexec -f nodelist -n 2 ~/mpich3/build/examples/cpi``
+``mpiexec -f nodelist -n 2 /hpc/mpich3/build/examples/cpi``
 
 Should give an output similar to the following:
 [image]
 
 ![Step 4](https://github.com/swosu/MAPSS/blob/dev/WinterCamp/Ubuntu%20Cluster%20Guide/images/part2step4.png)
+
+Shutdown head node:
+
+``sudo shutdown -h now``
 
 ---
 
