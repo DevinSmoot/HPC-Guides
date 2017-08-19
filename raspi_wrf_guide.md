@@ -21,11 +21,11 @@ Create a new, clean directory called Build_WRF, and another one called TESTS.
 ```
 cd /software
 
-mkdir ncar_wrf
+mkdir ncar_wrf_3.8.1
 
-cd ncar_wrf
+cd ncar_wrf_3.8.1
 
-mkdir TEST build
+mkdir TESTS build
 ```
 
 There are a few simple tests that can be run to verify that the fortran compiler is built properly, and that it is compatible with the C compiler. Below is a tar file that contains the tests. Download the tar file and place it in the TESTS directory.
@@ -33,14 +33,14 @@ There are a few simple tests that can be run to verify that the fortran compiler
 [Fortran and C Tests Tar File](http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/Fortran_C_tests.tar)
 
 ```
-cd /software/ncar_wrf/TESTS
+cd /software/ncar_wrf_3.8.1/TESTS
 
 wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/Fortran_C_tests.tar
 ```
 
 To unpack the tar file, type:
 
-``tar -xf Fortran_C_tests.tar``
+``tar xf Fortran_C_tests.tar``
 
 There are 7 tests available, so start at the top and run through them, one at a
 time.
@@ -208,16 +208,18 @@ export F77=gfortran
 
 mkdir netcdf-4.1.3
 cd netcdf-4.1.3
+mv netcdf-4.1.3.tar.gz netcdf-4.1.3
 
 tar xzvf netcdf-4.1.3.tar.gz
 cd netcdf-4.1.3
 
-./configure --prefix=$DIR/netcdf --disable-dap --disable-netcdf-4 --disable-shared
+./configure --prefix=$DIR/netcdf-4.1.3 --disable-dap --disable-netcdf-4 --disable-shared
 
 make
 make install
 export PATH=$DIR/netcdf-4.1.3/bin:$PATH
 export NETCDF=$DIR/netcdf-4.1.3
+
 cd ..
 ```
 
@@ -230,10 +232,13 @@ Assuming all the 'export' commands were already issued while setting up NetCDF, 
 ```
 tar xzvf mpich-3.0.4.tar.gz
 cd mpich-3.0.4
+
 ./configure --prefix=$DIR/mpich
+
 make
 make install
-export PATH=$PATH:$DIR/mpich/bin
+export PATH=$DIR/mpich/bin:$PATH
+
 cd ..
 ```
 
@@ -247,9 +252,12 @@ export CPPFLAGS=-I$DIR/grib2/include
 
 tar xzvf zlib-1.2.7.tar.gz
 cd zlib-1.2.7
+
 ./configure --prefix=$DIR/grib2
+
 make
 make install
+
 cd ..
 ```
 
@@ -260,9 +268,12 @@ Assuming all the "export" commands from the NetCDF install are already set, you 
 ```
 tar xzvf libpng-1.2.50.tar.gz
 cd libpng-1.2.50
+
 ./configure --prefix=$DIR/grib2
+
 make
 make install
+
 cd ..
 ```
 
@@ -273,9 +284,12 @@ Assuming all the "export" commands from the NetCDF install are already set, you 
 ```
 tar xzvf jasper-1.900.1.tar.gz
 cd jasper-1.900.1
+
 ./configure --prefix=$DIR/grib2
+
 make
 make install
+
 cd ..
 ```
 
@@ -288,7 +302,7 @@ Download this tar file and place it in the TESTS directory:
 [Fortran_C_NETCDF_MPI_tests.tar](http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/Fortran_C_NETCDF_MPI_tests.tar)
 
 ```
-cd /software/ncar_wrf/TESTS
+cd /software/ncar_wrf_3.8.1/TESTS
 
 wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/Fortran_C_NETCDF_MPI_tests.tar
 ```
