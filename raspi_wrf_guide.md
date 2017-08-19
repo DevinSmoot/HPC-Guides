@@ -551,15 +551,42 @@ Download that file and unpack it in the Build_WRF directory:
 [WPSV3.8.1](http://www2.mmm.ucar.edu/wrf/src/WPSV3.8.1.TAR.gz)
 
 ```
-cd /hpc/Build_WRF
+cd /software/ncar_wrf_3.8.1/build
+
 wget http://www2.mmm.ucar.edu/wrf/src/WPSV3.8.1.TAR.gz
-gunzip WPSV3.8.1.TAR.gz
-tar -xf WPSV3.8.1.TAR
+
+tar xfvz WPSV3.8.1.TAR
 ```
 
 Go into the WPS directory:
 
 ``cd WPS``
+
+Edit the configuration files to work with Raspberry Pi:
+
+```
+cd arch
+
+sudo nano configure.defaults
+```
+
+Use ``Ctrl+W`` then ``Ctrl+R`` to find and replace the following:
+
+```
+i486 i586 i686
+```
+
+With:
+
+```
+armv7l
+```
+
+The end character is a lowercase L.
+
+Press _**A**_ to replace all.
+
+Save and exit.
 
 Similar to the WRF model, make sure the WPS directory is clean, by issuing:
 
@@ -617,10 +644,12 @@ Download the file, and place it in the Build_WRF directory.
 Uncompress and un-tar the file:
 
 ```
-cd /hpc/Build_WRF
+cd /software/ncar_wrf_3.8.1/build
+
 wget http://www2.mmm.ucar.edu/wrf/src/wps_files/geog_minimum.tar.bz2
-gunzip geog.tar.gz
-tar -xf geog.tar
+
+
+tar xfvz geog.tar
 ```
 
 When you untar the file, it will be called "geog."
@@ -631,7 +660,7 @@ Rename the file to "WPS_GEOG."
 
 The directory infomation is given to the geogrid program in the namelist.wps file in the &geogrid section:
 
-``geog_data_path = ´/hpc/Build_WRF/WPS_GEOG´``
+``geog_data_path = ´/software/ncar_wrf_3.8.1/build/WPS_GEOG´``
 
 The data expands to approximately 10 GB. This data allows a user to run the geogrid.exe program.
 
@@ -658,7 +687,8 @@ Note that the initialization data and time (gfs.2014013100) remains the same, an
 Before obtaining the data, creat a directory in Build_WRF, called "DATA", and then go into that directory:
 
 ```
-cd /hpc/Build_WRF
+cd /software/ncar_wrf_3.8.1/buildpc
+
 mkdir DATA
 cd DATA
 ```
@@ -687,7 +717,7 @@ You need to fill in the anonymous login information (which is not private, so th
 
 You are now ready to begin running WPS and WRFV3. Start by going to the WPS directory:
 
-``cd /hpc/Build_WRF/WPS``
+``cd /software/ncar_wrf_3.8.1/build/WPS``
 
 Make any changes to the namelist.wps file, to reflect information for your particular run
 
