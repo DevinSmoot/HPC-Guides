@@ -225,7 +225,7 @@ Add settings to _/etc/network/interfaces_:
 
 Add the following line at the end of the wlan0 section under wpa-conf line to make the changes persistent:
 
-``pre-up iptables-restore < /etc/iptables.rules``
+``post-up iptables-restore < /etc/iptables.rules``
 
 Save and exit
 
@@ -302,9 +302,9 @@ sudo mkdir /software
 cd /software
 ```
 
-Take ownership of /hpc:
+Take ownership of /software:
 
-``sudo chown -R pi:hpc /hpc``
+``sudo chown -R pi:hpc /software``
 
 Create mpich3 directory:
 
@@ -656,15 +656,17 @@ Add to end of the file:
 
 ---
 
-## Install NTP on Head Node
+## Install NTP
+
 Reference:
 http://raspberrypi.tomasgreno.cz/ntp-client-and-server.html
 http://www.pool.ntp.org/zone/north-america
 
 
+> ##### Head Node
 Install NTP:
 
-``sudo apt-get install ntp``
+``sudo apt install ntp``
 
 Edit the _/etc/ntp.conf_:
 
@@ -692,7 +694,12 @@ Restart NTP:
 
 ``sudo /etc/init.d/ntp restart``
 
-Setup Head Node as NTP server:
+
+> ##### Compute Node
+
+Set Head Node as NTP server.
+
+Edit _/etc/ntp.conf_:
 
 Under ``restrict ::1`` add:
 
@@ -715,7 +722,7 @@ Restart NTP service:
 
 > ##### Step 1 - Install Slurm
 
-``sudo apt-get install slurm-wlm slurmctld slurmd``
+``sudo apt install slurm-wlm slurmctld slurmd``
 
 > ##### Step 2 - Add configuration file
 
