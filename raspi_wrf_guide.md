@@ -478,9 +478,15 @@ armv7l
 
 The end character is a lowercase L.
 
+Press _**A**_ to replace all.
+
 Create a configuration file for your computer and compiler:
 
-``./configure``
+```
+cd ..
+
+./configure
+```
 
 You will see various options. Choose the option that lists the compiler you are using and the way you wish to build WRFV3 (i.e., serially or in parallel). Although there are 3 different types of parallel (smpar, dmpar, and dm+sm), we have the most experience with dmpar and typically recommend choosing this option.
 
