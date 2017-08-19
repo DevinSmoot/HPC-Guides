@@ -509,7 +509,7 @@ The options are listed below:
 
 Usage:
 
-``./compile <case_name> >& log.compile``
+``./compile <case_name> >& compile.log``
 
 Where <case_name> is one of the options listed above.
 
@@ -615,9 +615,33 @@ the metgrid.exe and geogrid.exe programs rely on the WRF model's I/O libraries. 
 
 Above is the default setting. As long as the name of the WRF model's top-level directory is "WRFV3" and the WPS and WRFV3 directories are at the same level (which they should be if you have followed exactly as instructed on this page so far), then the existing default setting is correct and there is no need to change it. If it is not correct, you must modify the configure file and then save the changes before compiling.
 
+Before compiling you need to make one more change to the configuration file.
+
+Edit _configuration.wps_:
+
+```
+sudo nano configure.wps
+```
+
+Under the _WRF_LIB_ section:
+
+Find:
+
+```
+-L$(NETCDF)/lib -lnetcdff -lnetcdf
+```
+
+Add _-lgomp_ to the end:
+
+```
+-L$(NETCDF)/lib -lnetcdff -lnetcdf -lgomp
+```
+
+Now it will invoke OpenMP as needed.
+
 You can now compile WPS:
 
-``./compile >& log.compile``
+``./compile >& compile.log``
 
 Compilation should only take a few minutes.
 
@@ -723,7 +747,7 @@ Make any changes to the namelist.wps file, to reflect information for your parti
 
 Before running geogrid, make sure that you have your geog_data_path set to the location where you put your geography static data. Once that is set, you can run geogrid.
 
-``./geogrid.exe >& log.geogrid``
+``./geogrid.exe >& geogrid.log``
 
 If you successfully created a geo_em* file for each domain, then you are ready to prepare to run ungrib. Start by linking in the input GFS data:
 
@@ -741,7 +765,7 @@ You should now have files with the prefix "FILE" (or if you named them something
 
 You are now ready to run metgrid:
 
-``./metgrid.exe >& log.metgrid``
+``./metgrid.exe >& metgrid.log``
 
 You should now have files with the prefix met_em* for each of the time periods for which you are running.
 
