@@ -19,9 +19,13 @@ We recommend using gfortran version 4.4.0 or later. To determine the version of 
 Create a new, clean directory called Build_WRF, and another one called TESTS.
 
 ```
-cd /hpc
+cd /software
 
-sudo mkdir Build_WRF TESTS
+mkdir ncar_wrf
+
+cd ncar_wrf
+
+mkdir TEST
 ```
 
 There are a few simple tests that can be run to verify that the fortran compiler is built properly, and that it is compatible with the C compiler. Below is a tar file that contains the tests. Download the tar file and place it in the TESTS directory.
@@ -29,7 +33,7 @@ There are a few simple tests that can be run to verify that the fortran compiler
 [Fortran and C Tests Tar File](http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/Fortran_C_tests.tar)
 
 ```
-cd /hpc/TESTS
+cd /software/ncar_wrf/TESTS
 
 wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/Fortran_C_tests.tar
 ```
@@ -168,13 +172,9 @@ Before getting started, you need to make another directory.
 
 Go inside your Build_WRF directory:
 
-``cd /hpc/Build_WRF``
+``cd /software``
 
-and then make a directory called "LIBRARIES"
-
-``sudo mkdir LIBRARIES``
-
-Depending on the type of run you wish to make, there are various libraries that should be installed. Below are 5 libraries. Download all 5 tar files and place them in the LIBRARIES directory.
+Depending on the type of run you wish to make, there are various libraries that should be installed. Below are 5 libraries.
 
 [mpich-3.0.4](http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/mpich-3.0.4.tar.gz)
 
@@ -201,7 +201,7 @@ It is important to note that these libraries must all be installed with the same
 **NetCDF:** This library is always necessary!
 
 ```
-export DIR=/hpc/Build_WRF/LIBRARIES
+export DIR=/software
 export CC=gcc
 export CXX=g++
 export FC=gfortran
