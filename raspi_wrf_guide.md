@@ -359,6 +359,72 @@ The following should be displayed on your screen:
 
 Before compiling WRF on a Raspberry Pi you will need to expand the swap file space to allow for low system memory.
 
+Find the USB drive or external hard drive:
+
+``lsblk``
+
+It is most likely device _sda1_.
+
+Next mount the drive:
+
+```
+sudo mkdir /mnt/usb
+
+mount /dev/sda1 /mnt/usb
+```
+
+Verify the drive mounted:
+
+``lsblk``
+
+You should see a new device _sbd1_. Mounted at _/mnt/usb_.
+
+Now edit the _/etc/dphys-swapfile_ file:
+
+``sudo nano /etc/dphys-swapfile``
+
+Change:
+
+```
+CONF_SWAPSIZE=1024
+```
+
+To:
+
+```
+CONF_SWAPSIZE=2048
+```
+
+Also change _CONF_SWAPFILE_:
+
+```
+CONF_SWAPFILE=/mnt/usb/swap.file
+```
+
+Set the permissions so only root has access:
+
+```
+sudo chmod 600 /mnt/usb/swap.file
+```
+
+Next create a swap memory space and turn it on:
+
+```
+sudo mkswap /mnt/usb/swap.file
+sudo swapon /mnt/usb/swap.file
+```
+
+Now make these changes persistent:
+
+```
+sudo nano /etc/fstab
+```
+
+Add to the end of the file:
+
+```
+/mnt/usb/swap.file none swap defaults 0 0
+```
 
 After ensuring that all libraries are compatible with the compilers, you can now prepare to build WRFV3. If you do not already have a WRFV3 tar file, you can find it below.
 
