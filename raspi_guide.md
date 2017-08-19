@@ -194,7 +194,7 @@ Reboot:
 
 > ##### Step 4 - Update the system
 
-``sudo apt-get update && sudo apt-get upgrade -y``
+``sudo apt update && sudo apt upgrade -y``
 
 Reboot:
 
@@ -279,7 +279,7 @@ Install prerequisite _Fortran_ which wil be required for compiling MPICH. All ot
 > ##### Step 1 - Install Fortran
 
 ```
-sudo apt-get install gfortran
+sudo apt install gfortran
 ```
 
 > ##### Step 2 - Install and Setup MPICH3
@@ -582,7 +582,7 @@ https://www.htpcguides.com/configure-nfs-server-and-nfs-client-raspberry-pi/
 
 Install required packages:
 
-``sudo apt-get install nfs-kernel-server``
+``sudo apt install nfs-kernel-server``
 
 Create share folder in 'pi' home directory:
 
@@ -621,7 +621,7 @@ sudo service rpcbind restart
 
 Install required packages:
 
-``sudo apt-get install nfs-common``
+``sudo apt install nfs-common``
 
 Create a directory to mount the share to:
 
@@ -862,7 +862,7 @@ sudo chown -R slurm:slurm /var/log/slurm
 SSH into _node0_
 
 ```
-sudo apt-get install slurmd slurm-client
+sudo apt install slurmd slurm-client
 sudo ln -s /var/lib/slurm-llnl /var/lib/slurm
 ```
 
