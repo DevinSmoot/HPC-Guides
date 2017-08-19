@@ -309,7 +309,7 @@ wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/Fort
 
 To unpack the tar file, type:
 
-``tar -xf Fortran_C_NETCDF_MPI_tests.tar``
+``tar xf Fortran_C_NETCDF_MPI_tests.tar``
 
 There are 2 tests:
 
@@ -442,18 +442,41 @@ Add to the end of the file:
 
 After ensuring that all libraries are compatible with the compilers, you can now prepare to build WRFV3. If you do not already have a WRFV3 tar file, you can find it below.
 
-Download that file and unpack it in the Build_WRF directory.
+Download that file and unpack it in the _build_ directory.
 
 [WRFV3.8.1](http://www2.mmm.ucar.edu/wrf/src/WRFV3.8.1.TAR.gz)
 
 ```
-gunzip WRFV3.8.1.TAR.gz
-tar -xf WRFV3.8.1.TAR
+cd /software/ncar_wrf_3.8.1/build
+
+wget http://www2.mmm.ucar.edu/wrf/src/WRFV3.8.1.TAR.gz
+
+tar xfz WRFV3.8.1.TAR
 ```
 
 Go into the WRFV3 directory:
 
-``cd /hpc/Build_WRF/WRFV3``
+``cd /software/ncar_wrf_3.8.1/build/WRFV3``
+
+Setup WRF for Raspberry Pi. Edit the configuration files to conform to Raspberry Pi.
+
+```
+sudo nano /software/ncar_wrf_3.8.1/build/WRFV3/arch/configure_new.defaults
+```
+
+Use ``Ctrl+W`` then ``Ctrl+R`` to find and replace the following:
+
+```
+x86_64
+```
+
+With:
+
+```
+armv7l
+```
+
+The end character is a lowercase L.
 
 Create a configuration file for your computer and compiler:
 
