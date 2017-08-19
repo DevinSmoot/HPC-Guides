@@ -25,7 +25,7 @@ mkdir ncar_wrf
 
 cd ncar_wrf
 
-mkdir TEST
+mkdir TEST build
 ```
 
 There are a few simple tests that can be run to verify that the fortran compiler is built properly, and that it is compatible with the C compiler. Below is a tar file that contains the tests. Download the tar file and place it in the TESTS directory.
@@ -91,21 +91,20 @@ The following should print out to the screen:
 
 *SUCCESS test 3 c only*
 
-**Test #4:** Fortran Calling a C Function (our gcc and gfortran have different
-defaults, so we force both to always use 64 bit [-m64] when combining them):
+**Test #4:** Fortran Calling a C Function:
 TEST_4_fortran+c_c.c, and TEST_4_fortran+x_f.f90
 
 Type the following in the command line:
 
-``gcc -c -m64 TEST_4_fortran+c_c.c``
+``gcc -c TEST_4_fortran+c_c.c``
 
 and then type:
 
-``gfortran -c -m64 TEST_4_fortran+c_f.f90``
+``gfortran -c TEST_4_fortran+c_f.f90``
 
 and then:
 
-``gfortran -m64 TEST_4_fortran+c_f.o TEST_4_fortran+c_c.o``
+``gfortran TEST_4_fortran+c_f.o TEST_4_fortran+c_c.o``
 
 and then issue:
 
@@ -205,9 +204,10 @@ export DIR=/software
 export CC=gcc
 export CXX=g++
 export FC=gfortran
-export FCFLAGS=-m64
 export F77=gfortran
-export FFLAGS=-m64
+
+mkdir netcdf-4.1.3
+cd netcdf-4.1.3
 
 tar xzvf netcdf-4.1.3.tar.gz
 cd netcdf-4.1.3
@@ -216,8 +216,8 @@ cd netcdf-4.1.3
 
 make
 make install
-export PATH=$PATH:$DIR/netcdf/bin
-export NETCDF=$DIR/netcdf
+export PATH=$DIR/netcdf-4.1.3/bin:$PATH
+export NETCDF=$DIR/netcdf-4.1.3
 cd ..
 ```
 
@@ -288,7 +288,7 @@ Download this tar file and place it in the TESTS directory:
 [Fortran_C_NETCDF_MPI_tests.tar](http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/Fortran_C_NETCDF_MPI_tests.tar)
 
 ```
-cd /hpc/TESTS
+cd /software/ncar_wrf/TESTS
 
 wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/Fortran_C_NETCDF_MPI_tests.tar
 ```
@@ -356,6 +356,9 @@ The following should be displayed on your screen:
 *SUCCESS test 2 fortran + c + netcdf + mpi*
 
 ## Building WRFV3
+
+Before compiling WRF on a Raspberry Pi you will need to expand the swap file space to allow for low system memory.
+
 
 After ensuring that all libraries are compatible with the compilers, you can now prepare to build WRFV3. If you do not already have a WRFV3 tar file, you can find it below.
 
