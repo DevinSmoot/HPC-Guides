@@ -233,7 +233,7 @@ cd mpich-3.0.4
 ./configure --prefix=$DIR/mpich
 make
 make install
-export PATH=$PATH:$DIR/mpich3/bin
+export PATH=$PATH:$DIR/mpich/bin
 cd ..
 ```
 
