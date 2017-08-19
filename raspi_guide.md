@@ -72,7 +72,7 @@ https://www.packtpub.com/hardware-and-creative/raspberry-pi-super-cluster
 ## Additional Hardware
 
 *	10 Port USB hub
-*	16 Port gigabit switch                           
+*	16 Port gigabit switch
 
 ---
 
@@ -248,13 +248,15 @@ Update the configuration files:
 
 ``sudo sysctl -p``
 
-Update _etc/hosts_ file:
+Update _/etc/hosts_ file:
 
 Add the following to the end of the file:
 
 _**Note:**_ At this point you want to assign and name all of your nodes that **WILL** be in your cluster and enter them in the hosts file. Below is an example of a 6 node cluster including the head node as one of the six. This file will be copied with the image to the compute nodes and will save you a step of developing and deploying the hosts file later.
 
 ```
+127.0.1.1				head
+
 192.168.10.3		nodeX
 192.168.10.5		head
 192.168.10.100	node0
@@ -295,27 +297,26 @@ Add pi user to hpc group:
 Create hpc directory in root:
 
 ```
-sudo mkdir /hpc
+sudo mkdir /software
 
-cd /hpc
+cd /software
 ```
+
+Take ownership of /hpc:
+
+``sudo chown -R pi:hpc /hpc``
 
 Create mpich3 directory:
 
 ```
-sudo mkdir mpich3
+mkdir mpich3
 
 cd mpich3
 ```
 
 Create build and install directory inside mpich3 directory:
 
-``sudo mkdir build install``
-
-
-Take ownership of /hpc:
-
-``sudo chown -R pi:hpc /hpc``
+``mkdir build install``
 
 
 Download mpich3 and untar:
@@ -331,7 +332,7 @@ Compile and install mpich3:
 ```
 cd build
 
-/hpc/mpich3/mpich-3.2/configure --prefix=/hpc/mpich3/install
+/software/mpich3/mpich-3.2/configure --prefix=/software/mpich3/install
 
 make
 
@@ -340,19 +341,19 @@ make install
 
 Activate environment variable:
 
-``export PATH=$PATH:/hpc/mpich3/install/bin``
+``export PATH=/hpc/mpich3/install/bin:$PATH``
 
 
 Add path to environment variables for persistance:
 
-``sudo nano /etc/profile``
+``sudo nano ~/.bashrc``
 
 
 Add the following to the end of the file:
 
 ```
 # MPI
-export PATH="$PATH:/hpc/mpich3/install/bin"
+export PATH="/hpc/mpich3/install/bin:$PATH"
 ```
 
 > ##### Step 3 - Create list of nodes for MPI:
@@ -388,7 +389,7 @@ Should return:
 
 ###### Test 2 - Calculate Pi
 
-``mpiexec -f nodelist -n 2 /hpc/mpich3/build/examples/cpi``
+``mpiexec -f nodelist -n 2 /software/mpich3/build/examples/cpi``
 
 Should return similar:
 
@@ -498,7 +499,21 @@ To:
 
 Save and exit
 
-> ##### Step 4 - Shutdown and create a new image of the SD
+> ##### Step 4 - Edit hosts file
+
+``sudo nano /etc/hosts``
+
+Change:
+
+``127.0.1.1				head``
+
+To:
+
+``127.0.1.1				nodeX``
+
+Save and exit
+
+> ##### Step 5 - Shutdown and create a new image of the SD
 
 ``sudo shutdown -h now``
 
@@ -550,11 +565,11 @@ Save and exit
 
 ---
 
-## Deploy Head Node SSH Keyboard
+## Deploy Head Node SSH Key
 
 Issue the following command for each node:
 
-``ssh-copy-id node0``
+``cat ~/.ssh/authorized_keys | ssh pi@nodeX "cat > ~/.ssh/authorized_keys"
 
 
 _**Note:**_ At this point you will just do this once to develop a compute node image with Slurm installed. After that is complete you will create a new generic image of the compute node. Once that is complete you can use that image to finish deploying your compute nodes for the rest of your cluster.
