@@ -382,16 +382,14 @@ It is most likely device _sda1_.
 Next mount the drive:
 
 ```
-sudo mkdir /mnt/usb
-
-mount /dev/sda1 /mnt/usb
+mount /dev/sda1
 ```
 
 Verify the drive mounted:
 
-``lsblk``
+````
 
-You should see a new device _sbd1_. Mounted at _/mnt/usb_.
+You should see a new device _sda_. Mounted at _/mnt/usb_.
 
 Now edit the _/etc/dphys-swapfile_ file:
 
@@ -412,13 +410,13 @@ CONF_SWAPSIZE=2048
 Also change _CONF_SWAPFILE_:
 
 ```
-CONF_SWAPFILE=/mnt/usb/swap.file
+CONF_SWAPFILE=/mnt/sda/swap.file
 ```
 
 Set the permissions so only root has access:
 
 ```
-sudo chmod 600 /mnt/usb/swap.file
+sudo chmod 600 /mnt/sda/swap.file
 ```
 
 Next create a swap memory space and turn it on:
@@ -638,6 +636,24 @@ Add _-lgomp_ to the end:
 ```
 
 Now it will invoke OpenMP as needed.
+
+You will also need to change the two lines for compression libraries.
+
+Find:
+
+```
+COMPRESSION_LIBS
+COMPRESSION_INC
+```
+
+Change to:
+
+```
+COMPRESSION_LIBS    = -L/software/grib2/lib -ljasper -lpng -lz
+COMPRESSION_INC     = -I/software/grib2/include
+```
+
+Save and exit
 
 You can now compile WPS:
 
