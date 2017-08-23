@@ -309,9 +309,9 @@ Take ownership of /software:
 Create mpich3 directory:
 
 ```
-mkdir mpich3
+mkdir mpich-3.2
 
-cd mpich3
+cd mpich-3.2
 ```
 
 Create build and install directory inside mpich3 directory:
@@ -332,7 +332,7 @@ Compile and install mpich3:
 ```
 cd build
 
-/software/mpich3/mpich-3.2/configure --prefix=/software/mpich3/install
+/software/mpich-3.2/mpich-3.2/configure --prefix=/software/mpich-3.2/install
 
 make
 
@@ -341,7 +341,7 @@ make install
 
 Activate environment variable:
 
-``export PATH=/hpc/mpich3/install/bin:$PATH``
+``export PATH=/software/mpich-3.2/install/bin:$PATH``
 
 
 Add path to environment variables for persistance:

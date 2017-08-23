@@ -21,9 +21,9 @@ Create a new, clean directory called Build_WRF, and another one called TESTS.
 ```
 cd /software
 
-mkdir ncar_wrf_3.8.1
+mkdir ncar_wrf-3.8.1
 
-cd ncar_wrf_3.8.1
+cd ncar_wrf-3.8.1
 
 mkdir TESTS build
 ```
@@ -33,7 +33,7 @@ There are a few simple tests that can be run to verify that the fortran compiler
 [Fortran and C Tests Tar File](http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/Fortran_C_tests.tar)
 
 ```
-cd /software/ncar_wrf_3.8.1/TESTS
+cd /software/ncar_wrf-3.8.1/TESTS
 
 wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/Fortran_C_tests.tar
 ```
@@ -302,7 +302,7 @@ Download this tar file and place it in the TESTS directory:
 [Fortran_C_NETCDF_MPI_tests.tar](http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/Fortran_C_NETCDF_MPI_tests.tar)
 
 ```
-cd /software/ncar_wrf_3.8.1/TESTS
+cd /software/ncar_wrf-3.8.1/TESTS
 
 wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/Fortran_C_NETCDF_MPI_tests.tar
 ```
@@ -382,7 +382,7 @@ It is most likely device _sda1_.
 Next mount the drive:
 
 ```
-mount /dev/sda1
+sudo mount /dev/sda1 /mnt/usb/
 ```
 
 Verify the drive mounted:
@@ -410,13 +410,19 @@ CONF_SWAPSIZE=2048
 Also change _CONF_SWAPFILE_:
 
 ```
-CONF_SWAPFILE=/mnt/sda/swap.file
+CONF_SWAPFILE=/dev/sda1/swap.file
+```
+
+Creat the swap file:
+
+```
+sudo dd if=/dev/zero of=/mnt/usb/swap.file bs=1M count=2048
 ```
 
 Set the permissions so only root has access:
 
 ```
-sudo chmod 600 /mnt/sda/swap.file
+sudo chmod 600 /mnt/usb/swap.file
 ```
 
 Next create a swap memory space and turn it on:
@@ -435,7 +441,7 @@ sudo nano /etc/fstab
 Add to the end of the file:
 
 ```
-/mnt/usb/swap.file none swap defaults 0 0
+/dev/sda1        /mnt/usb       ext4      dmask=000,fmask111    0   0
 ```
 
 After ensuring that all libraries are compatible with the compilers, you can now prepare to build WRFV3. If you do not already have a WRFV3 tar file, you can find it below.
@@ -445,7 +451,7 @@ Download that file and unpack it in the _build_ directory.
 [WRFV3.8.1](http://www2.mmm.ucar.edu/wrf/src/WRFV3.8.1.TAR.gz)
 
 ```
-cd /software/ncar_wrf_3.8.1/build
+cd /software/ncar_wrf-3.8.1/build
 
 wget http://www2.mmm.ucar.edu/wrf/src/WRFV3.8.1.TAR.gz
 
@@ -454,12 +460,12 @@ tar xfz WRFV3.8.1.TAR
 
 Go into the WRFV3 directory:
 
-``cd /software/ncar_wrf_3.8.1/build/WRFV3``
+``cd /software/ncar_wrf-3.8.1/build/WRFV3``
 
 Setup WRF for Raspberry Pi. Edit the configuration files to conform to Raspberry Pi.
 
 ```
-sudo nano /software/ncar_wrf_3.8.1/build/WRFV3/arch/configure_new.defaults
+sudo nano /software/ncar_wrf-3.8.1/build/WRFV3/arch/configure_new.defaults
 ```
 
 Use ``Ctrl+W`` then ``Ctrl+R`` to find and replace the following:
@@ -487,6 +493,8 @@ cd ..
 ```
 
 You will see various options. Choose the option that lists the compiler you are using and the way you wish to build WRFV3 (i.e., serially or in parallel). Although there are 3 different types of parallel (smpar, dmpar, and dm+sm), we have the most experience with dmpar and typically recommend choosing this option.
+
+For the Raspberry Pi you will pick _**34 dmpar gfortran**_.
 
 Once your configuration is complete, you should have a configure.wrf file, and you are ready to compile. To compile WRFV3, you will need to decide which type of case you wish to compile.
 
@@ -549,7 +557,7 @@ Download that file and unpack it in the Build_WRF directory:
 [WPSV3.8.1](http://www2.mmm.ucar.edu/wrf/src/WPSV3.8.1.TAR.gz)
 
 ```
-cd /software/ncar_wrf_3.8.1/build
+cd /software/ncar_wrf-3.8.1/build
 
 wget http://www2.mmm.ucar.edu/wrf/src/WPSV3.8.1.TAR.gz
 
@@ -639,7 +647,7 @@ Now it will invoke OpenMP as needed.
 
 You will also need to change the two lines for compression libraries.
 
-Find:
+Find the second set of the following:
 
 ```
 COMPRESSION_LIBS
@@ -684,7 +692,7 @@ Download the file, and place it in the Build_WRF directory.
 Uncompress and un-tar the file:
 
 ```
-cd /software/ncar_wrf_3.8.1/build
+cd /software/ncar_wrf-3.8.1/build
 
 wget http://www2.mmm.ucar.edu/wrf/src/wps_files/geog_minimum.tar.bz2
 
@@ -700,7 +708,7 @@ Rename the file to "WPS_GEOG."
 
 The directory infomation is given to the geogrid program in the namelist.wps file in the &geogrid section:
 
-``geog_data_path = ´/software/ncar_wrf_3.8.1/build/WPS_GEOG´``
+``geog_data_path = ´/software/ncar_wrf-3.8.1/build/WPS_GEOG´``
 
 The data expands to approximately 10 GB. This data allows a user to run the geogrid.exe program.
 
@@ -727,7 +735,7 @@ Note that the initialization data and time (gfs.2014013100) remains the same, an
 Before obtaining the data, creat a directory in Build_WRF, called "DATA", and then go into that directory:
 
 ```
-cd /software/ncar_wrf_3.8.1/buildpc
+cd /software/ncar_wrf-3.8.1/build
 
 mkdir DATA
 cd DATA
@@ -757,7 +765,7 @@ You need to fill in the anonymous login information (which is not private, so th
 
 You are now ready to begin running WPS and WRFV3. Start by going to the WPS directory:
 
-``cd /software/ncar_wrf_3.8.1/build/WPS``
+``cd /software/ncar_wrf-3.8.1/build/WPS``
 
 Make any changes to the namelist.wps file, to reflect information for your particular run
 
