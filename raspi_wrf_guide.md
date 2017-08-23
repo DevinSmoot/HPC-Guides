@@ -410,7 +410,7 @@ CONF_SWAPSIZE=2048
 Also change _CONF_SWAPFILE_:
 
 ```
-CONF_SWAPFILE=/dev/sda1/swap.file
+CONF_SWAPFILE=/mnt/usb/swap.file
 ```
 
 Creat the swap file:
