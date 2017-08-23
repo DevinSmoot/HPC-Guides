@@ -56,7 +56,7 @@ https://www.packtpub.com/hardware-and-creative/raspberry-pi-super-cluster
 ##### Hardware:
 *	Raspberry Pi board x 1
 *	WiPi USB dongle	x 1
-*	SD Card 16GB x 1
+*	SD Card 16GB+ x 1
 *	Ethernet cable x 1
 *	HDMI cable x 1
 *	Power cable mini-USB x 1
@@ -225,7 +225,7 @@ Add settings to _/etc/network/interfaces_:
 
 Add the following line at the end of the wlan0 section under wpa-conf line to make the changes persistent:
 
-``post-up iptables-restore < /etc/iptables.rules``
+``pre-up iptables-restore < /etc/iptables.rules``
 
 Save and exit
 
