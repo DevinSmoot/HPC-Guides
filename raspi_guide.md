@@ -384,7 +384,7 @@ Should return:
 
 ###### Test 2 - Calculate Pi
 
-``mpiexec -f nodelist -n 2 /software/mpich3/build/examples/cpi``
+``mpiexec -f nodelist -n 2 /software/lib/mpich-3.2/build/examples/cpi``
 
 Should return similar:
 
