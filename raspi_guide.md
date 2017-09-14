@@ -416,7 +416,7 @@ Press 'Enter' for same passphrase
 Transfer the key to the authorized_keys file:
 
 ```
-cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
 ```
 
 ---
