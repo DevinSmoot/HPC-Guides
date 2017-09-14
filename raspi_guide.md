@@ -570,6 +570,9 @@ Issue the following command for each node:
 _**Note:**_ At this point you will just do this once to develop a compute node image with Slurm installed. After that is complete you will create a new generic image of the compute node. Once that is complete you can use that image to finish deploying your compute nodes for the rest of your cluster.
 
 ---
+
+** DO NOT INSTALL NFS AT THIS TIME. IT BREAKS THE NETWORK CONNECTIONS.**
+
 ## Install NFS on Head Node
 
 Reference:
