@@ -297,27 +297,14 @@ Add pi user to hpc group:
 Create hpc directory in root:
 
 ```
-sudo mkdir /software
+sudo mkdir -p /software/lib
 
-cd /software
+cd /software/lib
 ```
 
 Take ownership of /software:
 
 ``sudo chown -R pi:hpc /software``
-
-Create mpich3 directory:
-
-```
-mkdir mpich-3.2
-
-cd mpich-3.2
-```
-
-Create build and install directory inside mpich3 directory:
-
-``mkdir build install``
-
 
 Download mpich3 and untar:
 
@@ -327,12 +314,20 @@ wget http://www.mpich.org/static/downloads/3.2/mpich-3.2.tar.gz
 tar xvfz mpich-3.2.tar.gz
 ```
 
+Create build and install directory inside mpich3 directory:
+
+```
+cd mpich-3.2
+
+mkdir build install
+```
+
 Compile and install mpich3:
 
 ```
 cd build
 
-/software/mpich-3.2/mpich-3.2/configure --prefix=/software/mpich-3.2/install
+/software/lib/mpich-3.2/mpich-3.2/configure --prefix=/software/lib/mpich-3.2/install
 
 make
 
@@ -341,7 +336,7 @@ make install
 
 Activate environment variable:
 
-``export PATH=/software/mpich-3.2/install/bin:$PATH``
+``export PATH=/software/lib/mpich-3.2/install/bin:$PATH``
 
 
 Add path to environment variables for persistance:
@@ -353,7 +348,7 @@ Add the following to the end of the file:
 
 ```
 # MPI
-export PATH="/hpc/mpich3/install/bin:$PATH"
+export PATH="/software/lib/mpich3/install/bin:$PATH"
 ```
 
 > ##### Step 3 - Create list of nodes for MPI:
