@@ -271,7 +271,7 @@ Reboot:
 
 ---
 
-## Install MPICH3
+## Install MPICH-3.2
 
 Install prerequisite _Fortran_ which wil be required for compiling MPICH. All other dependencies are already installed.
 
@@ -301,6 +301,7 @@ sudo mkdir -p /software/lib
 cd /software/lib
 ```
 
+
 Take ownership of /software:
 
 ``sudo chown -R pi:hpc /software``
@@ -313,6 +314,7 @@ wget http://www.mpich.org/static/downloads/3.2/mpich-3.2.tar.gz
 tar xvfz mpich-3.2.tar.gz
 ```
 
+
 Create build and install directory inside mpich3 directory:
 
 ```
@@ -320,6 +322,7 @@ cd mpich-3.2
 
 mkdir build install
 ```
+
 
 Compile and install mpich3:
 
@@ -354,12 +357,14 @@ export PATH="/software/lib/mpich-3.2/install/bin:$PATH"
 
 This list of nodes will need to be updated as you add nodes later. Initially you will only have the head node.
 
+
 Create node list:
 
 ```
 cd ~
 sudo nano nodelist
 ```
+
 
 Add the head node ip address to the list:
 
@@ -377,6 +382,7 @@ cd ~
 mpiexec -f nodelist hostname
 ```
 
+
 Should return:
 
 ``head``
@@ -384,6 +390,7 @@ Should return:
 ###### Test 2 - Calculate Pi
 
 ``mpiexec -f nodelist -n 2 /software/lib/mpich-3.2/build/examples/cpi``
+
 
 Should return similar:
 
@@ -398,19 +405,19 @@ wall clock time = 0.003250
 
 *_Note:_ Must be executed from head node as pi user*
 
+
 Generate SSH key:
 
 ```
 cd ~
 
-ssh-keygen -t rsa -C "<username>@swosubta"
+ssh-keygen -t rsa -C "<username>@swosubta" -f ~/.ssh/id_rsa
 ```
-
-Press 'Enter' for file to save key
 
 Press 'Enter' for passphrase
 
 Press 'Enter' for same passphrase
+
 
 Transfer the key to the authorized_keys file:
 
