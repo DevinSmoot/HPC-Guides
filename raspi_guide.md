@@ -327,7 +327,7 @@ Compile and install mpich3:
 ```
 cd build
 
-/software/lib/mpich-3.2/mpich-3.2/configure --prefix=/software/lib/mpich-3.2/install
+/software/lib/mpich-3.2/configure --prefix=/software/lib/mpich-3.2/install
 
 make
 
