@@ -348,7 +348,7 @@ Add the following to the end of the file:
 
 ```
 # MPI
-export PATH="/software/lib/mpich3/install/bin:$PATH"
+export PATH="/software/lib/mpich-3.2/install/bin:$PATH"
 ```
 
 > ##### Step 3 - Create list of nodes for MPI:
