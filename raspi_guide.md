@@ -206,13 +206,31 @@ Setup IP forwarding so that all compute nodes will have access to the internet f
 
 Log in with username: **pi** and password **raspberry**
 
-Enable traffic forwarding and make it permanent:
+Enable IPv4 Forwarding and Disable IPv6:
+
+``sudo nano /etc/sysctl.conf``
+
+Add the following lines to the end of the file (this includes the IP forwarding rule from above):
 
 ```
-sudo sysctl -w net.ipv4.ip_forward=1
+# Enable IPv4 forwarding
+net.ipv4.ip_forward = 1
 
-sudo sed -i "s/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/g" /etc/sysctl.conf
+# Disable IPv6
+net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+net.ipv6.conf.lo.disable_ipv6 = 1
+```
 
+Save and exit
+
+Update the configuration files:
+
+``sudo sysctl -p``
+
+Edit and Save the iptables:
+
+```
 sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 sudo iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
 
@@ -228,25 +246,6 @@ Add the following line at the end of the wlan0 section under wpa-conf line to ma
 ``pre-up iptables-restore < /etc/iptables.rules``
 
 Save and exit
-
-Disable IPv6:
-
-``sudo nano /etc/sysctl.conf``
-
-Add the following lines to the end of the file (this includes the IP forwarding rule from above):
-
-```
-# Disable IPv6
-net.ipv6.conf.all.disable_ipv6 = 1
-net.ipv6.conf.default.disable_ipv6 = 1
-net.ipv6.conf.lo.disable_ipv6 = 1
-```
-
-Save and exit
-
-Update the configuration files:
-
-``sudo sysctl -p``
 
 Update _/etc/hosts_ file:
 
