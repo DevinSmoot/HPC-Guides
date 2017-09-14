@@ -597,10 +597,6 @@ Add to the end of the file:
 
 Initiate the filesystem with the server:
 
-==POSSIBLE CHANGES==
-``sudo exportfs``
-==END CHANGES==
-
 ``sudo exportfs -a``
 
 Restart the server and rpcbind service:
