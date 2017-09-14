@@ -347,7 +347,7 @@ Add path to environment variables for persistance:
 Add the following to the end of the file:
 
 ```
-# MPI
+# MPICH-3.2
 export PATH="/software/lib/mpich-3.2/install/bin:$PATH"
 ```
 
