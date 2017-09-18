@@ -657,7 +657,7 @@ Restart NTP service:
 
 > ##### Step 1 - Install Slurm
 
-``sudo apt install slurm-wlm slurmctld slurmd``
+``sudo apt install slurm-wlm slurmctld``
 
 > ##### Step 2 - Add configuration file
 
@@ -718,13 +718,9 @@ SlurmdLogFile=/var/log/slurm/slurmd.log
 #
 #
 # COMPUTE NODES
-NodeName=head NodeAddr=192.168.10.5
-NodeName=node0 NodeAddr=192.168.10.100
-NodeName=node1 NodeAddr=192.168.10.101
-NodeName=node2 NodeAddr=192.168.10.102
-NodeName=node3 NodeAddr=192.168.10.103
-NodeName=node4 NodeAddr=192.168.10.104
-PartitionName=raspi2 Default=yes Nodes=head,node0,node1,node2,node3,node4 State=UP
+NodeName=node[0-6] Procs=1 RealMemory=768 State=UNKNOWN
+
+PartitionName=raspi2 Default=YES  Nodes=node0,node1,node2,node3,node4,node5,node6 State=UP MaxTime=INFINITE
 ```
 
 _**Note:**_ Any nodes added to the cluster need to be added to the bottom of this file with a _NodeName_ entry.
@@ -735,7 +731,7 @@ Check if Slurm controller is running:
 
 Should return:
 
-``slurmctld``
+``slurmctld slurmd``
 
 > ##### Step 3 - Create Munge key
 
@@ -786,9 +782,9 @@ sudo chown -R slurm:slurm /var/log/slurm
 
 **On _head node_**
 
-``sudo cat /etc/munge/munge.key | ssh pi@node0 "cat >> ~/munge.key"``
+``sudo cat /etc/munge/munge.key | ssh pi@node0 "cat > ~/munge.key"``
 
-``sudo cat /etc/slurm-llnl/slurm.conf | ssh pi@node0 "cat >> ~/slurm.conf"``
+``sudo cat /etc/slurm-llnl/slurm.conf | ssh pi@node0 "cat > ~/slurm.conf"``
 
 > ##### Step 2 - Install Slurm daemon
 
@@ -839,10 +835,6 @@ sudo mkdir -p /var/log/slurm/accounting
 
 sudo chown -R slurm:slurm /var/log/slurm
 ```
-
-Execute for all nodes including head:
-
-``sudo scontrol update nodename="head" state=resume``
 
 Execute:
 
