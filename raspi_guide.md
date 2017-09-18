@@ -564,6 +564,20 @@ To:
 
 Save and exit
 
+> ##### Step 5 - Edit hosts file
+
+``sudo nano /etc/hosts``
+
+Change:
+
+``127.0.1.1				nodeX``
+
+To:
+
+``127.0.1.1				node0``
+
+Save and exit
+
 ---
 
 ## Deploy Head Node SSH Key
@@ -574,85 +588,6 @@ Issue the following command for each node:
 
 
 _**Note:**_ At this point you will just do this once to develop a compute node image with Slurm installed. After that is complete you will create a new generic image of the compute node. Once that is complete you can use that image to finish deploying your compute nodes for the rest of your cluster.
-
----
-
-** DO NOT INSTALL NFS AT THIS TIME. IT BREAKS THE NETWORK CONNECTIONS.**
-
-## Install NFS on Head Node
-
-Reference:
-https://www.htpcguides.com/configure-nfs-server-and-nfs-client-raspberry-pi/
-
-Install required packages:
-
-``sudo apt install nfs-kernel-server``
-
-Create share folder in 'pi' home directory:
-
-``sudo mkdir /hpc/users``
-
-Take ownership of the folder:
-
-``sudo chown pi:hpc /hpc/users``
-
-Add the directory to the /etc/exports file:
-
-``sudo nano /etc/exports``
-
-Add to the end of the file:
-
-``/hpc/users		192.168.10.0/24(rw,sync,no_root_squash,no_subtree_check)``
-
-Initiate the filesystem with the server:
-
-``sudo exportfs -a``
-
-Restart the server and rpcbind service:
-
-```
-sudo service nfs-kernel-server restart
-sudo update-rc.d rpcbind enable
-sudo service rpcbind restart
-```
-
-
-## Install NFS on compute Node
-
-Install required packages:
-
-``sudo apt install nfs-common``
-
-Create a directory to mount the share to:
-
-``sudo mkdir /hpc/users``
-
-Take ownership of the folder:
-
-``sudo chown -R pi:hpc /hpc/users``
-
-Mount the shared directory:
-
-``sudo mount -t nfs head:/hpc/users /hpc/users``
-
-Verify the mounted directory:
-
-``df -h``
-
-Should show:
-
-```
-Filesystem           Size  Used Avail Use% Mounted on
-head:/home/pi/cloud   15G  1.5G   13G  11% /home/pi/cloud
-```
-
-Make mount persistent through reboots:
-
-``sudo nano /etc/fstab``
-
-Add to end of the file:
-
-``head:/hpc/users /hpc/users 		nfs		rw  0  0``
 
 ---
 
