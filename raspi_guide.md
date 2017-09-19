@@ -836,9 +836,15 @@ sudo mkdir -p /var/log/slurm/accounting
 sudo chown -R slurm:slurm /var/log/slurm
 ```
 
-Execute:
+Execute on _head_ node:
 
-``sinfo``
+```
+sudo scontrol reconfigure
+
+sudo scontrol update nodename="node[0-6]" state=resume
+
+sinfo
+```
 
 This should show all nodes in an idle state.
 
