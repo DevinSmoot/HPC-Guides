@@ -239,7 +239,7 @@ Install some required compilers and packages:
 
 ``sudo apt-get install make build-essential``
 
-Create hpc directory for multiple users:
+Create software directory for multiple users:
 
 ``sudo mkdir -p /software/lib``
 
@@ -253,9 +253,9 @@ Add user to hpc user group:
 
 Take ownership of */software*:
 
-``sudo chgrp -R <username>:hpc /software``
+``sudo chown -R <username>:hpc /software``
 
-Change to *hpc* directory and create *mpich3* directory:
+Change to *software* directory and create *mpich-3.2* directory:
 
 ```
 cd /software/lib
@@ -263,7 +263,7 @@ cd /software/lib
 mkdir mpich-3.2
 ```
 
-Change to the *mpich3* directory and create *build* and *install* directories:
+Change to the *mpich-3.2* directory and create *build* and *install* directories:
 
 ```
 cd mpich-3.2
