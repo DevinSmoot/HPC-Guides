@@ -933,6 +933,10 @@ Edit _wpa_supplicant.conf_ file:
 
 Comment out the ``network={ connection information }`` section (all lines)
 
+Disable eth1 adapter:
+
+``sudo ifconfig eth1 down``
+
 Reboot:
 
 ``sudo reboot``
