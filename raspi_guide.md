@@ -514,7 +514,45 @@ To:
 
 Save and exit
 
-> ##### Step 5 - Shutdown and create a new image of the SD
+> ##### Step 5 - Remove wireless connection information
+
+Edit _interfaces_ file:
+
+``sudo nano /etc/network/interfaces``
+
+Remove:
+
+```
+allow-hotplug wlan0
+iface wlan0 inet manual
+wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+
+pre-up iptables-restore < /etc/iptables.rules
+```
+
+Edit _wpa_supplicant.conf_:
+
+``sudo nano /etc/wpa_supplicant/wpa_supplicant.conf``
+
+Remove this section if you have a secure network:
+
+```
+network={
+ssid="<network name>"
+psk="<network password>"
+}
+```
+
+Remove this section if you have an unsecure network:
+
+```
+network={
+ssid="<network name>"
+key_mgmt=NONE
+}
+```
+
+> ##### Step 6 - Shutdown and create a new image of the SD
 
 ``sudo shutdown -h now``
 
