@@ -186,6 +186,7 @@ Apply routing to iptables:
 ```
 sudo iptables -t nat -A POSTROUTING -o enp0s3 -j MASQUERADE
 sudo iptables -t nat -A POSTROUTING -o enp0s8 -j MASQUERADE
+
 sudo bash -c "iptables-save > /etc/iptables.rules"
 ```
 
@@ -206,7 +207,7 @@ Now reboot the system:
 
 ##### Step 4 - Update the system packages and kernel
 
-``sudo apt-get udpate && sudo apt-get upgrade -y && sudo apt-get dist-upgrade -y``
+``sudo apt udpate && sudo apt upgrade -y && sudo apt dist-upgrade -y``
 
 
 ##### Step 5 - Set up SSH key
@@ -226,7 +227,7 @@ Press ``Enter`` to confirm blank passphrase
 
 Copy SSH keys to authorized keys:
 
-``cat /home/<username>/.ssh/id_rsa.pub >> /home/<username>/.ssh/authorized_keys``
+``cat /home/<username>/.ssh/id_rsa.pub > /home/<username>/.ssh/authorized_keys``
 
 ---
 
@@ -240,7 +241,7 @@ Install some required compilers and packages:
 
 Create hpc directory for multiple users:
 
-``sudo mkdir /hpc``
+``sudo mkdir -p /software/lib``
 
 Create hpc user group:
 
@@ -250,22 +251,24 @@ Add user to hpc user group:
 
 ``sudo usermod -aG hpc <username>``
 
-Take ownership of */hpc*:
+Take ownership of */software*:
 
-``sudo chgrp -R hpc /hpc``
+``sudo chgrp -R <username>:hpc /software``
 
 Change to *hpc* directory and create *mpich3* directory:
 
 ```
-cd /hpc
-sudo mkdir mpich3
+cd /software/lib
+
+mkdir mpich-3.2
 ```
 
 Change to the *mpich3* directory and create *build* and *install* directories:
 
 ```
-cd mpich3
-sudo mkdir build install
+cd mpich-3.2
+
+mkdir build install
 ```
 
 ##### Step 2 - Download and install
@@ -290,23 +293,24 @@ Change to *build* directory to begin building the install:
 ``cd build``
 
 ```
-/hpc/mpich3/mpich-3.2/configure  --prefix=/hpc/mpich3/install
+/software/lib/mpich-3.2/mpich-3.2/configure  --prefix=/software/lib/mpich-3.2/install
+
 make
 make install
 ```
 
 Add MPI location to system environment variable PATH:
 
-``export PATH=$PATH:/hpc/mpich3/install/bin``
+``export PATH=$PATH:/software/lib/mpich-3.2/install/bin``
 
 Make the PATH change permanent by adding it to the profile file:
 
-``sudo nano /etc/profile``
+``sudo nano ~/.bashrc``
 
 Add the following to the end of the file:
 
 ```
-export PATH="$PATH:/hpc/mpich3/install/bin"
+export PATH="$PATH:/software/lib/mpich-3.2/install/bin"
 ```
 
 Save and exit
@@ -316,7 +320,8 @@ Save and exit
 Create a list of nodes for MPI to use:
 
 ```
-cd /hpc
+cd ~
+
 sudo nano nodelist
 ```
 
@@ -334,7 +339,7 @@ Should return **head** on the next line
 
 **Test 2**
 
-``mpiexec -f nodelist -n 2 /hpc/mpich3/build/examples/cpi``
+``mpiexec -f nodelist -n 2 /software/lib/mpich-3.2/build/examples/cpi``
 
 Should give an output similar to the following:
 [image]
@@ -459,7 +464,7 @@ Login to *Head Node*
 
 On *Head Node* enter:
 
-``ssh <username>@192.168.10.100``
+``ssh <username>@node0``
 
 Type ``yes`` and press ``Enter`` when asked *Are you sure you want to continue connection (yes/no)?*
 
@@ -473,7 +478,8 @@ Verify *Head Node* by checking the command prompt for ``<username>@head:~$``
 On the *Head Node* edit the nodelist:
 
 ```
-cd /hpc
+cd ~
+
 sudo nano nodelist
 ```
 
@@ -487,8 +493,7 @@ Save and exit
 On the *Head Node* enter:
 
 ```
-cd /hpc
-mpiexec -f nodelist -n 6 /hpc/mpich3/build/examples/cpi
+mpiexec -f nodelist -n 6 /software/lib/mpich-3.2/build/examples/cpi
 ```
 
 You should get an output similar to the following:
@@ -616,9 +621,9 @@ Reboot:
 
 ##### Step 1 - Copy Slurm configuration file and Munge key to _node1_ <username's> home directory:
 
-``sudo cat /etc/munge/munge.key | ssh <username>@node1 "cat >> ~/munge.key"``
+``sudo cat /etc/munge/munge.key | ssh <username>@node1 "cat > ~/munge.key"``
 
-``sudo cat /etc/slurm-llnl/slurm.conf | ssh <username>@node1 "cat >> ~/slurm.conf"``
+``sudo cat /etc/slurm-llnl/slurm.conf | ssh <username>@node1 "cat > ~/slurm.conf"``
 
 **On _compute node_**
 
@@ -707,118 +712,6 @@ Click **OK** and you are done
 Do this for all nodes and you are safe to begin making changes and producing
 
 **_Note:_** You can snapshot the node anywhere you want by following these instructions. In this case take advantage of the description box after naming the snapshot.
-
----
-
-## Set up Hadoop on the Cluster
-
-**This section is incomplete**
-
-##### Step 1 - Create new user and group
-
-Create hduser and hadoop group:
-
-```
-sudo addgroup HADOOP
-sudo adduser --ingroup hadoop hduser
-sudo usermod -a -G sudo hduser
-```
-
-**_Note:_** All other actions from now on must be completed under the *hduser* account
-Exit out and login as *hduser*
-
-##### Step 2 - Disable IPv6
-
-Edit /etc/sysctl.conf:
-
-``sudo nano /etc/sysctl.conf``
-
-Add the following lines to the end of the file:
-
-```
-net.ipv6.conf.all.disable_ipv6 = 1
-net.ipv6.conf.default.disable_ipv6 = 1
-net.ipv6.conf.lo.disable_ipv6 = 1
-```
-
-Apply changes:
-
-``sudo sysctl -p``
-
-
-##### Step 3 - Download latest Apache Hadoop
-
-```
-cd ~
-wget http://apache.osuosl.org/hadoop/common/hadoop-2.7.3/hadoop-2.7.3.tar.gz
-```
-
-Extract files:
-
-``tar xvfz hadoop-2.7.3.tar.gz``
-
-Create Hadoop folder under /usr/local:
-
-``sudo mkdir /usr/local/hadoop``
-
-Move the Hadoop folder to /usr/local/hadoop:
-
-```
-sudo mv hadoop-2.7.3 /usr/local/hadoop
-sudo chown hduser:hadoop -R /usr/local/hadoop
-```
-
-Create Hadoop temp directories for Namenode and Datanode:
-
-```
-sudo mkdir -p /usr/local/hadoop_tmp/hdfs/namenode
-sudo mkdir -p /usr/local/hadoop_tmp/hdfs/datanode
-sudo chown hduser:hadoop -R /usr/local/hadoop_tmp
-```
-
-##### Step 4 - Update Hadoop Configuration Files
-
-Update $HOME/.bashrc
-
-``sudo nano ~/.bashrc``
-
-Add environment variables to .bashrc file:
-
-```
-# -- HADOOP ENVIRONMENT VARIABLES START -- #
-export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-armhf
-export HADOOP_HOME=/usr/local/hadoop
-export PATH=$PATH:$HADOOP_HOME/bin
-export PATH=$PATH:$HADOOP_HOME/sbin
-export HADOOP_MAPRED_HOME=$HADOOP_HOME
-export HADOOP_COMMON_HOME=$HADOOP_HOME
-export HADOOP_HDFS_HOME=$HADOOP_HOME
-export YARN_HOME=$HADOOP_HOME
-export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
-export HADOOP_OPTS="-Djava.library.path=$HADOOP_HOME/lib"
-# -- HADOOP ENVIRONMENT VARIABLES END -- #
-```
-
-Change to the /usr/local/hadoop/etc/hadoop directory:
-
-``cd /usr/local/hadoop/etc/hadoop``
-
-Edit hadoop-env.sh:
-
-``sudo nano hadoop-env.sh``
-
-Change the following line:
-
-``JAVA_HOME=``
-
-To:
-
-``JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-armhf``
-
-Edit core-site.xml:
-
-
-
 
 ---
 
