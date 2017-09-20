@@ -41,6 +41,7 @@ https://github.com/davidsblog/rCPU
 
 https://raseshmori.wordpress.com/2012/10/14/install-hadoop-nextgen-yarn-multi-node-cluster/
 
+https://www.packtpub.com/hardware-and-creative/raspberry-pi-super-cluster
 ---
 
 ## Considerations to Consider before starting
@@ -55,7 +56,7 @@ https://raseshmori.wordpress.com/2012/10/14/install-hadoop-nextgen-yarn-multi-no
 ##### Hardware:
 *	Raspberry Pi board x 1
 *	WiPi USB dongle	x 1
-*	SD Card 32GB x 1
+*	SD Card 16GB+ x 1
 *	Ethernet cable x 1
 *	HDMI cable x 1
 *	Power cable mini-USB x 1
@@ -71,7 +72,7 @@ https://raseshmori.wordpress.com/2012/10/14/install-hadoop-nextgen-yarn-multi-no
 ## Additional Hardware
 
 *	10 Port USB hub
-*	16 Port gigabit switch                           
+*	16 Port gigabit switch
 
 ---
 
@@ -80,6 +81,8 @@ https://raseshmori.wordpress.com/2012/10/14/install-hadoop-nextgen-yarn-multi-no
 > ##### Step 1 - Install operating systems
 
 Install Raspbian Lite on SD card for head unit(s) and each compute node
+
+[Raspbian Lite](https://www.raspberrypi.org/downloads/raspbian/)
 
 [Raspbian Install Guides](https://www.raspberrypi.org/documentation/installation/installing-images/)
 
@@ -95,41 +98,50 @@ Log in with username: **pi** and password **raspberry**
 sudo raspi-config
 ```
 
-Select _Expand Filesystem_
+Expand the filesystem (_**Option 1**_)
 * Select _**Yes**_
 
-Select _Internationalization Options_
+Setup Localisation Options (_**Option 3**_)
 
-* Select _Change Locale_
+* Set Locale (_**Option I1**_)
 	* Unselect _**en_GB**_
 	* Select _**en_US ISO-8859-1**_
 	* Select _**en_US**_
 
-* Select _Change TimeZone_
-	* Select _**US**_
-	* Select _**Central**_
 
-* Select _Change Keyboard Layout_
+* Set TimeZone (_**Option I2**_)
+	* Select _**America**_
+	* Select _**Chicago**_
+
+
+* Set Keyboard Layout (_**Option I3**_)
 	* Use the default selected Keyboard
-	* Select _**Other**_
 	* Select _**English (US)**_
-	* Select _**English (US)**_ again
 	* Use the default keyboard Layout
 	* Select _**No compose key**_
+	* Select _**No**_
 
-* Select _Change Wi-fi Country_
+
+* Set Wi-Fi country (_**Option I4**_)
 	* Select _**US United States**_
 
-Select _Advanced Options_
 
-*	Select _Hostname_
+* Set Hostname (_**Option 7**_)
+	*	Set _Hostname_ (_**Option A2**_)
 	* Enter _**head**_
 
-* Select _Memory Split_
+
+* Set Memory Split (_**Option 7**_)
+	* Set _Memory Split_ (_**Option A3**_)
 	* Enter _**16**_
 
-* Select _SSH_
-	* Select _Yes_
+
+* ##### Setup SSH service:
+
+* Select _**Interfacing Options**_ (_**Option 7**_)
+	* Select _**SSH**_ (_**Option P2**_)
+	* Select _**Yes**_
+	* Select _**Ok**_
 
 Select _Finish_ and _Yes_ to reboot
 
@@ -182,7 +194,7 @@ Reboot:
 
 > ##### Step 4 - Update the system
 
-``sudo apt-get update && sudo apt-get upgrade -y``
+``sudo apt update && sudo apt upgrade -y``
 
 Reboot:
 
@@ -194,13 +206,7 @@ Setup IP forwarding so that all compute nodes will have access to the internet f
 
 Log in with username: **pi** and password **raspberry**
 
-Enable traffic forwarding and make it permanent:
-
-Execute the forwarding command:
-
-``sudo sysctl -w net.ipv4.ip_forward=1``
-
-Edit system file:
+Enable IPv4 Forwarding and Disable IPv6:
 
 ``sudo nano /etc/sysctl.conf``
 
@@ -218,11 +224,11 @@ net.ipv6.conf.lo.disable_ipv6 = 1
 
 Save and exit
 
-Enter the following command to initiate the changes:
+Update the configuration files:
 
 ``sudo sysctl -p``
 
-Create persistant rules for forwarding:
+Edit and Save the iptables:
 
 ```
 sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
@@ -241,13 +247,15 @@ Add the following line at the end of the wlan0 section under wpa-conf line to ma
 
 Save and exit
 
-Update _etc/hosts_ file:
+Update _/etc/hosts_ file:
 
 Add the following to the end of the file:
 
 _**Note:**_ At this point you want to assign and name all of your nodes that **WILL** be in your cluster and enter them in the hosts file. Below is an example of a 6 node cluster including the head node as one of the six. This file will be copied with the image to the compute nodes and will save you a step of developing and deploying the hosts file later.
 
 ```
+127.0.1.1				head
+
 192.168.10.3		nodeX
 192.168.10.5		head
 192.168.10.100	node0
@@ -261,94 +269,94 @@ Reboot:
 
 ``sudo reboot``
 
-> ##### Step 7- Setup SSH and keys
-
-Setup an SSH key that will be used by the entire cluster to eliminate the need to sign in to each node individually while setting up and using the cluster.
-
-**_Note:_ MAKE SURE TO EXIT OUT OF ROOT ACCESS IF YOU ARE IN IT BEFORE STARTING THE NEXT PART**
-
-Generate SSH key:
-
-```
-cd ~
-
-ssh-keygen -t rsa -C "raspi2@swosubta"
-```
-
-_**Enter**_ to select default location
-_**Enter**_ to leave passphrase blank
-_**Enter**_ to confirm blank passphrase
-
-Copy SSH keys to _authorized_keys_ file:
-
-``cat /home/pi/.ssh/id_rsa.pub >> /home/pi/.ssh/authorized_keys``
-
 ---
 
-## Install MPICH3
+## Install MPICH-3.2
 
 Install prerequisite _Fortran_ which wil be required for compiling MPICH. All other dependencies are already installed.
 
 > ##### Step 1 - Install Fortran
 
 ```
-sudo apt-get install gfortran
-mkdir /home/pi/fortran
+sudo apt install gfortran
 ```
 
 > ##### Step 2 - Install and Setup MPICH3
 
-Execute from command line:
+Create hpc group:
 
-Create folder structure for _MPICH3_.
+``sudo groupadd hpc``
+
+
+Add pi user to hpc group:
+
+``sudo usermod -aG hpc pi``
+
+
+Create hpc directory in root:
 
 ```
-cd ~
+sudo mkdir -p /software/lib
 
-mkdir mpich3
-
-cd mpich3
-mkdir build install
+cd /software/lib
 ```
 
-Download MPICH3 and untar:
+
+Take ownership of /software:
+
+``sudo chown -R pi:hpc /software``
+
+Download Mpich-3.2 and untar:
 
 ```
 wget http://www.mpich.org/static/downloads/3.2/mpich-3.2.tar.gz
+
 tar xvfz mpich-3.2.tar.gz
 ```
 
-Compile and install _MPICH3_
+
+Create build and install directory inside mpich3 directory:
+
+```
+cd mpich-3.2
+
+mkdir build install
+```
+
+
+Compile and install mpich3:
 
 ```
 cd build
 
-/home/pi/mpich3/mpich-3.2/configure --prefix=/home/pi/mpich3/install
+/software/lib/mpich-3.2/configure --prefix=/software/lib/mpich-3.2/install
 
 make
+
 make install
 ```
 
 Activate environment variable:
 
-```
-export PATH=$PATH:/home/pi/mpich3/install/bin
-```
+``export PATH=/software/lib/mpich-3.2/install/bin:$PATH``
+
 
 Add path to environment variables for persistance:
 
-``sudo nano /home/pi/.bashrc``
+``sudo nano ~/.bashrc``
+
 
 Add the following to the end of the file:
 
 ```
-# MPI
-export PATH="$PATH:/home/pi/mpich3/install/bin"
+# MPICH-3.2
+export PATH="/software/lib/mpich-3.2/install/bin:$PATH"
 ```
 
 > ##### Step 3 - Create list of nodes for MPI:
 
 This list of nodes will need to be updated as you add nodes later. Initially you will only have the head node.
+
 
 Create node list:
 
@@ -356,6 +364,7 @@ Create node list:
 cd ~
 sudo nano nodelist
 ```
+
 
 Add the head node ip address to the list:
 
@@ -373,13 +382,15 @@ cd ~
 mpiexec -f nodelist hostname
 ```
 
+
 Should return:
 
 ``head``
 
 ###### Test 2 - Calculate Pi
 
-``mpiexec -f nodelist -n 2 ~/mpich3/build/examples/cpi``
+``mpiexec -f nodelist -n 2 /software/lib/mpich-3.2/build/examples/cpi``
+
 
 Should return similar:
 
@@ -390,6 +401,38 @@ pi is approximately 3.1415926544231318, Error is 0.0000000008333387
 wall clock time = 0.003250
 ```
 
+> ##### Step 5 - Setup SSH keys
+
+*_Note:_ Must be executed from head node as pi user*
+
+
+Generate SSH key:
+
+```
+cd ~
+
+ssh-keygen -t rsa -C "<username>@swosubta" -f ~/.ssh/id_rsa
+```
+
+Press 'Enter' for passphrase
+
+Press 'Enter' for same passphrase
+
+
+Transfer the key to the authorized_keys file:
+
+```
+cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
+```
+
+---
+## Prepare for cloning
+
+Shutdown the head node:
+
+``sudo shutdown -h now``
+
+
 ---
 
 ## Save SD Image
@@ -397,6 +440,8 @@ wall clock time = 0.003250
 At this point you will want to save an image of the head node. This will give you a fall back point if you make mistakes moving forward. You will also use this image to begin your node image.
 
 Using the same guide as described in the beginning you will want to reverse the process of writing an image to the SD and _read_ an image from the SD and save that image to your PC. Now you have saved your SD like a checkpoint.
+
+Sample name for SD image: ``compute_node_mpi_stage_2017_01_03``
 
 ## Create Node image
 
@@ -455,13 +500,65 @@ To:
 
 Save and exit
 
-> ##### Step 4 - Shutdown and create a new image of the SD
+> ##### Step 4 - Edit hosts file
+
+``sudo nano /etc/hosts``
+
+Change:
+
+``127.0.1.1				head``
+
+To:
+
+``127.0.1.1				nodeX``
+
+Save and exit
+
+> ##### Step 5 - Remove wireless connection information
+
+Edit _interfaces_ file:
+
+``sudo nano /etc/network/interfaces``
+
+Remove:
+
+```
+allow-hotplug wlan0
+iface wlan0 inet manual
+wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+
+pre-up iptables-restore < /etc/iptables.rules
+```
+
+Edit _wpa_supplicant.conf_:
+
+``sudo nano /etc/wpa_supplicant/wpa_supplicant.conf``
+
+Remove this section if you have a secure network:
+
+```
+network={
+ssid="<network name>"
+psk="<network password>"
+}
+```
+
+Remove this section if you have an unsecure network:
+
+```
+network={
+ssid="<network name>"
+key_mgmt=NONE
+}
+```
+
+> ##### Step 6 - Shutdown and create a new image of the SD
 
 ``sudo shutdown -h now``
 
 Now you will go back to WinDiskImager32 and save the image as a node image. This is a generic node image that you can quickly deploy and use to set up your cluster with.
 
-Sample name for SD image: ``head_node_mpi_stage_2017_01_03``
+Sample name for SD image: ``compute_node_mpi_stage_2017_01_03``
 
 ---
 
@@ -505,14 +602,100 @@ To:
 
 Save and exit
 
+> ##### Step 5 - Edit hosts file
+
+``sudo nano /etc/hosts``
+
+Change:
+
+``127.0.1.1				nodeX``
+
+To:
+
+``127.0.1.1				node0``
+
+Save and exit
+
+---
+
+## Deploy Head Node SSH Key
+
+Issue the following command for each node:
+
+``cat ~/.ssh/authorized_keys | ssh pi@nodeX "cat > ~/.ssh/authorized_keys"
+
+
 _**Note:**_ At this point you will just do this once to develop a compute node image with Slurm installed. After that is complete you will create a new generic image of the compute node. Once that is complete you can use that image to finish deploying your compute nodes for the rest of your cluster.
+
+---
+
+## Install NTP
+
+Reference:
+http://raspberrypi.tomasgreno.cz/ntp-client-and-server.html
+http://www.pool.ntp.org/zone/north-america
+
+
+> ##### Head Node
+Install NTP:
+
+``sudo apt install ntp``
+
+Edit the _/etc/ntp.conf_:
+
+``sudo nano /etc/ntp.conf``
+
+Change:
+
+```
+server 0.debian.pool.ntp.org iburst
+server 1.debian.pool.ntp.org iburst
+server 2.debian.pool.ntp.org iburst
+server 3.debian.pool.ntp.org iburst
+```
+
+To:
+
+```
+server 0.north-america.pool.ntp.org
+server 1.north-america.pool.ntp.org
+server 2.north-america.pool.ntp.org
+server 3.north-america.pool.ntp.org
+```
+
+Restart NTP:
+
+``sudo /etc/init.d/ntp restart``
+
+
+> ##### Compute Node
+
+Set Head Node as NTP server.
+
+Edit _/etc/ntp.conf_:
+
+Under ``restrict ::1`` add:
+
+``restrict 192.168.10.0 mask 255.255.255.0``
+
+Change:
+
+``#broadcast 192.168.123.255``
+
+To:
+
+``broadcast 192.168.10.255``
+
+Restart NTP service:
+
+``sudo /etc/init.d/ntp restart``
 
 ---
 ## Install Slurm on Head Node
 
 > ##### Step 1 - Install Slurm
 
-``sudo apt-get install slurm-wlm slurmctld slurmd``
+``sudo apt install slurm-wlm slurmctld``
 
 > ##### Step 2 - Add configuration file
 
@@ -573,13 +756,9 @@ SlurmdLogFile=/var/log/slurm/slurmd.log
 #
 #
 # COMPUTE NODES
-NodeName=head NodeAddr=192.168.10.5
-NodeName=node0 NodeAddr=192.168.10.100
-NodeName=node1 NodeAddr=192.168.10.101
-NodeName=node2 NodeAddr=192.168.10.102
-NodeName=node3 NodeAddr=192.168.10.103
-NodeName=node4 NodeAddr=192.168.10.104
-PartitionName=raspi2 Default=yes Nodes=head,node0,node1,node2,node3,node4 State=UP
+NodeName=node[0-6] Procs=1 RealMemory=768 State=UNKNOWN
+
+PartitionName=raspi2 Default=YES  Nodes=node0,node1,node2,node3,node4,node5,node6 State=UP MaxTime=INFINITE
 ```
 
 _**Note:**_ Any nodes added to the cluster need to be added to the bottom of this file with a _NodeName_ entry.
@@ -590,7 +769,7 @@ Check if Slurm controller is running:
 
 Should return:
 
-``slurmctld``
+``slurmctld slurmd``
 
 > ##### Step 3 - Create Munge key
 
@@ -631,15 +810,19 @@ sudo mkdir -p /var/log/slurm/accounting
 sudo chown -R slurm:slurm /var/log/slurm
 ```
 
+``sinfo``
+
+---
+
 ## Install Slurm on Compute Node
 
 > ##### Step 1 - Copy Slurm configuration and Munge files from _Head Node_
 
 **On _head node_**
 
-``sudo cat /etc/munge/munge.key | ssh pi@node0 "cat >> ~/munge.key"``
+``sudo cat /etc/munge/munge.key | ssh pi@node0 "cat > ~/munge.key"``
 
-``sudo cat /etc/slurm-llnl/slurm.conf | ssh pi@node0 "cat >> ~/slurm.conf"``
+``sudo cat /etc/slurm-llnl/slurm.conf | ssh pi@node0 "cat > ~/slurm.conf"``
 
 > ##### Step 2 - Install Slurm daemon
 
@@ -648,7 +831,7 @@ sudo chown -R slurm:slurm /var/log/slurm
 SSH into _node0_
 
 ```
-sudo apt-get install slurmd slurm-client
+sudo apt install slurmd slurm-client
 sudo ln -s /var/lib/slurm-llnl /var/lib/slurm
 ```
 
@@ -665,7 +848,6 @@ sudo systemctl enable slurmd.service
 sudo systemctl restart slurmd.service
 sudo systemctl enable munge.service
 sudo systemctl restart munge.service
-sudo systemctl status slurmd.service
 ```
 
 Verify Slurm daemon is running:
@@ -675,7 +857,7 @@ Verify Slurm daemon is running:
 Will return feedback to the screen. Verify _Active_ line is _**active (running)**_.
 
 Verify Munge is running:
-dir
+
 ``sudo systemctl status munge.service``
 
 Will return feedback to the screen. Verify _Active_ line is _**active (running)**_.
@@ -692,49 +874,17 @@ sudo mkdir -p /var/log/slurm/accounting
 sudo chown -R slurm:slurm /var/log/slurm
 ```
 
-> ##### Step 5 - Setup SSH and keys
-
-**On each compute node**
-
-Generate SSH key:
+Execute on _head_ node:
 
 ```
-cd ~
+sudo scontrol reconfigure
 
-ssh-keygen -t rsa -C "raspi2@swosubta"
+sudo scontrol update nodename="node[0-6]" state=resume
+
+sinfo
 ```
 
-_**Enter**_ to select default location
-_**Enter**_ to leave passphrase blank
-_**Enter**_ to confirm blank passphrase
-
-**On head node**
-
-Setup an SSH key that will be used by the entire cluster to eliminate the need to sign in to each node individually while setting up and using the cluster.
-
-**_Note:_ MAKE SURE TO EXIT OUT OF ROOT ACCESS IF YOU ARE IN IT BEFORE STARTING THE NEXT PART**
-
-Generate SSH key:
-
-```
-cd ~
-
-ssh-keygen -t rsa -C "raspi2@swosubta"
-```
-
-_**Enter**_ to select default location
-_**Enter**_ to leave passphrase blank
-_**Enter**_ to confirm blank passphrase
-
-Copy SSH keys to _authorized_keys_ file:
-
-``cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys``
-
-Copy _authorized_keys_ file to all nodes:
-
-``sudo cat ~/.ssh/authorized_keys | ssh pi@node0 "cat >> ~/.ssh/authorized_keys"``
-
----
+This should show all nodes in an idle state.
 
 ## Deploying the Rest of the Cluster
 
