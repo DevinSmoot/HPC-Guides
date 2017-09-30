@@ -97,23 +97,23 @@ Log in with username: **pi** and password **raspberry**
 ```
 sudo raspi-config
 ```
-
-Expand the filesystem (_**Option 1**_)
+==9/29/17 - Changed option numbers to correlate with updated OS
+Expand the filesystem (_**Option 7**_)
 * Select _**Yes**_
 
-Setup Localisation Options (_**Option 3**_)
+Setup Localization Options (_**Option 4**_)
 
 * Set Locale (_**Option I1**_)
-	* Unselect _**en_GB**_
+	* Unselect _**en_GB.UTF-8**_
 	* Select _**en_US ISO-8859-1**_
 	* Select _**en_US**_
 
-
+Under Localization Options:
 * Set TimeZone (_**Option I2**_)
 	* Select _**America**_
 	* Select _**Chicago**_
 
-
+Under Localization Options:
 * Set Keyboard Layout (_**Option I3**_)
 	* Use the default selected Keyboard
 	* Select _**English (US)**_
@@ -121,29 +121,31 @@ Setup Localisation Options (_**Option 3**_)
 	* Select _**No compose key**_
 	* Select _**No**_
 
-
+Under Localization Options:
 * Set Wi-Fi country (_**Option I4**_)
 	* Select _**US United States**_
 
-
-* Set Hostname (_**Option 7**_)
+On the main settings page (not under advanced options):
+* Set Hostname (_**Option 2**_)
 	*	Set _Hostname_ (_**Option A2**_)
 	* Enter _**head**_
 
-
+Under Advanced options:
 * Set Memory Split (_**Option 7**_)
 	* Set _Memory Split_ (_**Option A3**_)
 	* Enter _**16**_
 
 
 * ##### Setup SSH service:
-
-* Select _**Interfacing Options**_ (_**Option 7**_)
+On the main screen:
+* Select _**Interfacing Options**_ (_**Option 5**_)
 	* Select _**SSH**_ (_**Option P2**_)
 	* Select _**Yes**_
 	* Select _**Ok**_
 
 Select _Finish_ and _Yes_ to reboot
+
+==End 9/29/17
 
 > ##### Step 3 - Configure head node network
 
@@ -942,3 +944,63 @@ Reboot:
 ``sudo reboot``
 
 Now all traffic for the cluster is routed through eth0 and out eth1 to the internet. Any returning traffic or downloads come in via eth1 and through eth0 to the cluster unless its meant for the head node.
+
+==9/28/17
+
+### Troubleshooting Section:
+MPI ISSUES:
+If mpiexec command fails to execute, stalls, or displays an error message about an unreadable path file:
+-Mpich3 could be in the wrong directory
+-Enter the command to move the mpich3 file:
+	`` sudo mv mpich3 /software/lib ``
+-Make sure the export path correlates to the Mpich3 path
+-Reinstalling Mpich3 and setting up the proper environment variables can fix many problems
+
+If the Pi is displaying SSH errors when running the mpiexec command:
+-Check the problematic node's authorized_keys file, and compare it with the head node's authorized_keys file.
+-These file should be identical in length, if not redistribute the head node's authorized_keys file to the compute node using the following command:
+``sudo cat ~/.ssh/authorized_keys | ssh pi@nodeX "cat > ~/.ssh/authorized_keys" ``
+
+RENAMING CONNECTION TYPES (eth0 and wlan0):
+-Use the command ``sudo nano /lib/udev/rules.d/73-usb-net-by-mac-rules ``
+-You should see:
+``ACTION=="add", SUBSYSTEM=="net", SUBSYSTEMS=="usb", NAME=="", \
+  ATTR{address}=="?[014589cd]:*", \
+  TEST!="/etc/udev/rules.d/80-net-setup-link.rules", \
+  IMPORT{builtin}="net_id", NAME="$env{ID_NET_NAME_MAC}" ``
+-Change the NAME to eth0, which should look like:
+``ACTION=="add", SUBSYSTEM=="net", SUBSYSTEMS=="usb", NAME=="", \
+  ATTR{address}=="?[014589cd]:*", \
+  TEST!="/etc/udev/rules.d/80-net-setup-link.rules", \
+  IMPORT{builtin}="net_id", NAME="eth0"``
+-After changing these settings, enter the command to keep the changes constant:
+`` cp /lib/udev/rules.d/73-usb-net-by-mac-rules /etc/udev/rules.d/ ``
+
+COMMANDS TO CHECK SERVICE STATUSES:
+-These commands do the same thing, just with a different syntax:
+``sudo systemctl [start,stop,restart] <service name> ``
+``sudo service <service name> [start,stop,restart] ``
+
+ENABLING/DISABLING CONNECTIONS:
+``sudo ifdown <connection name>``
+-Disables the specified connection
+``sudo ifup <connection name> ``
+-Enables the specified connection
+
+UPDATED COMMAND FOR IP FORWARDING:
+``sudo sed -i "s/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/g"``
+-Check the /etc/sysctl.conf file to ensure the changes have been made:
+``sudo nano /etc/sysctl.conf``
+-Save changes permanently:
+ ``sysctl -p``
+
+SLURM ISSUES:
+Make sure the slurm.conf file is identical across all nodes.
+-When running the service status command, read the error messages that are displayed: these messages are vital in order to troubleshoot current problems.
+
+PROBLEMATIC NODES:
+On many occasions, certain nodes fail to work because of a software/hardware malfunction. This can be fixed by removing and reinstalling the software malfunction. This can be fixed by removing and reinstalling the software. Hardware problems can be fixed by reformatting the node's SD card, and rewriting it with a functional node image. Also check each Ethernet cable for weaknesses, and verify that each node in the cluster is properly connected.
+-For Pi 3 Clusters: The head node is connected via Wi-Fi, and each compute node uses the head node's wireless connection to download files.
+-For Pi 2 Clusters: A Wi-Pi adapter is a tested solution for establishing a wireless connection with a Raspberry Pi model 2. Using other wireless adapters could result in incompatible drivers or other various issues. The head node can also be connected to the Internet via an Ethernet cable.
+
+==End 9/29/17
