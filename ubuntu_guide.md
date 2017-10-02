@@ -11,7 +11,6 @@ the process of setting up MPICH3.
 
 ## Setup Head Node
 
-
 ##### Step 1 - Install Ubuntu Server
 
 Select **Install Ubuntu Server**
@@ -158,15 +157,16 @@ Copy SSH keys to authorized keys:
 
 ``cat /home/<username>/.ssh/id_rsa.pub > /home/<username>/.ssh/authorized_keys``
 
+
 ---
 
-### MPI
+### MPICH-3.2
 
 ##### Step 1 - Create Directories
 
 Install some required compilers and packages:
 
-``sudo apt-get install make build-essential``
+``sudo apt install make build-essential gfortran``
 
 Create software directory for multiple users:
 
@@ -200,22 +200,19 @@ cd mpich-3.2
 mkdir build install
 ```
 
+
 ##### Step 2 - Download and install
-
-Install Fortran which is requred by MPICH3:
-
-``sudo apt-get install gfortran``
 
 Download MPICH3 package and install:
 http://www.mpich.org/downloads/
 
 ```
-sudo wget http://www.mpich.org/static/downloads/3.2/mpich-3.2.tar.gz
+wget http://www.mpich.org/static/downloads/3.2/mpich-3.2.tar.gz
 ```
 
 Untar the package:
 
-``sudo tar xvfz mpich-3.2.tar.gz``
+``tar xvfz mpich-3.2.tar.gz``
 
 Change to *build* directory to begin building the install:
 
@@ -238,9 +235,7 @@ Make the PATH change permanent by adding it to the profile file:
 
 Add the following to the end of the file:
 
-```
-export PATH="$PATH:/software/lib/mpich-3.2/install/bin"
-```
+``export PATH="$PATH:/software/lib/mpich-3.2/install/bin"``
 
 Save and exit
 
@@ -279,111 +274,8 @@ Shutdown head node:
 
 ``sudo shutdown -h now``
 
----
 
-## Set up Cluster Compute Node
-
-##### Step 1 - Clone the Virtual Machine
-
-In VirtualBox right click the *Head Node* in the left column and select **Clone**
-
-Set *Name* to **Compute Node 1**
-
-Click **Next**
-
-Select **Full clone**
-
-Click **Clone**
-
-##### Step 2 - Set Static IP Address
-
-In VirtualBox select *Compute Node 1* in the left column
-
-With *Compute Node 1* selected click **Start** in the toolbar
-
-Login to *Compute Node 1*
-
-At the terminal enter:
-
-``sudo nano /etc/network/interfaces``
-
-Remove all of the following lines:
-
-```
-# Secondary Interface - cluster connection enp0s8
-auto enp0s8
-iface enp0s8 inet static
-address 192.168.10.5
-netmask 255.255.255.0
-network 192.168.10.0
-```
-
-Under the line ``auto enp0s3`` change or add the following:
-
-```
-iface enp0s3 inet static
-address 192.168.10.100
-netmask 255.255.255.0
-gateway 192.168.10.5
-dns-nameservers 8.8.8.8
-```
-
-Save and exit
-
-Shutdown the *Compute Node 1*:
-
-``sudo shutdown -h now``
-
-
-##### Step 3 - Change Compute Node 1 Network Adapters
-
-In VirtualBox right click *Compute Node 1* in the left column
-
-Select **Settings**
-
-Click **Network** and select **Adapter 2**
-
-Uncheck the **Enable Network Adapter** box
-
-Next, select **Adapter 1** tab
-
-Set *Attached to:* to **Internal Network**
-
-Set *Name:* to **cluster**
-
-
-##### Step 4 - Set hostname
-
-In VirtualBox select *Compute Node 1* in the left column
-
-With *Compute Node 1* selected click **Start** in the toolbar
-
-Login to *Compute Node 1*
-
-Edit the hostname file:
-
-``sudo nano /etc/hostname``
-
-Change ``head`` to ``node1``
-
-Save and exit
-
-Edit the hosts file:
-
-``sudo nano /etc/hosts``
-
-Change ``head`` to ``node1``
-
-Save and exit
-
-Now reboot *Compute Node 1*
-
-``sudo reboot``
-
-Wait for *Compute Node 1* to reboot before continuing
-
-
-##### Step 5 - SSH into Compute Node 1 to Acquire Authentication key
+##### Step 5 - SSH into Compute Node 0 to Acquire Authentication key
 
 In VirtualBox select *Head Node* in the left column
 
@@ -415,6 +307,31 @@ sudo nano nodelist
 Add ``192.168.10.100`` to the second line
 
 Save and exit
+
+
+---
+
+## Set up Cluster Compute Node
+
+Begin by setting up the network interface connection:
+
+``sudo nano /etc/network/interfaces``
+
+Under the line ``auto enp0s3`` change or add the following:
+
+```
+iface enp0s3 inet static
+address 192.168.10.100
+netmask 255.255.255.0
+gateway 192.168.10.5
+dns-nameservers 8.8.8.8
+```
+
+Now reboot *Compute Node 0*
+
+``sudo reboot``
+
+Wait for *Compute Node 0* to reboot before continuing
 
 
 ##### Step 7 - Test MPI
