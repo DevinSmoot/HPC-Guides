@@ -3,47 +3,6 @@
 
 ---
 
-## References:
-
-https://www.modmypi.com/blog/how-to-give-your-raspberry-pi-a-static-ip-address-update
-
-https://www.raspberrypi.org/forums/viewtopic.php?f=28&t=44609
-
-http://weworkweplay.com/play/automatically-connect-a-raspberry-pi-to-a-wifi-network/
-
-https://www.raspberrypi.org/forums/viewtopic.php?f=36&t=162096
-
-https://www.raspberrypi.org/forums/viewtopic.php?t=118804&p=808453
-
-https://www.raspberrypi.org/forums/viewtopic.php?f=28&t=37575
-
-http://unix.stackexchange.com/questions/88100/importing-data-from-a-text-file-to-a-bash-script
-
-http://www.tldp.org/LDP/abs/html/arrays.html
-
-http://how-to.wikia.com/wiki/How_to_read_command_line_arguments_in_a_bash_script
-
-http://ryanstutorials.net/bash-scripting-tutorial/bash-variables.php
-
-http://stackoverflow.com/questions/19996089/use-ssh-to-start-a-background-process-on-a-remote-server-and-exit-session
-
-http://stackoverflow.com/questions/29142/getting-ssh-to-execute-a-command-in-the-background-on-target-machine
-
-http://www.igeekstudio.com/blog/setting-up-ganglia-and-hadoop-on-raspberry-pi
-
-http://ccm.net/faq/2540-linux-create-your-own-command
-
-https://github.com/XavierBerger/RPi-Monitor
-
-https://www.raspberrypi.org/blog/visualising-core-load-on-the-pi-2/
-
-https://github.com/davidsblog/rCPU
-
-https://raseshmori.wordpress.com/2012/10/14/install-hadoop-nextgen-yarn-multi-node-cluster/
-
-https://www.packtpub.com/hardware-and-creative/raspberry-pi-super-cluster
----
-
 ## Considerations to Consider before starting
 
 * SD card size
@@ -945,62 +904,136 @@ Reboot:
 
 Now all traffic for the cluster is routed through eth0 and out eth1 to the internet. Any returning traffic or downloads come in via eth1 and through eth0 to the cluster unless its meant for the head node.
 
-==9/28/17
+
 
 ### Troubleshooting Section:
-MPI ISSUES:
+
+##### MPI ISSUES:
+
 If mpiexec command fails to execute, stalls, or displays an error message about an unreadable path file:
--Mpich3 could be in the wrong directory
--Enter the command to move the mpich3 file:
-	`` sudo mv mpich3 /software/lib ``
--Make sure the export path correlates to the Mpich3 path
--Reinstalling Mpich3 and setting up the proper environment variables can fix many problems
+* Mpich3 could be in the wrong directory
+* Make sure the export path correlates to the actual install path for MPICH3
+* Reinstalling MPICH3 and setting up the proper environment variables can fix many problems, re-evaluate the MPICH3 install instructions and verify all settings before attempting a reinstall.
+
+##### SSH ISSUES:
 
 If the Pi is displaying SSH errors when running the mpiexec command:
--Check the problematic node's authorized_keys file, and compare it with the head node's authorized_keys file.
--These file should be identical in length, if not redistribute the head node's authorized_keys file to the compute node using the following command:
-``sudo cat ~/.ssh/authorized_keys | ssh pi@nodeX "cat > ~/.ssh/authorized_keys" ``
+Check the problematic node's authorized_keys file, and compare it with the head node's authorized_keys file.
 
-RENAMING CONNECTION TYPES (eth0 and wlan0):
--Use the command ``sudo nano /lib/udev/rules.d/73-usb-net-by-mac-rules ``
--You should see:
-``ACTION=="add", SUBSYSTEM=="net", SUBSYSTEMS=="usb", NAME=="", \
+Check the file by going to the SSH directory:
+
+```
+cd ~/.ssh
+```
+
+Now check the file information for *authorized_keys* file:
+
+```
+ls -ls
+```
+
+The filesize is listed after the owner and group names.
+
+These file should be identical in length, if not redistribute the head node's authorized_keys file to the compute node using the following command:
+
+```sudo cat ~/.ssh/authorized_keys | ssh pi@nodeX "cat > ~/.ssh/authorized_keys" ```
+
+##### RENAMING CONNECTION TYPES (eth0 and wlan0):
+
+Use the command ``sudo nano /lib/udev/rules.d/73-usb-net-by-mac-rules ``
+
+You should see:
+```
+	ACTION=="add", SUBSYSTEM=="net", SUBSYSTEMS=="usb", NAME=="", \
   ATTR{address}=="?[014589cd]:*", \
   TEST!="/etc/udev/rules.d/80-net-setup-link.rules", \
-  IMPORT{builtin}="net_id", NAME="$env{ID_NET_NAME_MAC}" ``
--Change the NAME to eth0, which should look like:
-``ACTION=="add", SUBSYSTEM=="net", SUBSYSTEMS=="usb", NAME=="", \
+  IMPORT{builtin}="net_id", NAME="$env{ID_NET_NAME_MAC}"
+```
+
+Change the NAME to eth0, which should look like:
+
+```
+	ACTION=="add", SUBSYSTEM=="net", SUBSYSTEMS=="usb", NAME=="", \
   ATTR{address}=="?[014589cd]:*", \
   TEST!="/etc/udev/rules.d/80-net-setup-link.rules", \
-  IMPORT{builtin}="net_id", NAME="eth0"``
--After changing these settings, enter the command to keep the changes constant:
-`` cp /lib/udev/rules.d/73-usb-net-by-mac-rules /etc/udev/rules.d/ ``
+  IMPORT{builtin}="net_id", NAME="eth0"
+```
 
-COMMANDS TO CHECK SERVICE STATUSES:
--These commands do the same thing, just with a different syntax:
-``sudo systemctl [start,stop,restart] <service name> ``
-``sudo service <service name> [start,stop,restart] ``
+After changing these settings, enter the command to keep the changes constant:
 
-ENABLING/DISABLING CONNECTIONS:
-``sudo ifdown <connection name>``
--Disables the specified connection
-``sudo ifup <connection name> ``
--Enables the specified connection
+```cp /lib/udev/rules.d/73-usb-net-by-mac-rules /etc/udev/rules.d/```
 
-UPDATED COMMAND FOR IP FORWARDING:
-``sudo sed -i "s/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/g"``
--Check the /etc/sysctl.conf file to ensure the changes have been made:
-``sudo nano /etc/sysctl.conf``
--Save changes permanently:
- ``sysctl -p``
+##### COMMANDS TO CHECK SERVICE STATUSES:
 
-SLURM ISSUES:
+These commands do the same thing, just with a different syntax:
+
+```sudo systemctl [start,stop,restart,status] <service name>```
+
+```sudo service <service name> [start,stop,restart,status]```
+
+```sudo /etc/init.d/<service name> [start,stop,restart,status]```
+
+##### ENABLING/DISABLING NETWORK INTERFACE CONNECTIONS:
+
+Disable the specified connection
+
+```sudo ifdown <connection name>```
+
+Enable the specified connection
+
+```sudo ifup <connection name> ```
+
+##### SLURM ISSUES:
+
 Make sure the slurm.conf file is identical across all nodes.
--When running the service status command, read the error messages that are displayed: these messages are vital in order to troubleshoot current problems.
 
-PROBLEMATIC NODES:
-On many occasions, certain nodes fail to work because of a software/hardware malfunction. This can be fixed by removing and reinstalling the software malfunction. This can be fixed by removing and reinstalling the software. Hardware problems can be fixed by reformatting the node's SD card, and rewriting it with a functional node image. Also check each Ethernet cable for weaknesses, and verify that each node in the cluster is properly connected.
+When running the service status command, read the error messages that are displayed: _**these messages are vital in order to troubleshoot current problems**_.
+
+###### PROBLEMATIC NODES:
+On many occasions, certain nodes fail to work because of a software/hardware malfunction. This can be fixed by removing and reinstalling the software. Hardware problems can be fixed by reformatting the node's SD card, and rewriting it with a functional node image. Also check each Ethernet cable for weaknesses, and verify that each node in the cluster is properly connected.
+
 -For Pi 3 Clusters: The head node is connected via Wi-Fi, and each compute node uses the head node's wireless connection to download files.
+
 -For Pi 2 Clusters: A Wi-Pi adapter is a tested solution for establishing a wireless connection with a Raspberry Pi model 2. Using other wireless adapters could result in incompatible drivers or other various issues. The head node can also be connected to the Internet via an Ethernet cable.
 
-==End 9/29/17
+---
+
+## References:
+
+https://www.modmypi.com/blog/how-to-give-your-raspberry-pi-a-static-ip-address-update
+
+https://www.raspberrypi.org/forums/viewtopic.php?f=28&t=44609
+
+http://weworkweplay.com/play/automatically-connect-a-raspberry-pi-to-a-wifi-network/
+
+https://www.raspberrypi.org/forums/viewtopic.php?f=36&t=162096
+
+https://www.raspberrypi.org/forums/viewtopic.php?t=118804&p=808453
+
+https://www.raspberrypi.org/forums/viewtopic.php?f=28&t=37575
+
+http://unix.stackexchange.com/questions/88100/importing-data-from-a-text-file-to-a-bash-script
+
+http://www.tldp.org/LDP/abs/html/arrays.html
+
+http://how-to.wikia.com/wiki/How_to_read_command_line_arguments_in_a_bash_script
+
+http://ryanstutorials.net/bash-scripting-tutorial/bash-variables.php
+
+http://stackoverflow.com/questions/19996089/use-ssh-to-start-a-background-process-on-a-remote-server-and-exit-session
+
+http://stackoverflow.com/questions/29142/getting-ssh-to-execute-a-command-in-the-background-on-target-machine
+
+http://www.igeekstudio.com/blog/setting-up-ganglia-and-hadoop-on-raspberry-pi
+
+http://ccm.net/faq/2540-linux-create-your-own-command
+
+https://github.com/XavierBerger/RPi-Monitor
+
+https://www.raspberrypi.org/blog/visualising-core-load-on-the-pi-2/
+
+https://github.com/davidsblog/rCPU
+
+https://raseshmori.wordpress.com/2012/10/14/install-hadoop-nextgen-yarn-multi-node-cluster/
+
+https://www.packtpub.com/hardware-and-creative/raspberry-pi-super-cluster
