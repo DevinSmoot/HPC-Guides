@@ -137,6 +137,9 @@ Now reboot the system:
 
 ``sudo apt udpate && sudo apt upgrade -y && sudo apt dist-upgrade -y``
 
+==CHANGES
+Add edit /etc/hosts section
+==END CHANGES
 
 ##### Step 5 - Set up SSH key
 
@@ -155,8 +158,11 @@ Press ``Enter`` to confirm blank passphrase
 
 Copy SSH keys to authorized keys:
 
-``cat /home/<username>/.ssh/id_rsa.pub > /home/<username>/.ssh/authorized_keys``
+``cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys``
 
+==CHANGES
+Add edit /etc/hosts stuff
+==END CHANGES
 
 ---
 
@@ -348,6 +354,10 @@ You should get an output similar to the following:
 **_Note:_** Each process shows which node it was executed on. You should see both head and node1 displayed. This shows that MPI is sending and executing the script on both nodes in the cluster.
 
 Congratulations! This cluster is ready to execute MPI code.
+
+==CHANGES
+Add ssh key generation StateSaveLocation
+==END CHANGES
 
 ---
 
@@ -564,6 +574,6 @@ ssh-keygen -t rsa -C "cluster@swosu"
 Copy new SSH keys to local system and nodes:
 
 ```
-cat /home/<username>/.ssh/id_rsa.pub > /home/<username>/.ssh/authorized_keys
-cat ~/.ssh/id_rsa.pub | ssh <username>@192.168.10.100 "cat > .ssh/authorized_keys"
+cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
+cat ~/.ssh/id_rsa.pub | ssh <username>@node0 "cat > .ssh/authorized_keys"
 ```
