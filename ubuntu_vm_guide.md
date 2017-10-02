@@ -307,7 +307,7 @@ Press ``Enter`` to confirm blank passphrase
 
 Copy SSH keys to authorized keys:
 
-``cat /home/<username>/.ssh/id_rsa.pub >> /home/<username>/.ssh/authorized_keys``
+``cat /home/<username>/.ssh/id_rsa.pub > /home/<username>/.ssh/authorized_keys``
 
 ---
 
