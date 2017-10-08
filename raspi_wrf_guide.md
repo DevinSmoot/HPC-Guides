@@ -361,7 +361,7 @@ The NetCDF+MPI test requires include files from both of these packages be in thi
 
 Copy the NetCDF include file here:
 
-``cp ${NETCDF}/include/netcdf.inc .``
+``cp ${NETCDF}/install/include/netcdf.inc .``
 
 Note that the MPI executables mpif90 and mpicc are used below when compiling.
 
@@ -370,7 +370,7 @@ Issue the following commands:
 ```
 mpif90 -c 02_fortran+c+netcdf+mpi_f.f
 mpicc -c 02_fortran+c+netcdf+mpi_c.c
-mpif90 02_fortran+c+netcdf+mpi_f.o 02_fortran+c+netcdf+mpi_c.o -L${NETCDF}/lib -lnetcdff -lnetcdf
+mpif90 02_fortran+c+netcdf+mpi_f.o 02_fortran+c+netcdf+mpi_c.o -L${NETCDF}/install/lib -lnetcdff -lnetcdf
 mpirun ./a.out
 ```
 
