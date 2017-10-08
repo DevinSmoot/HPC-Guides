@@ -21,9 +21,9 @@ Create a new, clean directory called Build_WRF, and another one called TESTS.
 ```
 cd /software
 
-mkdir ncar_wrf-3.8.1
+mkdir ncar-wrf_3.8.1
 
-cd ncar_wrf-3.8.1
+cd ncar-wrf_3.8.1
 
 mkdir TESTS build
 ```
@@ -33,7 +33,7 @@ There are a few simple tests that can be run to verify that the fortran compiler
 [Fortran and C Tests Tar File](http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/Fortran_C_tests.tar)
 
 ```
-cd /software/ncar_wrf-3.8.1/TESTS
+cd /software/ncar-wrf_3.8.1/TESTS
 
 wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/Fortran_C_tests.tar
 ```
@@ -171,21 +171,16 @@ Before getting started, you need to make another directory.
 
 Go inside your Build_WRF directory:
 
-``cd /software``
+``cd /software/lib``
 
 Depending on the type of run you wish to make, there are various libraries that should be installed. Below are 5 libraries.
 
 [mpich-3.0.4](http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/mpich-3.0.4.tar.gz)
 
-``wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/mpich-3.0.4.tar.gz``
-
 [netcdf-4.1.3](http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/netcdf-4.1.3.tar.gz)
-
-``wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/netcdf-4.1.3.tar.gz``
 
 [Jasper-1.900.1](http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/jasper-1.900.1.tar.gz)
 
-``wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/jasper-1.900.1.tar.gz``
 
 [libpng-1.2.50](http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/libpng-1.2.50.tar.gz)
 
@@ -194,31 +189,33 @@ Depending on the type of run you wish to make, there are various libraries that 
 [zlib-1.2.7](http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/zlib-1.2.7.tar.gz)
 
 ``wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/zlib-1.2.7.tar.gz``
-
 It is important to note that these libraries must all be installed with the same compilers as will be used to install WRFV3 and WPS.
 
 **NetCDF:** This library is always necessary!
 
 ```
-export DIR=/software
+export DIR=/software/lib
 export CC=gcc
 export CXX=g++
 export FC=gfortran
 export F77=gfortran
 
-mkdir netcdf-4.1.3
-cd netcdf-4.1.3
-mv netcdf-4.1.3.tar.gz netcdf-4.1.3
+mkdir netcdf_4.1.3
+cd netcdf_4.1.3
+
+wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/netcdf-4.1.3.tar.gz
+
+mv netcdf-4.1.3.tar.gz netcdf_4.1.3
 
 tar xzvf netcdf-4.1.3.tar.gz
-cd netcdf-4.1.3
+cd netcdf_4.1.3
 
-./configure --prefix=$DIR/netcdf-4.1.3 --disable-dap --disable-netcdf-4 --disable-shared
+$DIR/netcdf_4.1.3/configure --prefix=$DIR/netcdf_4.1.3 --disable-dap --disable-netcdf-4 --disable-shared
 
 make
 make install
-export PATH=$DIR/netcdf-4.1.3/bin:$PATH
-export NETCDF=$DIR/netcdf-4.1.3
+export PATH=$DIR/netcdf_4.1.3/bin:$PATH
+export NETCDF=$DIR/netcdf_4.1.3
 
 cd ..
 ```
@@ -230,14 +227,19 @@ In principle, any implementation of the MPI-2 standard should work with WRF; how
 Assuming all the 'export' commands were already issued while setting up NetCDF, you can continue on to install MPICH, issuing each of the following commands:
 
 ```
-tar xzvf mpich-3.0.4.tar.gz
-cd mpich-3.0.4
+mkdir -p mpich_3.0.4/build mpich_3.0.4/install
+cd mpich_3.0.4
 
-./configure --prefix=$DIR/mpich
+wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/mpich-3.0.4.tar.gz
+
+tar xzvf mpich-3.0.4.tar.gz
+cd build
+
+$DIR/mpich_3.0.4/mpich-3.0.4/configure --prefix=$DIR/mpich_3.0.4/install
 
 make
 make install
-export PATH=$DIR/mpich/bin:$PATH
+export PATH=$DIR/mpich_3.0.4/bin:$PATH
 
 cd ..
 ```
@@ -249,6 +251,8 @@ Assuming all the "export" commands from the NetCDF install are already set, you 
 ```
 export LDFLAGS=-L$DIR/grib2/lib
 export CPPFLAGS=-I$DIR/grib2/include
+
+
 
 tar xzvf zlib-1.2.7.tar.gz
 cd zlib-1.2.7
@@ -282,6 +286,8 @@ cd ..
 Assuming all the "export" commands from the NetCDF install are already set, you can move on to the commands to install zlib.
 
 ```
+wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/jasper-1.900.1.tar.gz
+
 tar xzvf jasper-1.900.1.tar.gz
 cd jasper-1.900.1
 
