@@ -184,10 +184,8 @@ Depending on the type of run you wish to make, there are various libraries that 
 
 [libpng-1.2.50](http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/libpng-1.2.50.tar.gz)
 
-
 [zlib-1.2.7](http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/zlib-1.2.7.tar.gz)
 
-``wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/zlib-1.2.7.tar.gz``
 It is important to note that these libraries must all be installed with the same compilers as will be used to install WRFV3 and WPS.
 
 **NetCDF:** This library is always necessary!
