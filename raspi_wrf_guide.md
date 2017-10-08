@@ -184,7 +184,6 @@ Depending on the type of run you wish to make, there are various libraries that 
 
 [libpng-1.2.50](http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/libpng-1.2.50.tar.gz)
 
-``wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/libpng-1.2.50.tar.gz``
 
 [zlib-1.2.7](http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/zlib-1.2.7.tar.gz)
 
@@ -270,6 +269,9 @@ cd ..
 Assuming all the "export" commands from the NetCDF install are already set, you can move on to the commands to install zlib.
 
 ```
+
+wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/libpng-1.2.50.tar.gz
+
 tar xzvf libpng-1.2.50.tar.gz
 cd libpng-1.2.50
 
