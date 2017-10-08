@@ -252,7 +252,7 @@ Assuming all the "export" commands from the NetCDF install are already set, you 
 export LDFLAGS=-L$DIR/grib2/lib
 export CPPFLAGS=-I$DIR/grib2/include
 
-
+wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/zlib-1.2.7.tar.gz
 
 tar xzvf zlib-1.2.7.tar.gz
 cd zlib-1.2.7
