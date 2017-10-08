@@ -33,7 +33,7 @@ There are a few simple tests that can be run to verify that the fortran compiler
 [Fortran and C Tests Tar File](http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/Fortran_C_tests.tar)
 
 ```
-cd /software/ncar-wrf_3.8.1/TESTS
+cd TESTS
 
 wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/Fortran_C_tests.tar
 ```
@@ -72,10 +72,8 @@ and then type:
 
 The following should print out to the screen:
 
-*
-Assume Fortran 2003: has FLUSH, ALLOCATABLE, derived type, and ISO C Binding
-SUCCESS test 2 fortran only free format
-*
+*Assume Fortran 2003: has FLUSH, ALLOCATABLE, derived type, and ISO C Binding*
+*SUCCESS test 2 fortran only free format*
 
 **Test #3:** C: TEST_3_c_only.c
 
@@ -135,6 +133,8 @@ To test whether these scripting languages are working properly on the system, th
 The result should be:
 
 *SUCCESS csh test*
+
+**NOTE:** can be resolved by ``sudo apt install csh``
 
 **Test #6:** perl in the command line, type:
 
@@ -317,14 +317,14 @@ Download this tar file and place it in the TESTS directory:
 [Fortran_C_NETCDF_MPI_tests.tar](http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/Fortran_C_NETCDF_MPI_tests.tar)
 
 ```
-cd /software/ncar_wrf-3.8.1/TESTS
+cd /software/ncar-wrf_3.8.1/TESTS
 
 wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/Fortran_C_NETCDF_MPI_tests.tar
 ```
 
 To unpack the tar file, type:
 
-``tar xf Fortran_C_NETCDF_MPI_tests.tar``
+```tar xf Fortran_C_NETCDF_MPI_tests.tar```
 
 There are 2 tests:
 
@@ -334,7 +334,7 @@ The NetCDF-only test requires the include file from the NETCDF package be in thi
 
 Copy the file here:
 
-``cp ${NETCDF}/include/netcdf.inc .``
+```cp ${NETCDF}/install/include/netcdf.inc .```
 
 Compile the Fortran and C codes for the purpose of this test (the -c option says to not try to build an executable).
 
@@ -343,7 +343,7 @@ Type the following commands:
 ```
 gfortran -c 01_fortran+c+netcdf_f.f
 gcc -c 01_fortran+c+netcdf_c.c
-gfortran 01_fortran+c+netcdf_f.o 01_fortran+c+netcdf_c.o -L${NETCDF}/lib -lnetcdff -lnetcdf
+gfortran 01_fortran+c+netcdf_f.o 01_fortran+c+netcdf_c.o -L${NETCDF}/install/lib -lnetcdff -lnetcdf
 ./a.out
 ```
 
