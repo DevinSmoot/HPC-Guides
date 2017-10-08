@@ -197,24 +197,24 @@ export CXX=g++
 export FC=gfortran
 export F77=gfortran
 
-mkdir netcdf_4.1.3
+cd $DIR
+mkdir -p $DIR/netcdf_4.1.3/build
+mkdir -p $DIR/netcdf_4.1.3/install
 cd netcdf_4.1.3
 
 wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/netcdf-4.1.3.tar.gz
 
-mv netcdf-4.1.3.tar.gz netcdf_4.1.3
-
 tar xzvf netcdf-4.1.3.tar.gz
-cd netcdf_4.1.3
+cd build
 
-$DIR/netcdf_4.1.3/configure --prefix=$DIR/netcdf_4.1.3 --disable-dap --disable-netcdf-4 --disable-shared
+$DIR/netcdf_4.1.3/netcdf-4.1.3/configure --prefix=$DIR/netcdf_4.1.3/install --disable-dap --disable-netcdf-4 --disable-shared
 
 make
 make install
-export PATH=$DIR/netcdf_4.1.3/bin:$PATH
+export PATH=$DIR/netcdf_4.1.3/install/bin:$PATH
 export NETCDF=$DIR/netcdf_4.1.3
 
-cd ..
+cd ../..
 ```
 
 **MPICH:** This library is necessary if you are planning to build WRF in parallel. If your machine does not have more than 1 processor, or if you have no need to run WRF with multiple processors, you can skip installing MPICH.
@@ -224,7 +224,8 @@ In principle, any implementation of the MPI-2 standard should work with WRF; how
 Assuming all the 'export' commands were already issued while setting up NetCDF, you can continue on to install MPICH, issuing each of the following commands:
 
 ```
-mkdir -p mpich_3.0.4/build mpich_3.0.4/install
+mkdir -p $DIR/mpich_3.0.4/build
+mkdir -p $DIR/mpich_3.0.4/install
 cd mpich_3.0.4
 
 wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/mpich-3.0.4.tar.gz
@@ -236,9 +237,9 @@ $DIR/mpich_3.0.4/mpich-3.0.4/configure --prefix=$DIR/mpich_3.0.4/install
 
 make
 make install
-export PATH=$DIR/mpich_3.0.4/bin:$PATH
+export PATH=$DIR/mpich_3.0.4/install/bin:$PATH
 
-cd ..
+cd ../..
 ```
 
 **zlib:** This is a compression library necessary for compiling WPS (specifically ungrib) with GRIB2 capability
@@ -248,6 +249,9 @@ Assuming all the "export" commands from the NetCDF install are already set, you 
 ```
 export LDFLAGS=-L$DIR/grib2/lib
 export CPPFLAGS=-I$DIR/grib2/include
+
+mkdir -p $DIR/grib2
+cd grib2
 
 wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/zlib-1.2.7.tar.gz
 
@@ -259,7 +263,7 @@ cd zlib-1.2.7
 make
 make install
 
-cd ..
+cd ../..
 ```
 
 **libpng:** This is a compression library necessary for compiling WPS (specifically ungrib) with GRIB2 capability
@@ -267,6 +271,8 @@ cd ..
 Assuming all the "export" commands from the NetCDF install are already set, you can move on to the commands to install zlib.
 
 ```
+mkdir -p $DIR/libpng_1.2.50
+cd libpng_1.2.50
 
 wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/libpng-1.2.50.tar.gz
 
@@ -278,7 +284,7 @@ cd libpng-1.2.50
 make
 make install
 
-cd ..
+cd ../..
 ```
 
 **JasPer:** This is a compression library necessary for compiling WPS (specifically ungrib) with GRIB2 capability
@@ -286,6 +292,9 @@ cd ..
 Assuming all the "export" commands from the NetCDF install are already set, you can move on to the commands to install zlib.
 
 ```
+mkdir -p $DIR/jasper_1.900.1
+cd jasper_1.900.1
+
 wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/jasper-1.900.1.tar.gz
 
 tar xzvf jasper-1.900.1.tar.gz
@@ -296,7 +305,7 @@ cd jasper-1.900.1
 make
 make install
 
-cd ..
+cd ../..
 ```
 
 ## Library Compatibility Tests
