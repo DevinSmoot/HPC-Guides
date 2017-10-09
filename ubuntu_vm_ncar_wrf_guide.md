@@ -598,7 +598,7 @@ Rename the file to "WPS_GEOG."
 
 The directory infomation is given to the geogrid program in the namelist.wps file in the &geogrid section:
 
-``geog_data_path = ´/software/ncar_wrf-3.8.1/build/WPS_GEOG´``
+``geog_data_path = ´/software/ncar-wrf3.8.1/build/WPS_GEOG´``
 
 The data expands to approximately 10 GB. This data allows a user to run the geogrid.exe program.
 
