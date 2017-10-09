@@ -598,7 +598,7 @@ Rename the file to "WPS_GEOG."
 
 The directory infomation is given to the geogrid program in the namelist.wps file in the &geogrid section:
 
-``geog_data_path = ´/software/ncar-wrf3.8.1/build/WPS_GEOG´``
+``geog_data_path = ´/software/ncar-wrf_3.8.1/build/WPS_GEOG´``
 
 The data expands to approximately 10 GB. This data allows a user to run the geogrid.exe program.
 
@@ -655,7 +655,7 @@ You need to fill in the anonymous login information (which is not private, so th
 
 You are now ready to begin running WPS and WRFV3. Start by going to the WPS directory:
 
-``cd /software/ncar_wrf-3.8.1/build/WPS``
+``cd /software/ncar_wrf-3.8.1/WPS``
 
 Make any changes to the namelist.wps file, to reflect information for your particular run
 
