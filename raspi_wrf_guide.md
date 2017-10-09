@@ -21,9 +21,9 @@ Create a new, clean directory called Build_WRF, and another one called TESTS.
 ```
 cd /software
 
-mkdir ncar_wrf-3.8.1
+mkdir ncar-wrf_3.8.1
 
-cd ncar_wrf-3.8.1
+cd ncar-wrf_3.8.1
 
 mkdir TESTS build
 ```
@@ -33,7 +33,7 @@ There are a few simple tests that can be run to verify that the fortran compiler
 [Fortran and C Tests Tar File](http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/Fortran_C_tests.tar)
 
 ```
-cd /software/ncar_wrf-3.8.1/TESTS
+cd TESTS
 
 wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/Fortran_C_tests.tar
 ```
@@ -72,10 +72,8 @@ and then type:
 
 The following should print out to the screen:
 
-*
-Assume Fortran 2003: has FLUSH, ALLOCATABLE, derived type, and ISO C Binding
-SUCCESS test 2 fortran only free format
-*
+*Assume Fortran 2003: has FLUSH, ALLOCATABLE, derived type, and ISO C Binding*
+*SUCCESS test 2 fortran only free format*
 
 **Test #3:** C: TEST_3_c_only.c
 
@@ -136,6 +134,8 @@ The result should be:
 
 *SUCCESS csh test*
 
+**NOTE:** can be resolved by ``sudo apt install csh``
+
 **Test #6:** perl in the command line, type:
 
 ``./TEST_perl.pl``
@@ -171,56 +171,50 @@ Before getting started, you need to make another directory.
 
 Go inside your Build_WRF directory:
 
-``cd /software``
+``cd /software/lib``
 
 Depending on the type of run you wish to make, there are various libraries that should be installed. Below are 5 libraries.
 
 [mpich-3.0.4](http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/mpich-3.0.4.tar.gz)
 
-``wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/mpich-3.0.4.tar.gz``
-
 [netcdf-4.1.3](http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/netcdf-4.1.3.tar.gz)
-
-``wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/netcdf-4.1.3.tar.gz``
 
 [Jasper-1.900.1](http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/jasper-1.900.1.tar.gz)
 
-``wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/jasper-1.900.1.tar.gz``
 
 [libpng-1.2.50](http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/libpng-1.2.50.tar.gz)
 
-``wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/libpng-1.2.50.tar.gz``
-
 [zlib-1.2.7](http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/zlib-1.2.7.tar.gz)
-
-``wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/zlib-1.2.7.tar.gz``
 
 It is important to note that these libraries must all be installed with the same compilers as will be used to install WRFV3 and WPS.
 
 **NetCDF:** This library is always necessary!
 
 ```
-export DIR=/software
+export DIR=/software/lib
 export CC=gcc
 export CXX=g++
 export FC=gfortran
 export F77=gfortran
 
-mkdir netcdf-4.1.3
-cd netcdf-4.1.3
-mv netcdf-4.1.3.tar.gz netcdf-4.1.3
+cd $DIR
+mkdir -p $DIR/netcdf_4.1.3/build
+mkdir -p $DIR/netcdf_4.1.3/install
+cd netcdf_4.1.3
+
+wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/netcdf-4.1.3.tar.gz
 
 tar xzvf netcdf-4.1.3.tar.gz
-cd netcdf-4.1.3
+cd build
 
-./configure --prefix=$DIR/netcdf-4.1.3 --disable-dap --disable-netcdf-4 --disable-shared
+$DIR/netcdf_4.1.3/netcdf-4.1.3/configure --prefix=$DIR/netcdf_4.1.3/install --disable-dap --disable-netcdf-4 --disable-shared
 
 make
 make install
-export PATH=$DIR/netcdf-4.1.3/bin:$PATH
-export NETCDF=$DIR/netcdf-4.1.3
+export PATH=$DIR/netcdf_4.1.3/install/bin:$PATH
+export NETCDF=$DIR/netcdf_4.1.3
 
-cd ..
+cd ../..
 ```
 
 **MPICH:** This library is necessary if you are planning to build WRF in parallel. If your machine does not have more than 1 processor, or if you have no need to run WRF with multiple processors, you can skip installing MPICH.
@@ -230,16 +224,22 @@ In principle, any implementation of the MPI-2 standard should work with WRF; how
 Assuming all the 'export' commands were already issued while setting up NetCDF, you can continue on to install MPICH, issuing each of the following commands:
 
 ```
-tar xzvf mpich-3.0.4.tar.gz
-cd mpich-3.0.4
+mkdir -p $DIR/mpich_3.0.4/build
+mkdir -p $DIR/mpich_3.0.4/install
+cd mpich_3.0.4
 
-./configure --prefix=$DIR/mpich
+wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/mpich-3.0.4.tar.gz
+
+tar xzvf mpich-3.0.4.tar.gz
+cd build
+
+$DIR/mpich_3.0.4/mpich-3.0.4/configure --prefix=$DIR/mpich_3.0.4/install
 
 make
 make install
-export PATH=$DIR/mpich/bin:$PATH
+export PATH=$DIR/mpich_3.0.4/install/bin:$PATH
 
-cd ..
+cd ../..
 ```
 
 **zlib:** This is a compression library necessary for compiling WPS (specifically ungrib) with GRIB2 capability
@@ -250,6 +250,11 @@ Assuming all the "export" commands from the NetCDF install are already set, you 
 export LDFLAGS=-L$DIR/grib2/lib
 export CPPFLAGS=-I$DIR/grib2/include
 
+mkdir -p $DIR/grib2
+cd grib2
+
+wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/zlib-1.2.7.tar.gz
+
 tar xzvf zlib-1.2.7.tar.gz
 cd zlib-1.2.7
 
@@ -258,7 +263,7 @@ cd zlib-1.2.7
 make
 make install
 
-cd ..
+cd ../..
 ```
 
 **libpng:** This is a compression library necessary for compiling WPS (specifically ungrib) with GRIB2 capability
@@ -266,6 +271,11 @@ cd ..
 Assuming all the "export" commands from the NetCDF install are already set, you can move on to the commands to install zlib.
 
 ```
+mkdir -p $DIR/libpng_1.2.50
+cd libpng_1.2.50
+
+wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/libpng-1.2.50.tar.gz
+
 tar xzvf libpng-1.2.50.tar.gz
 cd libpng-1.2.50
 
@@ -274,7 +284,7 @@ cd libpng-1.2.50
 make
 make install
 
-cd ..
+cd ../..
 ```
 
 **JasPer:** This is a compression library necessary for compiling WPS (specifically ungrib) with GRIB2 capability
@@ -282,6 +292,11 @@ cd ..
 Assuming all the "export" commands from the NetCDF install are already set, you can move on to the commands to install zlib.
 
 ```
+mkdir -p $DIR/jasper_1.900.1
+cd jasper_1.900.1
+
+wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/jasper-1.900.1.tar.gz
+
 tar xzvf jasper-1.900.1.tar.gz
 cd jasper-1.900.1
 
@@ -290,7 +305,7 @@ cd jasper-1.900.1
 make
 make install
 
-cd ..
+cd ../..
 ```
 
 ## Library Compatibility Tests
@@ -302,14 +317,14 @@ Download this tar file and place it in the TESTS directory:
 [Fortran_C_NETCDF_MPI_tests.tar](http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/Fortran_C_NETCDF_MPI_tests.tar)
 
 ```
-cd /software/ncar_wrf-3.8.1/TESTS
+cd /software/ncar-wrf_3.8.1/TESTS
 
 wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/Fortran_C_NETCDF_MPI_tests.tar
 ```
 
 To unpack the tar file, type:
 
-``tar xf Fortran_C_NETCDF_MPI_tests.tar``
+```tar xf Fortran_C_NETCDF_MPI_tests.tar```
 
 There are 2 tests:
 
@@ -319,7 +334,7 @@ The NetCDF-only test requires the include file from the NETCDF package be in thi
 
 Copy the file here:
 
-``cp ${NETCDF}/include/netcdf.inc .``
+```cp ${NETCDF}/install/include/netcdf.inc .```
 
 Compile the Fortran and C codes for the purpose of this test (the -c option says to not try to build an executable).
 
@@ -328,7 +343,7 @@ Type the following commands:
 ```
 gfortran -c 01_fortran+c+netcdf_f.f
 gcc -c 01_fortran+c+netcdf_c.c
-gfortran 01_fortran+c+netcdf_f.o 01_fortran+c+netcdf_c.o -L${NETCDF}/lib -lnetcdff -lnetcdf
+gfortran 01_fortran+c+netcdf_f.o 01_fortran+c+netcdf_c.o -L${NETCDF}/install/lib -lnetcdff -lnetcdf
 ./a.out
 ```
 
@@ -346,7 +361,7 @@ The NetCDF+MPI test requires include files from both of these packages be in thi
 
 Copy the NetCDF include file here:
 
-``cp ${NETCDF}/include/netcdf.inc .``
+``cp ${NETCDF}/install/include/netcdf.inc .``
 
 Note that the MPI executables mpif90 and mpicc are used below when compiling.
 
@@ -355,7 +370,7 @@ Issue the following commands:
 ```
 mpif90 -c 02_fortran+c+netcdf+mpi_f.f
 mpicc -c 02_fortran+c+netcdf+mpi_c.c
-mpif90 02_fortran+c+netcdf+mpi_f.o 02_fortran+c+netcdf+mpi_c.o -L${NETCDF}/lib -lnetcdff -lnetcdf
+mpif90 02_fortran+c+netcdf+mpi_f.o 02_fortran+c+netcdf+mpi_c.o -L${NETCDF}/install/lib -lnetcdff -lnetcdf
 mpirun ./a.out
 ```
 
