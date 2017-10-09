@@ -98,15 +98,16 @@ Log in with username: **pi** and password **raspberry**
 sudo raspi-config
 ```
 ==9/29/17 - Changed option numbers to correlate with updated OS
-Expand the filesystem (_**Option 7**_)
-* Select _**Yes**_
+Under Advanced Options: (_**Option 7**_)
+Expand the filesystem (_***Option A1**_)
+* Select _**OK**_
 
 Setup Localization Options (_**Option 4**_)
 
 * Set Locale (_**Option I1**_)
-	* Unselect _**en_GB.UTF-8**_
+	* Unselect _**en_GB.UTF-8 UTF-8**_
 	* Select _**en_US ISO-8859-1**_
-	* Select _**en_US**_
+	* Select _**es_US**_
 
 Under Localization Options:
 * Set TimeZone (_**Option I2**_)
@@ -114,8 +115,9 @@ Under Localization Options:
 	* Select _**Chicago**_
 
 Under Localization Options:
-* Set Keyboard Layout (_**Option I3**_)
+* Set Keyboard Layout (_**Choose highlighted keyboard**_)
 	* Use the default selected Keyboard
+	* Select _**Other**_
 	* Select _**English (US)**_
 	* Use the default keyboard Layout
 	* Select _**No compose key**_
@@ -127,6 +129,7 @@ Under Localization Options:
 
 On the main settings page (not under advanced options):
 * Set Hostname (_**Option 2**_)
+	* Select _**OK_
 	*	Set _Hostname_ (_**Option A2**_)
 	* Enter _**head**_
 
@@ -239,13 +242,35 @@ sudo iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
 sudo bash -c "iptables-save > /etc/iptables.rules"
 ```
 
-Add settings to _/etc/network/interfaces_:
+Edit the file _/etc/network/interfaces_:
 
 ``sudo nano /etc/network/interfaces``
 
-Add the following line at the end of the wlan0 section under wpa-conf line to make the changes persistent:
+Add the following to the file:
 
-``pre-up iptables-restore < /etc/iptables.rules``
+
+```
+# Please note that this file is written to be used with dhcpcd
+# For static IP, consult /etc/dhcpcd.conf and 'man dhcpcd.conf'
+
+# Include files from /etc/network/interfaces.d:
+source-directory /etc/network/interfaces.d
+
+auto lo
+iface lo inet loopback
+
+iface eth0 inet manual
+
+allow-hotplug wlan0
+iface wlan0 inet manual
+    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+
+#allow-hotplug wlan1
+#iface wlan1 inet manual
+#    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+
+pre-up iptables-restore < /etc/iptables.rules
+```
 
 Save and exit
 
