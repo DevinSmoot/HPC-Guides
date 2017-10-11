@@ -582,7 +582,7 @@ Download the file, and place it in the Build_WRF directory.
 Uncompress and un-tar the file:
 
 ```
-cd /software/ncar_wrf-3.8.1/build
+cd /software/ncar_wrf-3.8.1/
 
 wget http://www2.mmm.ucar.edu/wrf/src/wps_files/geog_complete.tar.bz2
 
@@ -598,7 +598,7 @@ Rename the file to "WPS_GEOG."
 
 The directory infomation is given to the geogrid program in the namelist.wps file in the &geogrid section:
 
-``geog_data_path = ´/software/ncar-wrf_3.8.1/build/WPS_GEOG´``
+``export geog_data_path=/software/ncar-wrf_3.8.1/WPS_GEOG``
 
 The data expands to approximately 10 GB. This data allows a user to run the geogrid.exe program.
 
@@ -625,7 +625,7 @@ Note that the initialization data and time (gfs.2014013100) remains the same, an
 Before obtaining the data, creat a directory in Build_WRF, called "DATA", and then go into that directory:
 
 ```
-cd /software/ncar_wrf-3.8.1/build
+cd /software/ncar_wrf-3.8.1/
 
 mkdir DATA
 cd DATA
