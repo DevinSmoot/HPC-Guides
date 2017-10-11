@@ -308,6 +308,25 @@ make install
 cd ../..
 ```
 
+**HDF5:** HDF5 is a data model, library, and file format for storing and managing data. It supports an unlimited variety of datatypes, and is designed for flexible and efficient I/O and for high volume and complex data. HDF5 is portable and is extensible, allowing applications to evolve in their use of HDF5. The HDF5 Technology suite includes tools and applications for managing, manipulating, viewing, and analyzing data in the HDF5 format.
+
+```
+mkdir -p $DIR/hdf5_1.8.19
+cd hdf5_1.8.19
+
+wget https://support.hdfgroup.org/ftp/HDF5/current18/src/hdf5-1.8.19.tar.gz
+
+tar xzvf hdf5-1.8.19.tar.gz
+cd hdf5-1.8.19
+
+./configure --prefix=$DIR/hdf5_1.8.19
+
+make
+make check
+make install
+make check-install
+```
+
 ## Library Compatibility Tests
 
 Once the target machine is able to make small Fortran and C executables (what was verified in the System Environment Tests section), and after the NetCDF and MPI libraries are constructed (two of the libraries from the Building Libraries section), to emulate the WRF code's behavior, two additional small tests are required. We need to verify that the libraries are able to work with the compilers that are to be used for the WPS and WRF builds. Below is a tar file that contans these tests.
