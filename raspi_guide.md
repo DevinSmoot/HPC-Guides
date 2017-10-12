@@ -57,16 +57,15 @@ Log in with username: **pi** and password **raspberry**
 sudo raspi-config
 ```
 ==9/29/17 - Changed option numbers to correlate with updated OS
-Under Advanced Options: (_**Option 7**_)
-Expand the filesystem (_***Option A1**_)
-* Select _**OK**_
+Expand the filesystem (_**Option 7**_)
+* Select _**Yes**_
 
 Setup Localization Options (_**Option 4**_)
 
 * Set Locale (_**Option I1**_)
-	* Unselect _**en_GB.UTF-8 UTF-8**_
+	* Unselect _**en_GB.UTF-8**_
 	* Select _**en_US ISO-8859-1**_
-	* Select _**es_US**_
+	* Select _**en_US**_
 
 Under Localization Options:
 * Set TimeZone (_**Option I2**_)
@@ -74,9 +73,8 @@ Under Localization Options:
 	* Select _**Chicago**_
 
 Under Localization Options:
-* Set Keyboard Layout (_**Choose highlighted keyboard**_)
+* Set Keyboard Layout (_**Option I3**_)
 	* Use the default selected Keyboard
-	* Select _**Other**_
 	* Select _**English (US)**_
 	* Use the default keyboard Layout
 	* Select _**No compose key**_
@@ -88,7 +86,6 @@ Under Localization Options:
 
 On the main settings page (not under advanced options):
 * Set Hostname (_**Option 2**_)
-	* Select _**OK_
 	*	Set _Hostname_ (_**Option A2**_)
 	* Enter _**head**_
 
@@ -126,6 +123,7 @@ interface eth0
 static ip_address=192.168.10.5
 static domain_name_servers=8.8.8.8
 ```
+Save and exit
 
 ##### Setup _wlan0_:
 
@@ -201,35 +199,13 @@ sudo iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
 sudo bash -c "iptables-save > /etc/iptables.rules"
 ```
 
-Edit the file _/etc/network/interfaces_:
+Add settings to _/etc/network/interfaces_:
 
 ``sudo nano /etc/network/interfaces``
 
-Add the following to the file:
+Add the following line at the end of the wlan0 section under wpa-conf line to make the changes persistent:
 
-
-```
-# Please note that this file is written to be used with dhcpcd
-# For static IP, consult /etc/dhcpcd.conf and 'man dhcpcd.conf'
-
-# Include files from /etc/network/interfaces.d:
-source-directory /etc/network/interfaces.d
-
-auto lo
-iface lo inet loopback
-
-iface eth0 inet manual
-
-allow-hotplug wlan0
-iface wlan0 inet manual
-    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
-
-#allow-hotplug wlan1
-#iface wlan1 inet manual
-#    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
-
-pre-up iptables-restore < /etc/iptables.rules
-```
+``pre-up iptables-restore < /etc/iptables.rules``
 
 Save and exit
 
@@ -806,9 +782,9 @@ sudo chown -R slurm:slurm /var/log/slurm
 
 **On _head node_**
 
-``sudo cat /etc/munge/munge.key | ssh pi@node0 "cat > ~/munge.key"``
+`` rsync -a --rsync-path="rsync sudo" /etc/munge/munge.key pi@nodeX:/etc/slurm-llnl/slurm.conf``
 
-``sudo cat /etc/slurm-llnl/slurm.conf | ssh pi@node0 "cat > ~/slurm.conf"``
+``rsync -a --rsync-path="rsync sudo" /etc/slurm-llnl/slurm.conf pi@nodeX:/etc/slurm-llnl/slurm.conf``
 
 > ##### Step 2 - Install Slurm daemon
 
@@ -933,6 +909,33 @@ Now all traffic for the cluster is routed through eth0 and out eth1 to the inter
 
 ### Troubleshooting Section:
 
+##### NETWORK UNREACHABLE:
+When experiencing network connectivity problems with compute nodes:
+
+* Flush the iptables in Memory
+
+``sudo iptables --flush``
+
+* Delete the rules file
+
+``sudo rm -rf /etc/iptables.rules``
+
+* Rebuild the rules and file
+Repeat the IP tables section of the guide, starting with the commands:
+
+``sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE``
+
+``sudo iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE``
+
+Save the iptables.rules file:
+``sudo bash -c
+"iptables-save > /etc/iptables.rules"``
+
+* Check for the iptable rules in the /etc/network/interfaces file:
+Make sure that the line:
+``pre-up iptables-restore < /etc/iptables.rules``
+is present and not commented out.
+
 ##### MPI ISSUES:
 
 If mpiexec command fails to execute, stalls, or displays an error message about an unreadable path file:
@@ -1019,8 +1022,23 @@ On many occasions, certain nodes fail to work because of a software/hardware mal
 
 -For Pi 3 Clusters: The head node is connected via Wi-Fi, and each compute node uses the head node's wireless connection to download files.
 
--For Pi 2 Clusters: A Wi-Pi adapter is a tested solution for establishing a wireless connection with a Raspberry Pi model 2. Using other wireless adapters could result in incompatible drivers or other various issues. The head node can also be connected to the Internet via an Ethernet cable.
 
+-For Pi 2 Clusters: A Wi-Pi adapter is a tested solution for establishing a wireless connection with a Raspberry Pi model 2. Using other wireless adapters could result in incompatible drivers or other various issues. The head node can also be connected to the Internet via an Ethernet cable.
+### Network Diagrams
+Base Equipment Layer (Pictured Below)
+<image src ="E:\PI CHECKPOINTS\Raspberry_Pi_Cluster_Network_Configuration_-_Base_Equipment_Layer.png">
+
+
+Physical Layer (Pictured Below)
+<image src = "E:\PI CHECKPOINTS\Raspberry_Pi_Cluster_Network_Configuration_-_Physical_Layer.png">
+
+
+Logical Layer (Pictured Below)
+<image src = "E:\PI CHECKPOINTS\Raspberry_Pi_Cluster_Network_Configuration_-_Logical_Layer.png">
+
+
+Physical and Logical Layers (Pictured Below)
+<image src = "E:\PI CHECKPOINTS\Raspberry_Pi_Cluster_Network_Configuration_-_Physical_and_Logical_Layers.png">
 ---
 
 ## References:
