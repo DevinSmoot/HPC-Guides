@@ -782,9 +782,9 @@ sudo chown -R slurm:slurm /var/log/slurm
 
 **On _head node_**
 
-`` rsync -a --rsync-path="rsync sudo" /etc/munge/munge.key pi@nodeX:/etc/slurm-llnl/slurm.conf``
+``rsync -a --rsync-path="sudo rsync" /etc/munge/munge.key pi@nodeX:/etc/slurm-llnl/slurm.conf``
 
-``rsync -a --rsync-path="rsync sudo" /etc/slurm-llnl/slurm.conf pi@nodeX:/etc/slurm-llnl/slurm.conf``
+``rsync -a --rsync-path="sudo rsync" /etc/slurm-llnl/slurm.conf pi@nodeX:/etc/slurm-llnl/slurm.conf``
 
 > ##### Step 2 - Install Slurm daemon
 
@@ -842,6 +842,9 @@ Execute on _head_ node:
 sudo scontrol reconfigure
 
 sudo scontrol update nodename="node[0-6]" state=resume
+-If this command throws an invalid nodename error:
+try updating each node individually with the command:
+sudo scontrol update NodeName="nodeX" state=resume
 
 sinfo
 ```
@@ -939,7 +942,8 @@ is present and not commented out.
 ##### MPI ISSUES:
 
 If mpiexec command fails to execute, stalls, or displays an error message about an unreadable path file:
-* Mpich3 could be in the wrong directory
+* Mpich3 could be i
+*  the wrong directory
 * Make sure the export path correlates to the actual install path for MPICH3
 * Reinstalling MPICH3 and setting up the proper environment variables can fix many problems, re-evaluate the MPICH3 install instructions and verify all settings before attempting a reinstall.
 
@@ -1018,27 +1022,34 @@ Make sure the slurm.conf file is identical across all nodes.
 When running the service status command, read the error messages that are displayed: _**these messages are vital in order to troubleshoot current problems**_.
 
 ###### PROBLEMATIC NODES:
+
 On many occasions, certain nodes fail to work because of a software/hardware malfunction. This can be fixed by removing and reinstalling the software. Hardware problems can be fixed by reformatting the node's SD card, and rewriting it with a functional node image. Also check each Ethernet cable for weaknesses, and verify that each node in the cluster is properly connected.
 
 -For Pi 3 Clusters: The head node is connected via Wi-Fi, and each compute node uses the head node's wireless connection to download files.
 
 
 -For Pi 2 Clusters: A Wi-Pi adapter is a tested solution for establishing a wireless connection with a Raspberry Pi model 2. Using other wireless adapters could result in incompatible drivers or other various issues. The head node can also be connected to the Internet via an Ethernet cable.
+
 ### Network Diagrams
+
 Base Equipment Layer (Pictured Below)
-<image src ="E:\PI CHECKPOINTS\Raspberry_Pi_Cluster_Network_Configuration_-_Base_Equipment_Layer.png">
+
+<img src="images\Raspberry_Pi_Cluster_Network_Configuration_-_Base_Equipment_Layer.png">
 
 
 Physical Layer (Pictured Below)
-<image src = "E:\PI CHECKPOINTS\Raspberry_Pi_Cluster_Network_Configuration_-_Physical_Layer.png">
+
+<img src="images\Raspberry_Pi_Cluster_Network_Configuration_-_Physical_Layer.png">
 
 
 Logical Layer (Pictured Below)
-<image src = "E:\PI CHECKPOINTS\Raspberry_Pi_Cluster_Network_Configuration_-_Logical_Layer.png">
+
+<img src="images\Raspberry_Pi_Cluster_Network_Configuration_-_Logical_Layer.png">
 
 
 Physical and Logical Layers (Pictured Below)
-<image src = "E:\PI CHECKPOINTS\Raspberry_Pi_Cluster_Network_Configuration_-_Physical_and_Logical_Layers.png">
+
+<img src="images\Raspberry_Pi_Cluster_Network_Configuration_-_Physical_and_Logical_Layers.png">
 ---
 
 ## References:
