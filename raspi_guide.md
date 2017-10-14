@@ -1,5 +1,5 @@
 # Raspberry Pi Cluster Setup Guide
-## Using Raspbian Jessie Lite 
+## Using Raspbian Jessie Lite
 
 ---
 
@@ -112,7 +112,7 @@ Set a static address for the cluster facing network interface connection _etho0_
 
 ##### Setup _eth0_:
 
-Edit _/etc/dhcpcd.conf_:
+Edit */etc/dhcpcd.conf*:
 
 ``sudo nano /etc/dhcpcd.conf``
 
@@ -125,11 +125,11 @@ static domain_name_servers=8.8.8.8
 ```
 Save and exit
 
-##### Setup _wlan0_:
+##### Setup *wlan0*:
 
 Add wireless network credentials:
 
-Edit _/etc/wpa_supplicant/wpa_supplicant.conf_:
+Edit */etc/wpa_supplicant/wpa_supplicant.conf*:
 
 ``sudo nano /etc/wpa_supplicant/wpa_supplicant.conf``
 
@@ -152,15 +152,15 @@ key_mgmt=NONE
 
 Reboot:
 
-``sudo reboot``
+```sudo reboot```
 
 > ##### Step 4 - Update the system
 
-``sudo apt update && sudo apt upgrade -y``
+```sudo apt update && sudo apt upgrade -y```
 
 Reboot:
 
-``sudo reboot``
+```sudo reboot```
 
 > ##### Step 5 - IP forwarding for nodes to access internet
 
@@ -170,7 +170,7 @@ Log in with username: **pi** and password **raspberry**
 
 Enable IPv4 Forwarding and Disable IPv6:
 
-``sudo nano /etc/sysctl.conf``
+```sudo nano /etc/sysctl.conf```
 
 Add the following lines to the end of the file (this includes the IP forwarding rule from above):
 
@@ -188,7 +188,7 @@ Save and exit
 
 Update the configuration files:
 
-``sudo sysctl -p``
+```sudo sysctl -p```
 
 Edit and Save the iptables:
 
@@ -782,9 +782,9 @@ sudo chown -R slurm:slurm /var/log/slurm
 
 **On _head node_**
 
-``rsync -a --rsync-path="sudo rsync" /etc/munge/munge.key pi@nodeX:/etc/slurm-llnl/slurm.conf``
+```rsync -a --rsync-path="sudo rsync" /etc/munge/munge.key pi@nodeX:/etc/slurm-llnl/slurm.conf```
 
-``rsync -a --rsync-path="sudo rsync" /etc/slurm-llnl/slurm.conf pi@nodeX:/etc/slurm-llnl/slurm.conf``
+```rsync -a --rsync-path="sudo rsync" /etc/slurm-llnl/slurm.conf pi@nodeX:/etc/slurm-llnl/slurm.conf```
 
 > ##### Step 2 - Install Slurm daemon
 
@@ -797,12 +797,6 @@ sudo apt install slurmd slurm-client
 sudo ln -s /var/lib/slurm-llnl /var/lib/slurm
 ```
 
-Copy Slurm configuration file and Munge key file to proper location:
-
-``sudo cp ~/slurm.conf /etc/slurm-llnl/``
-
-``sudo cp ~/munge.key /etc/munge/``
-
 Finish install and start Slurm and Munge:
 
 ```
@@ -814,13 +808,13 @@ sudo systemctl restart munge.service
 
 Verify Slurm daemon is running:
 
-``sudo systemctl status slurmd.service``
+```sudo systemctl status slurmd.service```
 
 Will return feedback to the screen. Verify _Active_ line is _**active (running)**_.
 
 Verify Munge is running:
 
-``sudo systemctl status munge.service``
+```sudo systemctl status munge.service```
 
 Will return feedback to the screen. Verify _Active_ line is _**active (running)**_.
 
