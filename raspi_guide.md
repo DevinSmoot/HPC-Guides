@@ -1,5 +1,5 @@
 # Raspberry Pi Cluster Setup Guide
-## Using Raspbian Jessie Lite 2016-11-25
+## Using Raspbian Jessie Lite 
 
 ---
 
