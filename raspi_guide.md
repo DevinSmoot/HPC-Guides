@@ -1,5 +1,5 @@
 # Raspberry Pi Cluster Setup Guide
-## Using Raspbian Jessie Lite 2016-11-25
+## Using Raspbian Jessie Lite
 
 ---
 
@@ -112,7 +112,7 @@ Set a static address for the cluster facing network interface connection _etho0_
 
 ##### Setup _eth0_:
 
-Edit _/etc/dhcpcd.conf_:
+Edit */etc/dhcpcd.conf*:
 
 ``sudo nano /etc/dhcpcd.conf``
 
@@ -123,12 +123,13 @@ interface eth0
 static ip_address=192.168.10.5
 static domain_name_servers=8.8.8.8
 ```
+Save and exit
 
-##### Setup _wlan0_:
+##### Setup *wlan0*:
 
 Add wireless network credentials:
 
-Edit _/etc/wpa_supplicant/wpa_supplicant.conf_:
+Edit */etc/wpa_supplicant/wpa_supplicant.conf*:
 
 ``sudo nano /etc/wpa_supplicant/wpa_supplicant.conf``
 
@@ -151,15 +152,15 @@ key_mgmt=NONE
 
 Reboot:
 
-``sudo reboot``
+```sudo reboot```
 
 > ##### Step 4 - Update the system
 
-``sudo apt update && sudo apt upgrade -y``
+```sudo apt update && sudo apt upgrade -y```
 
 Reboot:
 
-``sudo reboot``
+```sudo reboot```
 
 > ##### Step 5 - IP forwarding for nodes to access internet
 
@@ -169,7 +170,7 @@ Log in with username: **pi** and password **raspberry**
 
 Enable IPv4 Forwarding and Disable IPv6:
 
-``sudo nano /etc/sysctl.conf``
+```sudo nano /etc/sysctl.conf```
 
 Add the following lines to the end of the file (this includes the IP forwarding rule from above):
 
@@ -187,7 +188,7 @@ Save and exit
 
 Update the configuration files:
 
-``sudo sysctl -p``
+```sudo sysctl -p```
 
 Edit and Save the iptables:
 
@@ -783,9 +784,9 @@ sudo chown -R slurm:slurm /var/log/slurm
 
 **On _head node_**
 
-``sudo cat /etc/munge/munge.key | ssh pi@node0 "cat > ~/munge.key"``
+```rsync -a --rsync-path="sudo rsync" /etc/munge/munge.key pi@nodeX:/etc/slurm-llnl/slurm.conf```
 
-``sudo cat /etc/slurm-llnl/slurm.conf | ssh pi@node0 "cat > ~/slurm.conf"``
+```rsync -a --rsync-path="sudo rsync" /etc/slurm-llnl/slurm.conf pi@nodeX:/etc/slurm-llnl/slurm.conf```
 
 > ##### Step 2 - Install Slurm daemon
 
@@ -798,12 +799,6 @@ sudo apt install slurmd slurm-client
 sudo ln -s /var/lib/slurm-llnl /var/lib/slurm
 ```
 
-Copy Slurm configuration file and Munge key file to proper location:
-
-``sudo cp ~/slurm.conf /etc/slurm-llnl/``
-
-``sudo cp ~/munge.key /etc/munge/``
-
 Finish install and start Slurm and Munge:
 
 ```
@@ -815,13 +810,13 @@ sudo systemctl restart munge.service
 
 Verify Slurm daemon is running:
 
-``sudo systemctl status slurmd.service``
+```sudo systemctl status slurmd.service```
 
 Will return feedback to the screen. Verify _Active_ line is _**active (running)**_.
 
 Verify Munge is running:
 
-``sudo systemctl status munge.service``
+```sudo systemctl status munge.service```
 
 Will return feedback to the screen. Verify _Active_ line is _**active (running)**_.
 
@@ -843,6 +838,9 @@ Execute on _head_ node:
 sudo scontrol reconfigure
 
 sudo scontrol update nodename="node[0-6]" state=resume
+-If this command throws an invalid nodename error:
+try updating each node individually with the command:
+sudo scontrol update NodeName="nodeX" state=resume
 
 sinfo
 ```
@@ -910,10 +908,38 @@ Now all traffic for the cluster is routed through eth0 and out eth1 to the inter
 
 ### Troubleshooting Section:
 
+##### NETWORK UNREACHABLE:
+When experiencing network connectivity problems with compute nodes:
+
+* Flush the iptables in Memory
+
+``sudo iptables --flush``
+
+* Delete the rules file
+
+``sudo rm -rf /etc/iptables.rules``
+
+* Rebuild the rules and file
+Repeat the IP tables section of the guide, starting with the commands:
+
+``sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE``
+
+``sudo iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE``
+
+Save the iptables.rules file:
+``sudo bash -c
+"iptables-save > /etc/iptables.rules"``
+
+* Check for the iptable rules in the /etc/network/interfaces file:
+Make sure that the line:
+``pre-up iptables-restore < /etc/iptables.rules``
+is present and not commented out.
+
 ##### MPI ISSUES:
 
 If mpiexec command fails to execute, stalls, or displays an error message about an unreadable path file:
-* Mpich3 could be in the wrong directory
+* Mpich3 could be i
+*  the wrong directory
 * Make sure the export path correlates to the actual install path for MPICH3
 * Reinstalling MPICH3 and setting up the proper environment variables can fix many problems, re-evaluate the MPICH3 install instructions and verify all settings before attempting a reinstall.
 
@@ -992,12 +1018,34 @@ Make sure the slurm.conf file is identical across all nodes.
 When running the service status command, read the error messages that are displayed: _**these messages are vital in order to troubleshoot current problems**_.
 
 ###### PROBLEMATIC NODES:
+
 On many occasions, certain nodes fail to work because of a software/hardware malfunction. This can be fixed by removing and reinstalling the software. Hardware problems can be fixed by reformatting the node's SD card, and rewriting it with a functional node image. Also check each Ethernet cable for weaknesses, and verify that each node in the cluster is properly connected.
 
 -For Pi 3 Clusters: The head node is connected via Wi-Fi, and each compute node uses the head node's wireless connection to download files.
 
+
 -For Pi 2 Clusters: A Wi-Pi adapter is a tested solution for establishing a wireless connection with a Raspberry Pi model 2. Using other wireless adapters could result in incompatible drivers or other various issues. The head node can also be connected to the Internet via an Ethernet cable.
 
+### Network Diagrams
+
+Base Equipment Layer (Pictured Below)
+
+<img src="images\Raspberry_Pi_Cluster_Network_Configuration_-_Base_Equipment_Layer.png">
+
+
+Physical Layer (Pictured Below)
+
+<img src="images\Raspberry_Pi_Cluster_Network_Configuration_-_Physical_Layer.png">
+
+
+Logical Layer (Pictured Below)
+
+<img src="images\Raspberry_Pi_Cluster_Network_Configuration_-_Logical_Layer.png">
+
+
+Physical and Logical Layers (Pictured Below)
+
+<img src="images\Raspberry_Pi_Cluster_Network_Configuration_-_Physical_and_Logical_Layers.png">
 ---
 
 ## References:
