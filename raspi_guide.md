@@ -110,11 +110,11 @@ Select _Finish_ and _Yes_ to reboot
 
 Set a static address for the cluster facing network interface connection _etho0_. Turn on wireless and setup wireless connection on network interface connection _wlan0_. Turn on SSH service and then reboot the head node.
 
-##### Setup _eth0_:
+##### Setup *eth0*:
 
 Edit */etc/dhcpcd.conf*:
 
-``sudo nano /etc/dhcpcd.conf``
+```sudo nano /etc/dhcpcd.conf```
 
 Add to the end of the file:
 
@@ -131,7 +131,7 @@ Add wireless network credentials:
 
 Edit */etc/wpa_supplicant/wpa_supplicant.conf*:
 
-``sudo nano /etc/wpa_supplicant/wpa_supplicant.conf``
+```sudo nano /etc/wpa_supplicant/wpa_supplicant.conf```
 
 For connecting to a secure network add the following to the end of the file:
 
@@ -199,17 +199,17 @@ sudo iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
 sudo bash -c "iptables-save > /etc/iptables.rules"
 ```
 
-Add settings to _/etc/network/interfaces_:
+Add settings to */etc/network/interfaces*:
 
-``sudo nano /etc/network/interfaces``
+```sudo nano /etc/network/interfaces```
 
 Add the following line at the end of the wlan0 section under wpa-conf line to make the changes persistent:
 
-``pre-up iptables-restore < /etc/iptables.rules``
+```pre-up iptables-restore < /etc/iptables.rules```
 
 Save and exit
 
-Update _/etc/hosts_ file:
+Update */etc/hosts_ file*:
 
 Add the following to the end of the file:
 
@@ -229,13 +229,13 @@ _**Note:**_ At this point you want to assign and name all of your nodes that **W
 
 Reboot:
 
-``sudo reboot``
+```sudo reboot```
 
 ---
 
 ## Install MPICH-3.2
 
-Install prerequisite _Fortran_ which wil be required for compiling MPICH. All other dependencies are already installed.
+Install prerequisite *Fortran* which wil be required for compiling MPICH. All other dependencies are already installed.
 
 > ##### Step 1 - Install Fortran
 
@@ -247,12 +247,12 @@ sudo apt install gfortran
 
 Create hpc group:
 
-``sudo groupadd hpc``
+```sudo groupadd hpc```
 
 
 Add pi user to hpc group:
 
-``sudo usermod -aG hpc pi``
+```sudo usermod -aG hpc pi```
 
 
 Create hpc directory in root:
@@ -266,7 +266,7 @@ cd /software/lib
 
 Take ownership of /software:
 
-``sudo chown -R pi:hpc /software``
+```sudo chown -R pi:hpc /software```
 
 Create build and install directory inside mpich3 directory:
 
@@ -302,12 +302,12 @@ make install
 
 Activate environment variable:
 
-``export PATH=/software/lib/mpich-3.2/install/bin:$PATH``
+```export PATH=/software/lib/mpich-3.2/install/bin:$PATH```
 
 
 Add path to environment variables for persistance:
 
-``sudo nano ~/.bashrc``
+```sudo nano ~/.bashrc```
 
 
 Add the following to the end of the file:
@@ -332,9 +332,9 @@ sudo nano nodelist
 
 Add the head node ip address to the list:
 
-``192.168.10.5``
+```192.168.10.5```
 
-_**Note:**_ Anytime you need to add a node to the cluster make sure to add it here as well as _/etc/hosts_ file.
+_**Note:**_ Anytime you need to add a node to the cluster make sure to add it here as well as */etc/hosts* file.
 
 > ##### Step 4 - Test MPI
 
@@ -349,11 +349,11 @@ mpiexec -f nodelist hostname
 
 Should return:
 
-``head``
+```head```
 
 ###### Test 2 - Calculate Pi
 
-``mpiexec -f nodelist -n 2 /software/lib/mpich-3.2/build/examples/cpi``
+```mpiexec -f nodelist -n 2 /software/lib/mpich_3.2/build/examples/cpi```
 
 
 Should return similar:
@@ -367,7 +367,7 @@ wall clock time = 0.003250
 
 > ##### Step 5 - Setup SSH keys
 
-*_Note:_ Must be executed from head node as pi user*
+_**Note:**_ *Must be executed from head node as pi user*
 
 
 Generate SSH key:
@@ -394,8 +394,7 @@ cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
 
 Shutdown the head node:
 
-``sudo shutdown -h now``
-
+```sudo shutdown -h now```
 
 ---
 
@@ -403,22 +402,22 @@ Shutdown the head node:
 
 At this point you will want to save an image of the head node. This will give you a fall back point if you make mistakes moving forward. You will also use this image to begin your node image.
 
-Using the same guide as described in the beginning you will want to reverse the process of writing an image to the SD and _read_ an image from the SD and save that image to your PC. Now you have saved your SD like a checkpoint.
+Using the same guide as described in the beginning you will want to reverse the process of writing an image to the SD and *read* an image from the SD and save that image to your PC. Now you have saved your SD like a checkpoint.
 
-Sample name for SD image: ``compute_node_mpi_stage_2017_01_03``
+Sample name for SD image: ```compute_node_mpi_stage_2017_01_03```
 
 ## Create Node image
 
 The overview of this process:
 
-1. Save image of _head node_.
-2. On a new SD card write the _head node_ image you just saved.
+1. Save image of *head node*.
+2. On a new SD card write the *head node* image you just saved.
 3. Boot the second SD you just created from the head node and make the following changes for "Creating a Generic Node Image".
-4. Save image of newly created _generic compute node_.
+4. Save image of newly created *generic compute node*.
 
-At this point you have a copy of both the _head node_ and _generic comput node_ at the MPI stage. This is a checkpoint that you can fall back to if there are errors after this point.
+At this point you have a copy of both the *head node* and *generic comput node* at the MPI stage. This is a checkpoint that you can fall back to if there are errors after this point.
 
-This will be a repeatable process when completed. You will setup an initial _Compute Node_ image using your saved _Head Node_ image. You will go in and change specific settings to _generic settings_. Doing this will allow you to always access your _generic Compute Node_ image at the same IP address and hostname. You will then be able to set up the compute node image to a specific IP address and hostname. Following this process will allow for prompt and efficient deployment of a cluster.
+This will be a repeatable process when completed. You will setup an initial *compute node* image using your saved *head node* image. You will go in and change specific settings to *generic settings*. Doing this will allow you to always access your *generic compute node* image at the same IP address and hostname. You will then be able to set up the compute node image to a specific IP address and hostname. Following this process will allow for prompt and efficient deployment of a cluster.
 
 [Raspbian Install Guides](https://www.raspberrypi.org/documentation/installation/installing-images/)
 
@@ -426,7 +425,7 @@ This will be a repeatable process when completed. You will setup an initial _Com
 
 ## Create Generic Node image
 
-This will be a repeatable process when completed. You will setup an initial _Compute Node_ image using your saved _Head Node_ image. You will go in and change specific settings to _generic settings_. Doing this will allow you to always access your _generic Compute Node_ image at the same IP address and hostname. You will then be able to set up the compute node image to a specific IP address and hostname. Following this process will allow for prompt and efficient deployment of a cluster.
+This will be a repeatable process when completed. You will setup an initial *compute node* image using your saved *head node* image. You will go in and change specific settings to *generic settings*. Doing this will allow you to always access your *generic compute node* image at the same IP address and hostname. You will then be able to set up the compute node image to a specific IP address and hostname. Following this process will allow for prompt and efficient deployment of a cluster.
 
 > ##### Step 1 - Boot image and login
 
@@ -434,55 +433,55 @@ Log in with username: **pi** and password **raspberry**
 
 > ##### Step 2 - Enter a generic ip address
 
-``sudo nano /etc/dhcpcd.conf``
+```sudo nano /etc/dhcpcd.conf```
 
 Change the _eth0_ ip address from:
 
-``static ip_address=192.168.10.5``
+```static ip_address=192.168.10.5```
 
 To:
 
-``static ip_address=192.168.10.3``
+```static ip_address=192.168.10.3```
 
 Also add to the end of the file:
 
-``static routers=192.168.10.5``
+```static routers=192.168.10.5```
 
 Save and exit
 
 > ##### Step 3 - Enter a generic hostname
 
-``sudo nano /etc/hostname``
+```sudo nano /etc/hostname```
 
 Change:
 
-``head``
+```head```
 
 To:
 
-``nodeX``
+```nodeX```
 
 Save and exit
 
 > ##### Step 4 - Edit hosts file
 
-``sudo nano /etc/hosts``
+```sudo nano /etc/hosts```
 
 Change:
 
-``127.0.1.1				head``
+```127.0.1.1				head```
 
 To:
 
-``127.0.1.1				nodeX``
+```127.0.1.1				nodeX```
 
 Save and exit
 
 > ##### Step 5 - Remove wireless connection information
 
-Edit _interfaces_ file:
+Edit *interfaces* file:
 
-``sudo nano /etc/network/interfaces``
+```sudo nano /etc/network/interfaces```
 
 Remove:
 
@@ -494,9 +493,9 @@ wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
 pre-up iptables-restore < /etc/iptables.rules
 ```
 
-Edit _wpa_supplicant.conf_:
+Edit *wpa_supplicant.conf*:
 
-``sudo nano /etc/wpa_supplicant/wpa_supplicant.conf``
+```sudo nano /etc/wpa_supplicant/wpa_supplicant.conf```
 
 Remove this section if you have a secure network:
 
@@ -518,11 +517,11 @@ key_mgmt=NONE
 
 > ##### Step 6 - Shutdown and create a new image of the SD
 
-``sudo shutdown -h now``
+```sudo shutdown -h now```
 
 Now you will go back to WinDiskImager32 and save the image as a node image. This is a generic node image that you can quickly deploy and use to set up your cluster with.
 
-Sample name for SD image: ``compute_node_mpi_stage_2017_01_03``
+Sample name for SD image: ```compute_node_mpi_stage_2017_01_03```
 
 ---
 
@@ -536,47 +535,47 @@ Sample name for SD image: ``compute_node_mpi_stage_2017_01_03``
 
 Log in with username: **pi** and password **raspberry**
 
-> ##### Step 3 - Adjust _/etc/hostname_ file
+> ##### Step 3 - Adjust */etc/hostname* file
 
-``sudo nano /etc/hostname``
+```sudo nano /etc/hostname```
 
 Change:
 
-``nodeX``
+```nodeX```
 
 To:
 
-``node0``
+```node0```
 
 Save and exit
 
 _**Note:**_ This number will increment by one each time you add a node and must be unique on your cluster.
 
-> ##### Step 4 - Adjust _/etc/dhcpcd.conf_
+> ##### Step 4 - Adjust */etc/dhcpcd.conf*
 
-``sudo nano /etc/dhcpcd.conf``
+```sudo nano /etc/dhcpcd.conf```
 
-Change the _eth0_ ip address from:
+Change the *eth0* ip address from:
 
-``static ip_address=192.168.10.3``
+```static ip_address=192.168.10.3```
 
 To:
 
-``static ip_address=192.168.10.100``
+```static ip_address=192.168.10.100```
 
 Save and exit
 
 > ##### Step 5 - Edit hosts file
 
-``sudo nano /etc/hosts``
+```sudo nano /etc/hosts```
 
 Change:
 
-``127.0.1.1				nodeX``
+```127.0.1.1				nodeX```
 
 To:
 
-``127.0.1.1				node0``
+```127.0.1.1				node0```
 
 Save and exit
 
@@ -586,14 +585,19 @@ Save and exit
 
 Issue the following command for each node:
 
-``cat ~/.ssh/authorized_keys | ssh pi@nodeX "cat > ~/.ssh/authorized_keys"
+```cat ~/.ssh/authorized_keys | ssh pi@nodeX "cat > ~/.ssh/authorized_keys"```
 
+==POSSIBLE CHANGE==
+```rsync -a --rsync-path="sudo rsync" ~/.ssh/authorized_keys pi@nodeX:~/.ssh/authorized_keys```
+==END CHANGE==
 
 _**Note:**_ At this point you will just do this once to develop a compute node image with Slurm installed. After that is complete you will create a new generic image of the compute node. Once that is complete you can use that image to finish deploying your compute nodes for the rest of your cluster.
 
 ---
 
 ## Install NTP
+
+NTP is used to keep the cluster time close together using outside NTP servers to sync with the head node. All computer nodes will sync with the head node.
 
 Reference:
 http://raspberrypi.tomasgreno.cz/ntp-client-and-server.html
@@ -603,11 +607,11 @@ http://www.pool.ntp.org/zone/north-america
 > ##### Head Node
 Install NTP:
 
-``sudo apt install ntp``
+```sudo apt install ntp```
 
-Edit the _/etc/ntp.conf_:
+Edit the */etc/ntp.conf*:
 
-``sudo nano /etc/ntp.conf``
+```sudo nano /etc/ntp.conf```
 
 Change:
 
@@ -629,43 +633,43 @@ server 3.north-america.pool.ntp.org
 
 Restart NTP:
 
-``sudo /etc/init.d/ntp restart``
+```sudo /etc/init.d/ntp restart```
 
 
 > ##### Compute Node
 
 Set Head Node as NTP server.
 
-Edit _/etc/ntp.conf_:
+Edit */etc/ntp.conf*:
 
 Under ``restrict ::1`` add:
 
-``restrict 192.168.10.0 mask 255.255.255.0``
+```restrict 192.168.10.0 mask 255.255.255.0```
 
 Change:
 
-``#broadcast 192.168.123.255``
+```#broadcast 192.168.123.255```
 
 To:
 
-``broadcast 192.168.10.255``
+```broadcast 192.168.10.255```
 
 Restart NTP service:
 
-``sudo /etc/init.d/ntp restart``
+```sudo /etc/init.d/ntp restart```
 
 ---
 ## Install Slurm on Head Node
 
 > ##### Step 1 - Install Slurm
 
-``sudo apt install slurm-wlm slurmctld``
+```sudo apt install slurm-wlm slurmctld```
 
 > ##### Step 2 - Add configuration file
 
-Create the new Slurm configuration file _/etc/slurm-llnl/slurm.conf_:
+Create the new Slurm configuration file */etc/slurm-llnl/slurm.conf*:
 
-``sudo nano /etc/slurm-llnl/slurm.conf``
+```sudo nano /etc/slurm-llnl/slurm.conf```
 
 Add the following to the file and save:
 
@@ -722,22 +726,20 @@ SlurmdLogFile=/var/log/slurm/slurmd.log
 # COMPUTE NODES
 NodeName=node[0-6] Procs=1 RealMemory=768 State=UNKNOWN
 
-PartitionName=raspi2 Default=YES  Nodes=node0,node1,node2,node3,node4,node5,node6 State=UP MaxTime=INFINITE
+PartitionName=raspi2 Default=YES  Nodes=node[0-6] State=UP MaxTime=INFINITE
 ```
-
-_**Note:**_ Any nodes added to the cluster need to be added to the bottom of this file with a _NodeName_ entry.
 
 Check if Slurm controller is running:
 
-``scontrol show daemons``
+```scontrol show daemons```
 
 Should return:
 
-``slurmctld slurmd``
+```slurmctld slurmd```
 
 > ##### Step 3 - Create Munge key
 
-``sudo /usr/sbin/create-munge-key``
+```sudo /usr/sbin/create-munge-key```
 
 Agree to overwrite.
 
@@ -752,19 +754,19 @@ sudo systemctl enable munge.service
 
 Verify Slurm controller is running:
 
-``sudo systemctl status slurmctld.service``
+```sudo systemctl status slurmctld.service```
 
-Will return feedback to the screen. Verify _Active_ line is _**active (running)**_.
+Will return feedback to the screen. Verify *Active* line states: _**active (running)**_.
 
 Verify Munge is running:
 
-``sudo systemctl status munge.service``
+```sudo systemctl status munge.service```
 
-Will return feedback to the screen. Verify _Active_ line is _**active (running)**_.
+Will return feedback to the screen. Verify *Active* line states: _**active (running)**_.
 
 > ##### Step 5 - Add user to Slurm group
 
-``sudo adduser pi slurm``
+```sudo adduser pi slurm```
 
 > ##### Step 6 - Add and take ownership of Slurm log folder
 
@@ -774,15 +776,15 @@ sudo mkdir -p /var/log/slurm/accounting
 sudo chown -R slurm:slurm /var/log/slurm
 ```
 
-``sinfo``
+```sinfo```
 
 ---
 
 ## Install Slurm on Compute Node
 
-> ##### Step 1 - Copy Slurm configuration and Munge files from _Head Node_
+> ##### Step 1 - Copy Slurm configuration and Munge files from *Head Node*
 
-**On _head node_**
+**On *head node*:**
 
 ```rsync -a --rsync-path="sudo rsync" /etc/munge/munge.key pi@nodeX:/etc/slurm-llnl/slurm.conf```
 
@@ -790,9 +792,9 @@ sudo chown -R slurm:slurm /var/log/slurm
 
 > ##### Step 2 - Install Slurm daemon
 
-**On _node0 node_**
+**On *node0 node*:**
 
-SSH into _node0_
+SSH into *node0*:
 
 ```
 sudo apt install slurmd slurm-client
@@ -812,17 +814,17 @@ Verify Slurm daemon is running:
 
 ```sudo systemctl status slurmd.service```
 
-Will return feedback to the screen. Verify _Active_ line is _**active (running)**_.
+Will return feedback to the screen. Verify *Active* line states: _**active (running)**_.
 
 Verify Munge is running:
 
 ```sudo systemctl status munge.service```
 
-Will return feedback to the screen. Verify _Active_ line is _**active (running)**_.
+Will return feedback to the screen. Verify *Active* line states: _**active (running)**_.
 
 > ##### Step 3 - Add user to Slurm group
 
-``sudo adduser pi slurm``
+```sudo adduser pi slurm```
 
 > ##### Step 4 - Add and take ownership of Slurm log folder
 
@@ -832,7 +834,7 @@ sudo mkdir -p /var/log/slurm/accounting
 sudo chown -R slurm:slurm /var/log/slurm
 ```
 
-Execute on _head_ node:
+Execute on *head node*:
 
 ```
 sudo scontrol reconfigure
@@ -853,9 +855,9 @@ By now you have developed a head node image that contains both MPI and Slurm. Yo
 
 ## Add an ethernet adapter
 
-Edit _interfaces_ file:
+Edit */etc/network/interfaces* file:
 
-``sudo nano /etc/network/interfaces``
+```sudo nano /etc/network/interfaces```
 
 Add below eth0 section:
 
@@ -866,12 +868,12 @@ iface eth1 inet manual
 
 Change or add iptables rule to end of file:
 
-``pre-up iptables-restore < /etc/iptables_wired.rules``
+```pre-up iptables-restore < /etc/iptables_wired.rules```
 
 
 Create iptables rules file:
 
-``sudo nano /etc/iptables_wired.rules``
+```sudo nano /etc/iptables_wired.rules```
 
 ```
 # Generated by iptables-save v1.6.0 on Wed Sep 20 04:58:42 2017
@@ -888,19 +890,19 @@ COMMIT
 
 ### Disable WiFi
 
-Edit _wpa_supplicant.conf_ file:
+Edit */etc/wpa_supplicant/wpa_supplicant.conf* file:
 
-``sudo nano /etc/wpa_supplicant/wpa_supplicant.conf``
+```sudo nano /etc/wpa_supplicant/wpa_supplicant.conf```
 
 Comment out the ``network={ connection information }`` section (all lines)
 
 Disable eth1 adapter:
 
-``sudo ifconfig eth1 down``
+```sudo ifconfig eth1 down```
 
 Reboot:
 
-``sudo reboot``
+```sudo reboot```
 
 Now all traffic for the cluster is routed through eth0 and out eth1 to the internet. Any returning traffic or downloads come in via eth1 and through eth0 to the cluster unless its meant for the head node.
 
@@ -913,27 +915,33 @@ When experiencing network connectivity problems with compute nodes:
 
 * Flush the iptables in Memory
 
-``sudo iptables --flush``
+```sudo iptables --flush```
 
 * Delete the rules file
 
-``sudo rm -rf /etc/iptables.rules``
+```sudo rm -rf /etc/iptables.rules```
 
 * Rebuild the rules and file
 Repeat the IP tables section of the guide, starting with the commands:
 
-``sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE``
-
-``sudo iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE``
+```
+sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+sudo iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
+```
 
 Save the iptables.rules file:
-``sudo bash -c
-"iptables-save > /etc/iptables.rules"``
 
-* Check for the iptable rules in the /etc/network/interfaces file:
-Make sure that the line:
-``pre-up iptables-restore < /etc/iptables.rules``
-is present and not commented out.
+```
+sudo bash -c "iptables-save > /etc/iptables.rules"
+```
+
+Check for the iptable rules in the */etc/network/interfaces file*:
+
+Make sure that the line below is present and not commented out:
+
+```pre-up iptables-restore < /etc/iptables.rules```
+
+If it is missing then add it to the end of the file. Save and exit.
 
 ##### MPI ISSUES:
 
@@ -966,30 +974,10 @@ These file should be identical in length, if not redistribute the head node's au
 
 ```sudo cat ~/.ssh/authorized_keys | ssh pi@nodeX "cat > ~/.ssh/authorized_keys" ```
 
-##### RENAMING CONNECTION TYPES (eth0 and wlan0):
+==POSSIBLE CHANGE==
+Use the new rsync instructions
+==END CHANGE==
 
-Use the command ``sudo nano /lib/udev/rules.d/73-usb-net-by-mac-rules ``
-
-You should see:
-```
-	ACTION=="add", SUBSYSTEM=="net", SUBSYSTEMS=="usb", NAME=="", \
-  ATTR{address}=="?[014589cd]:*", \
-  TEST!="/etc/udev/rules.d/80-net-setup-link.rules", \
-  IMPORT{builtin}="net_id", NAME="$env{ID_NET_NAME_MAC}"
-```
-
-Change the NAME to eth0, which should look like:
-
-```
-	ACTION=="add", SUBSYSTEM=="net", SUBSYSTEMS=="usb", NAME=="", \
-  ATTR{address}=="?[014589cd]:*", \
-  TEST!="/etc/udev/rules.d/80-net-setup-link.rules", \
-  IMPORT{builtin}="net_id", NAME="eth0"
-```
-
-After changing these settings, enter the command to keep the changes constant:
-
-```cp /lib/udev/rules.d/73-usb-net-by-mac-rules /etc/udev/rules.d/```
 
 ##### COMMANDS TO CHECK SERVICE STATUSES:
 
@@ -1000,6 +988,7 @@ These commands do the same thing, just with a different syntax:
 ```sudo service <service name> [start,stop,restart,status]```
 
 ```sudo /etc/init.d/<service name> [start,stop,restart,status]```
+
 
 ##### ENABLING/DISABLING NETWORK INTERFACE CONNECTIONS:
 
