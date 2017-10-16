@@ -267,6 +267,18 @@ Take ownership of /software:
 
 ``sudo chown -R pi:hpc /software``
 
+Create build and install directory inside mpich3 directory:
+
+```
+cd /software/lib
+
+mkdir mpich_3.2
+
+cd mpich_3.2
+
+mkdir build install
+```
+
 Download mpich3 and untar:
 
 ```
@@ -275,22 +287,12 @@ wget http://www.mpich.org/static/downloads/3.2/mpich-3.2.tar.gz
 tar xvfz mpich-3.2.tar.gz
 ```
 
-
-Create build and install directory inside mpich3 directory:
-
-```
-cd mpich-3.2
-
-mkdir build install
-```
-
-
 Compile and install mpich3:
 
 ```
 cd build
 
-/software/lib/mpich-3.2/configure --prefix=/software/lib/mpich-3.2/install
+/software/lib/mpich_3.2/mpich-3.2/configure --prefix=/software/lib/mpich_3.2/install
 
 make
 
