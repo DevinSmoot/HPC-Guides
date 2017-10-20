@@ -659,6 +659,7 @@ Restart NTP service:
 ```sudo /etc/init.d/ntp restart```
 
 ---
+
 ## Install Slurm on Head Node
 
 > ##### Step 1 - Install Slurm

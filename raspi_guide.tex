@@ -60,8 +60,8 @@
 \section{Raspberry Pi Cluster Setup
 Guide}\label{raspberry-pi-cluster-setup-guide}
 
-\subsection{Using Raspbian Jessie Lite
-2016-11-25}\label{using-raspbian-jessie-lite-2016-11-25}
+\subsection{Using Raspbian Jessie
+Lite}\label{using-raspbian-jessie-lite}
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
@@ -168,9 +168,8 @@ Log in with username: \textbf{pi} and password \textbf{raspberry}
 sudo raspi-config
 \end{verbatim}
 
-==9/29/17 - Changed option numbers to correlate with updated OS Under
-Advanced Options: (\emph{\textbf{Option 7}}) Expand the filesystem
-(\_*\textbf{Option A1}\emph{) * Select }\textbf{OK}\_
+==9/29/17 - Changed option numbers to correlate with updated OS Expand
+the filesystem (\emph{\textbf{Option 7}}) * Select \emph{\textbf{Yes}}
 
 Setup Localization Options (\emph{\textbf{Option 4}})
 
@@ -182,29 +181,28 @@ Setup Localization Options (\emph{\textbf{Option 4}})
   \begin{itemize}
   \tightlist
   \item
-    Unselect \emph{\textbf{en\_GB.UTF-8 UTF-8}}
+    Unselect \emph{\textbf{en\_GB.UTF-8}}
   \item
     Select \emph{\textbf{en\_US ISO-8859-1}}
   \item
-    Select \emph{\textbf{es\_US}}
+    Select \emph{\textbf{en\_US}}
   \end{itemize}
 \end{itemize}
 
 Under Localization Options: * Set TimeZone (\emph{\textbf{Option I2}}) *
 Select \emph{\textbf{America}} * Select \emph{\textbf{Chicago}}
 
-Under Localization Options: * Set Keyboard Layout (\emph{\textbf{Choose
-highlighted keyboard}}) * Use the default selected Keyboard * Select
-\emph{\textbf{Other}} * Select \emph{\textbf{English (US)}} * Use the
-default keyboard Layout * Select \emph{\textbf{No compose key}} * Select
-\emph{\textbf{No}}
+Under Localization Options: * Set Keyboard Layout (\emph{\textbf{Option
+I3}}) * Use the default selected Keyboard * Select \emph{\textbf{English
+(US)}} * Use the default keyboard Layout * Select \emph{\textbf{No
+compose key}} * Select \emph{\textbf{No}}
 
 Under Localization Options: * Set Wi-Fi country (\emph{\textbf{Option
 I4}}) * Select \emph{\textbf{US United States}}
 
 On the main settings page (not under advanced options): * Set Hostname
-(\emph{\textbf{Option 2}}) * Select \_**OK\_ * Set \emph{Hostname}
-(\emph{\textbf{Option A2}}) * Enter \emph{\textbf{head}}
+(\emph{\textbf{Option 2}}) * Set \emph{Hostname} (\emph{\textbf{Option
+A2}}) * Enter \emph{\textbf{head}}
 
 Under Advanced options: * Set Memory Split (\emph{\textbf{Option 7}}) *
 Set \emph{Memory Split} (\emph{\textbf{Option A3}}) * Enter
@@ -258,6 +256,8 @@ interface eth0
 static ip_address=192.168.10.5
 static domain_name_servers=8.8.8.8
 \end{verbatim}
+
+Save and exit
 
 \subparagraph{\texorpdfstring{Setup
 \emph{wlan0}:}{Setup wlan0:}}\label{setup-wlan0}
@@ -348,38 +348,18 @@ sudo iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
 sudo bash -c "iptables-save > /etc/iptables.rules"
 \end{verbatim}
 
-Edit the file \emph{/etc/network/interfaces}:
+Add settings to \emph{/etc/network/interfaces}:
 
 \texttt{sudo\ nano\ /etc/network/interfaces}
 
-Add the following to the file:
+Add the following line at the end of the wlan0 section under wpa-conf
+line to make the changes persistent:
 
-\begin{verbatim}
-# Please note that this file is written to be used with dhcpcd
-# For static IP, consult /etc/dhcpcd.conf and 'man dhcpcd.conf'
-
-# Include files from /etc/network/interfaces.d:
-source-directory /etc/network/interfaces.d
-
-auto lo
-iface lo inet loopback
-
-iface eth0 inet manual
-
-allow-hotplug wlan0
-iface wlan0 inet manual
-    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
-
-#allow-hotplug wlan1
-#iface wlan1 inet manual
-#    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
-
-pre-up iptables-restore < /etc/iptables.rules
-\end{verbatim}
+\texttt{pre-up\ iptables-restore\ \textless{}\ /etc/iptables.rules}
 
 Save and exit
 
-Update \emph{/etc/hosts} file:
+Update \emph{/etc/hosts\_ file}:
 
 Add the following to the end of the file:
 
@@ -448,6 +428,18 @@ Take ownership of /software:
 
 \texttt{sudo\ chown\ -R\ pi:hpc\ /software}
 
+Create build and install directory inside mpich3 directory:
+
+\begin{verbatim}
+cd /software/lib
+
+mkdir mpich_3.2
+
+cd mpich_3.2
+
+mkdir build install
+\end{verbatim}
+
 Download mpich3 and untar:
 
 \begin{verbatim}
@@ -456,20 +448,12 @@ wget http://www.mpich.org/static/downloads/3.2/mpich-3.2.tar.gz
 tar xvfz mpich-3.2.tar.gz
 \end{verbatim}
 
-Create build and install directory inside mpich3 directory:
-
-\begin{verbatim}
-cd mpich-3.2
-
-mkdir build install
-\end{verbatim}
-
 Compile and install mpich3:
 
 \begin{verbatim}
 cd build
 
-/software/lib/mpich-3.2/configure --prefix=/software/lib/mpich-3.2/install
+/software/lib/mpich_3.2/mpich-3.2/configure --prefix=/software/lib/mpich_3.2/install
 
 make
 
@@ -478,7 +462,7 @@ make install
 
 Activate environment variable:
 
-\texttt{export\ PATH=/software/lib/mpich-3.2/install/bin:\$PATH}
+\texttt{export\ PATH=/software/lib/mpich\_3.2/install/bin:\$PATH}
 
 Add path to environment variables for persistance:
 
@@ -488,7 +472,7 @@ Add the following to the end of the file:
 
 \begin{verbatim}
 # MPICH-3.2
-export PATH="/software/lib/mpich-3.2/install/bin:$PATH"
+export PATH="/software/lib/mpich_3.2/install/bin:$PATH"
 \end{verbatim}
 
 \begin{quote}
@@ -509,23 +493,18 @@ sudo nano nodelist
 
 Add the head node ip address to the list:
 
-\texttt{192.168.10.5}
-
-\emph{\textbf{Note:}} Anytime you need to add a node to the cluster make
-sure to add it here as well as \emph{/etc/hosts} file.
-
-\begin{quote}
-\mbox{}%
-\subparagraph{Step 4 - Test MPI}\label{step-4---test-mpi}
-\end{quote}
-
-Test 1 - Hostname Test
-
 \begin{verbatim}
-cd ~
 
-mpiexec -f nodelist hostname
+_**Note:**_ Anytime you need to add a node to the cluster make sure to add it here as well as */etc/hosts* file.
+
+> ##### Step 4 - Test MPI
+
+###### Test 1 - Hostname Test
 \end{verbatim}
+
+cd \textasciitilde{}
+
+mpiexec -f nodelist hostname ```
 
 Should return:
 
@@ -533,7 +512,7 @@ Should return:
 
 Test 2 - Calculate Pi
 
-\texttt{mpiexec\ -f\ nodelist\ -n\ 2\ /software/lib/mpich-3.2/build/examples/cpi}
+\texttt{mpiexec\ -f\ nodelist\ -n\ 2\ /software/lib/mpich\_3.2/build/examples/cpi}
 
 Should return similar:
 
@@ -549,7 +528,7 @@ wall clock time = 0.003250
 \subparagraph{Step 5 - Setup SSH keys}\label{step-5---setup-ssh-keys}
 \end{quote}
 
-\emph{\emph{Note:} Must be executed from head node as pi user}
+\emph{\textbf{Note:}} \emph{Must be executed from head node as pi user}
 
 Generate SSH key:
 
@@ -606,10 +585,10 @@ At this point you have a copy of both the \emph{head node} and
 you can fall back to if there are errors after this point.
 
 This will be a repeatable process when completed. You will setup an
-initial \emph{Compute Node} image using your saved \emph{Head Node}
+initial \emph{compute node} image using your saved \emph{head node}
 image. You will go in and change specific settings to \emph{generic
 settings}. Doing this will allow you to always access your \emph{generic
-Compute Node} image at the same IP address and hostname. You will then
+compute node} image at the same IP address and hostname. You will then
 be able to set up the compute node image to a specific IP address and
 hostname. Following this process will allow for prompt and efficient
 deployment of a cluster.
@@ -622,10 +601,10 @@ Install Guides}
 \subsection{Create Generic Node image}\label{create-generic-node-image}
 
 This will be a repeatable process when completed. You will setup an
-initial \emph{Compute Node} image using your saved \emph{Head Node}
+initial \emph{compute node} image using your saved \emph{head node}
 image. You will go in and change specific settings to \emph{generic
 settings}. Doing this will allow you to always access your \emph{generic
-Compute Node} image at the same IP address and hostname. You will then
+compute node} image at the same IP address and hostname. You will then
 be able to set up the compute node image to a specific IP address and
 hostname. Following this process will allow for prompt and efficient
 deployment of a cluster.
@@ -687,11 +666,11 @@ Save and exit
 
 Change:
 
-\texttt{127.0.1.1\ \ \ \ \ \ \ \ \ \ \ \ \ head}
+\texttt{127.0.1.1\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ head}
 
 To:
 
-\texttt{127.0.1.1\ \ \ \ \ \ \ \ \ \ \ \ \ nodeX}
+\texttt{127.0.1.1\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ nodeX}
 
 Save and exit
 
@@ -704,8 +683,6 @@ information}\label{step-5---remove-wireless-connection-information}
 Edit \emph{interfaces} file:
 
 \texttt{sudo\ nano\ /etc/network/interfaces}
-
-Remove:
 
 \begin{verbatim}
 allow-hotplug wlan0
@@ -822,11 +799,11 @@ Save and exit
 
 Change:
 
-\texttt{127.0.1.1\ \ \ \ \ \ \ \ \ \ \ \ \ nodeX}
+\texttt{127.0.1.1\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ nodeX}
 
 To:
 
-\texttt{127.0.1.1\ \ \ \ \ \ \ \ \ \ \ \ \ node0}
+\texttt{127.0.1.1\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ node0}
 
 Save and exit
 
@@ -836,8 +813,11 @@ Save and exit
 
 Issue the following command for each node:
 
-``cat \textasciitilde{}/.ssh/authorized\_keys \textbar{} ssh pi@nodeX
-``cat \textgreater{} \textasciitilde{}/.ssh/authorized\_keys''
+\texttt{cat\ \textasciitilde{}/.ssh/authorized\_keys\ \textbar{}\ ssh\ pi@nodeX\ "cat\ \textgreater{}\ \textasciitilde{}/.ssh/authorized\_keys"}
+
+==POSSIBLE CHANGE==
+\texttt{rsync\ -a\ -\/-rsync-path="sudo\ rsync"\ \textasciitilde{}/.ssh/authorized\_keys\ pi@nodeX:\textasciitilde{}/.ssh/authorized\_keys}
+==END CHANGE==
 
 \emph{\textbf{Note:}} At this point you will just do this once to
 develop a compute node image with Slurm installed. After that is
@@ -848,6 +828,10 @@ nodes for the rest of your cluster.
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
 \subsection{Install NTP}\label{install-ntp}
+
+NTP is used to keep the cluster time close together using outside NTP
+servers to sync with the head node. All computer nodes will sync with
+the head node.
 
 Reference: http://raspberrypi.tomasgreno.cz/ntp-client-and-server.html
 http://www.pool.ntp.org/zone/north-america
@@ -922,11 +906,11 @@ Munge files from \emph{Head
 Node}}{Step 1 - Copy Slurm configuration and Munge files from Head Node}}\label{step-1---copy-slurm-configuration-and-munge-files-from-head-node}
 \end{quote}
 
-\textbf{On \emph{head node}}
+\textbf{On \emph{head node}:}
 
-\texttt{sudo\ cat\ /etc/munge/munge.key\ \textbar{}\ ssh\ pi@node0\ "cat\ \textgreater{}\ \textasciitilde{}/munge.key"}
+\texttt{rsync\ -a\ -\/-rsync-path="sudo\ rsync"\ /etc/munge/munge.key\ pi@nodeX:/etc/slurm-llnl/slurm.conf}
 
-\texttt{sudo\ cat\ /etc/slurm-llnl/slurm.conf\ \textbar{}\ ssh\ pi@node0\ "cat\ \textgreater{}\ \textasciitilde{}/slurm.conf"}
+\texttt{rsync\ -a\ -\/-rsync-path="sudo\ rsync"\ /etc/slurm-llnl/slurm.conf\ pi@nodeX:/etc/slurm-llnl/slurm.conf}
 
 \begin{quote}
 \mbox{}%
@@ -934,20 +918,14 @@ Node}}{Step 1 - Copy Slurm configuration and Munge files from Head Node}}\label{
 daemon}\label{step-2---install-slurm-daemon}
 \end{quote}
 
-\textbf{On \emph{node0 node}}
+\textbf{On \emph{node0 node}:}
 
-SSH into \emph{node0}
+SSH into \emph{node0}:
 
 \begin{verbatim}
 sudo apt install slurmd slurm-client
 sudo ln -s /var/lib/slurm-llnl /var/lib/slurm
 \end{verbatim}
-
-Copy Slurm configuration file and Munge key file to proper location:
-
-\texttt{sudo\ cp\ \textasciitilde{}/slurm.conf\ /etc/slurm-llnl/}
-
-\texttt{sudo\ cp\ \textasciitilde{}/munge.key\ /etc/munge/}
 
 Finish install and start Slurm and Munge:
 
@@ -962,14 +940,14 @@ Verify Slurm daemon is running:
 
 \texttt{sudo\ systemctl\ status\ slurmd.service}
 
-Will return feedback to the screen. Verify \emph{Active} line is
+Will return feedback to the screen. Verify \emph{Active} line states:
 \emph{\textbf{active (running)}}.
 
 Verify Munge is running:
 
 \texttt{sudo\ systemctl\ status\ munge.service}
 
-Will return feedback to the screen. Verify \emph{Active} line is
+Will return feedback to the screen. Verify \emph{Active} line states:
 \emph{\textbf{active (running)}}.
 
 \begin{quote}
@@ -992,12 +970,15 @@ sudo mkdir -p /var/log/slurm/accounting
 sudo chown -R slurm:slurm /var/log/slurm
 \end{verbatim}
 
-Execute on \emph{head} node:
+Execute on \emph{head node}:
 
 \begin{verbatim}
 sudo scontrol reconfigure
 
 sudo scontrol update nodename="node[0-6]" state=resume
+-If this command throws an invalid nodename error:
+try updating each node individually with the command:
+sudo scontrol update NodeName="nodeX" state=resume
 
 sinfo
 \end{verbatim}
@@ -1019,7 +1000,7 @@ that point rather then starting from the beginning.
 
 \subsection{Add an ethernet adapter}\label{add-an-ethernet-adapter}
 
-Edit \emph{interfaces} file:
+Edit \emph{/etc/network/interfaces} file:
 
 \texttt{sudo\ nano\ /etc/network/interfaces}
 
@@ -1053,7 +1034,7 @@ COMMIT
 
 \subsubsection{Disable WiFi}\label{disable-wifi}
 
-Edit \emph{wpa\_supplicant.conf} file:
+Edit \emph{/etc/wpa\_supplicant/wpa\_supplicant.conf} file:
 
 \texttt{sudo\ nano\ /etc/wpa\_supplicant/wpa\_supplicant.conf}
 
@@ -1074,10 +1055,56 @@ through eth0 to the cluster unless its meant for the head node.
 
 \subsubsection{Troubleshooting Section:}\label{troubleshooting-section}
 
+\subparagraph{NETWORK UNREACHABLE:}\label{network-unreachable}
+
+When experiencing network connectivity problems with compute nodes:
+
+\begin{itemize}
+\tightlist
+\item
+  Flush the iptables in Memory
+\end{itemize}
+
+\texttt{sudo\ iptables\ -\/-flush}
+
+\begin{itemize}
+\tightlist
+\item
+  Delete the rules file
+\end{itemize}
+
+\texttt{sudo\ rm\ -rf\ /etc/iptables.rules}
+
+\begin{itemize}
+\tightlist
+\item
+  Rebuild the rules and file Repeat the IP tables section of the guide,
+  starting with the commands:
+\end{itemize}
+
+\begin{verbatim}
+sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+sudo iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
+\end{verbatim}
+
+Save the iptables.rules file:
+
+\begin{verbatim}
+sudo bash -c "iptables-save > /etc/iptables.rules"
+\end{verbatim}
+
+Check for the iptable rules in the \emph{/etc/network/interfaces file}:
+
+Make sure that the line below is present and not commented out:
+
+\texttt{pre-up\ iptables-restore\ \textless{}\ /etc/iptables.rules}
+
+If it is missing then add it to the end of the file. Save and exit.
+
 \subparagraph{MPI ISSUES:}\label{mpi-issues}
 
 If mpiexec command fails to execute, stalls, or displays an error
-message about an unreadable path file: * Mpich3 could be in the wrong
+message about an unreadable path file: * Mpich3 could be i * the wrong
 directory * Make sure the export path correlates to the actual install
 path for MPICH3 * Reinstalling MPICH3 and setting up the proper
 environment variables can fix many problems, re-evaluate the MPICH3
@@ -1110,34 +1137,7 @@ command:
 
 \texttt{sudo\ cat\ \textasciitilde{}/.ssh/authorized\_keys\ \textbar{}\ ssh\ pi@nodeX\ "cat\ \textgreater{}\ \textasciitilde{}/.ssh/authorized\_keys"}
 
-\subparagraph{RENAMING CONNECTION TYPES (eth0 and
-wlan0):}\label{renaming-connection-types-eth0-and-wlan0}
-
-Use the command
-\texttt{sudo\ nano\ /lib/udev/rules.d/73-usb-net-by-mac-rules}
-
-You should see:
-
-\begin{verbatim}
-    ACTION=="add", SUBSYSTEM=="net", SUBSYSTEMS=="usb", NAME=="", \
-  ATTR{address}=="?[014589cd]:*", \
-  TEST!="/etc/udev/rules.d/80-net-setup-link.rules", \
-  IMPORT{builtin}="net_id", NAME="$env{ID_NET_NAME_MAC}"
-\end{verbatim}
-
-Change the NAME to eth0, which should look like:
-
-\begin{verbatim}
-    ACTION=="add", SUBSYSTEM=="net", SUBSYSTEMS=="usb", NAME=="", \
-  ATTR{address}=="?[014589cd]:*", \
-  TEST!="/etc/udev/rules.d/80-net-setup-link.rules", \
-  IMPORT{builtin}="net_id", NAME="eth0"
-\end{verbatim}
-
-After changing these settings, enter the command to keep the changes
-constant:
-
-\texttt{cp\ /lib/udev/rules.d/73-usb-net-by-mac-rules\ /etc/udev/rules.d/}
+==POSSIBLE CHANGE== Use the new rsync instructions ==END CHANGE==
 
 \subparagraph{COMMANDS TO CHECK SERVICE
 STATUSES:}\label{commands-to-check-service-statuses}
@@ -1187,7 +1187,17 @@ other wireless adapters could result in incompatible drivers or other
 various issues. The head node can also be connected to the Internet via
 an Ethernet cable.
 
-\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+\subsubsection{Network Diagrams}\label{network-diagrams}
+
+Base Equipment Layer (Pictured Below)
+
+Physical Layer (Pictured Below)
+
+Logical Layer (Pictured Below)
+
+Physical and Logical Layers (Pictured Below)
+
+\subsection{}\label{section}
 
 \subsection{References:}\label{references}
 
