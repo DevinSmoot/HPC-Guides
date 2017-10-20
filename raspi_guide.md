@@ -240,10 +240,10 @@ Add the following to the end of the file:
 _**Note:**_ At this point you want to assign and name all of your nodes that **WILL** be in your cluster and enter them in the hosts file. Below is an example of a 6 node cluster including the head node as one of the six. This file will be copied with the image to the compute nodes and will save you a step of developing and deploying the hosts file later.
 
 ```
-127.0.1.1				head
+127.0.1.1	head
 
-192.168.10.3		nodeX
-192.168.10.5		head
+192.168.10.3	nodeX
+192.168.10.5	head
 192.168.10.100	node0
 192.168.10.101	node1
 192.168.10.102	node2
