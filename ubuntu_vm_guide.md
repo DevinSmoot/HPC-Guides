@@ -179,10 +179,6 @@ Save and exit
 Enable traffic forwarding and make it permanent:
 
 ```
-sudo sysctl -w net.ipv4.ip_forward=1
-```
-
-```
 sudo nano /etc/sysctl.conf
 ```
 
@@ -199,6 +195,14 @@ net.ipv6.conf.lo.disable_ipv6 = 1
 ```
 
 Save and exit
+
+Enable the new rules:
+
+```
+sudo sysctl -p
+```
+
+Enter iptables rules:
 
 ```
 sudo iptables -t nat -A POSTROUTING -o enp0s3 -j MASQUERADE
@@ -230,7 +234,7 @@ sudo reboot
 ##### Step 10 - Update the system packages and kernel
 
 ```
-sudo apt-get udpate && sudo apt-get upgrade -y && sudo apt-get dist-upgrade -y
+sudo apt udpate && sudo apt upgrade -y && sudo apt dist-upgrade -y
 ```
 
 
@@ -241,7 +245,7 @@ sudo apt-get udpate && sudo apt-get upgrade -y && sudo apt-get dist-upgrade -y
 Generate an SSH key:
 ```
 cd ~
-ssh-keygen -t rsa -C "cluster@swosu"
+ssh-keygen -t rsa -C "vmcluster@swosu"
 ```
 Press ```Enter``` to select default install location
 
@@ -268,10 +272,10 @@ Install some required compilers and packages:
 sudo apt-get install make build-essential gfortran
 ```
 
-Change to *home* directory and create *mpich3* directory:
+Create */software* directory:
 
 ```
-sudo mkdir -p /software/lib
+sudo mkdir -p /software/lib/mpich_3.2
 ```
 
 Create hpc user group:
@@ -292,25 +296,17 @@ Take ownership of */software*:
 sudo chown -R <username>:hpc /software
 ```
 
-Change to the *software* directory and create *mpich-3.2* directory:
-
-```
-cd /software/lib
-mkdir mpich-3.2
-```
-
 Change to the *mpich-3.2* directory and create *build* and *install* directories:
 
 ```
-cd mpich-3.2
+cd /software/lib/mpich_3.2
 
-mkdir mpich-3.2
+mdkir build install
 ```
 
 ##### Step 2 - Download and install
 
 Download MPICH3 package and install:
-http://www.mpich.org/downloads/
 
 ```
 wget http://www.mpich.org/static/downloads/3.2/mpich-3.2.tar.gz
@@ -331,7 +327,7 @@ cd build
 Configure the install:
 
 ```
-/software/lib/mpich-3.2/mpich-3.2/configure  --prefix=/software/lib/mpich-3.2/install
+/software/lib/mpich_3.2/mpich-3.2/configure  --prefix=/software/lib/mpich_3.2/install
 ```
 
 Compile the install:
@@ -344,7 +340,7 @@ make install
 Add MPI location to system environment variable PATH:
 
 ```
-export PATH=$PATH:/software/lib/mpich-3.2/install/bin
+export PATH=$PATH:/software/lib/mpich_3.2/install/bin
 ```
 
 Make the PATH change permanent by adding it to the profile file:
@@ -356,7 +352,7 @@ sudo nano ~/.bashrc
 Add the following to the end of the file:
 
 ```
-export PATH="$PATH:/software/lib/mpich-3.2/install/bin"
+export PATH="$PATH:/software/lib/mpich_3.2/install/bin"
 ```
 
 Save and exit
@@ -395,7 +391,7 @@ Should return **head** on the next line
 **Test 2**
 
 ```
-mpiexec -f nodelist -n 2 /software/lib/mpich-3.2/build/examples/cpi
+mpiexec -f nodelist -n 2 /software/lib/mpich_3.2/build/examples/cpi
 ```
 
 Should give an output similar to the following:
