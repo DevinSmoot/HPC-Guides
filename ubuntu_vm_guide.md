@@ -28,7 +28,7 @@ Set *Type:* to **Linux**
 
 Set *Version:* to **Ubuntu (64-bit)**
 
-Set *Memory size* to 1/4 of total host system memory or **1024**
+Set *Memory size* to 1/4 of total host system memory or **2048**
 
 Set *Hard disk* to **Create a virtual hard disk now**
 
@@ -101,7 +101,7 @@ Select **enp0s3** for *Primary network adapter*
 
 Set *hostname* to **head**
 
-Set *New user full name* to last name and first initial
+Set *New user full name* to first initial and last name
 
 Set *Username* to last name and first initial
 
