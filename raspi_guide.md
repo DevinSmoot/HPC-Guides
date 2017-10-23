@@ -110,6 +110,20 @@ Select _Finish_ and _Yes_ to reboot
 
 Set a static address for the cluster facing network interface connection _etho0_. Turn on wireless and setup wireless connection on network interface connection _wlan0_. Turn on SSH service and then reboot the head node.
 
+===Start 10/23/17 Changes- Added example /etc/network/interface file
+### Edit lines of /etc/network/interface file to match /etc/network/interface File below:
+```
+auto lo
+iface lo inet loopback
+
+iface eth0 inet manual
+
+allow-hotplug wlan0
+iface wlan0 inet manual
+    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+```
+
+===End 10/23/17 Changes
 ##### Setup *eth0*:
 
 Edit */etc/dhcpcd.conf*:
