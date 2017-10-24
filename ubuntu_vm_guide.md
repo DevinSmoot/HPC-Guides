@@ -1,7 +1,8 @@
 # <center>Ubuntu Supercomputing Virtual Cluster Setup Guide</center>
 
 ---
-### <center>Definition of repository</center>
+
+## <center>Definition of repository</center>
 This repository and guide is designed to guide the setup of a Ubuntu
 supercomputing cluster. This cluster consists of a basic Ubuntu Server install
 that is combined with the MPICH3 system. This gives the cluster MPI capability.
