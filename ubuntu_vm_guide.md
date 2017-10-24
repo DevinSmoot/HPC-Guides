@@ -865,7 +865,7 @@ Should show _Active: active (running)_
 sinfo
 ```
 
-Should show two entries. Look for _head_ under nodelist. It's state should be _idle_. The other entry is for _node1_ that we have not set up yet.
+Should show two entries. Look for _head_ under nodelist. It's state should be _idle_. The other entry is for _node0_ that we have not set up yet.
 
 ---
 
