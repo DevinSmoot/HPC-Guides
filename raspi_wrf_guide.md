@@ -1,4 +1,17 @@
+<head>
+<style>
+h1 {
+  text-align: center;
+}
+h2 {
+  text-align: center;
+}
+</style>
+</head>
 
+# NCAR-WRF on Raspberry Pi Cluster
+
+---
 
 ## System Environment Tests
 
@@ -16,7 +29,9 @@ If you have these installed, you should be given a path for the location of each
 
 We recommend using gfortran version 4.4.0 or later. To determine the version of gfortran you have, type:
 
-``gcc --version``
+```
+gcc --version
+```
 
 Create a new, clean directory called Build_WRF, and another one called TESTS.
 
@@ -42,7 +57,9 @@ wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/Fort
 
 To unpack the tar file, type:
 
-``tar xf Fortran_C_tests.tar``
+```
+tar xf Fortran_C_tests.tar
+```
 
 There are 7 tests available, so start at the top and run through them, one at a
 time.
@@ -51,11 +68,15 @@ time.
 
 Type the following in the command line:
 
-``gfortran TEST_1_fortran_only_fixed.f``
+```
+gfortran TEST_1_fortran_only_fixed.f
+```
 
 Now type:
 
-``./a.out``
+```
+./a.out
+```
 
 The following should print out to the screen:
 
@@ -66,11 +87,15 @@ The following should print out to the screen:
 
 Type the following in the command line:
 
-``gfortran TEST_2_fortran_only_free.f90``
+```
+gfortran TEST_2_fortran_only_free.f90
+```
 
 and then type:
 
-``./a.out``
+```
+./a.out
+```
 
 The following should print out to the screen:
 
@@ -166,6 +191,8 @@ expr         mv            uname
 file         nm            wc
 grep         printf        which
 gzip         rm            m4
+
+---
 
 ## Building Libraries
 
@@ -310,6 +337,8 @@ make install
 cd ../..
 ```
 
+---
+
 ## Library Compatibility Tests
 
 Once the target machine is able to make small Fortran and C executables (what was verified in the System Environment Tests section), and after the NetCDF and MPI libraries are constructed (two of the libraries from the Building Libraries section), to emulate the WRF code's behavior, two additional small tests are required. We need to verify that the libraries are able to work with the compilers that are to be used for the WPS and WRF builds. Below is a tar file that contans these tests.
@@ -326,7 +355,9 @@ wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/Fort
 
 To unpack the tar file, type:
 
-```tar xf Fortran_C_NETCDF_MPI_tests.tar```
+```
+tar xf Fortran_C_NETCDF_MPI_tests.tar
+```
 
 There are 2 tests:
 
@@ -336,7 +367,9 @@ The NetCDF-only test requires the include file from the NETCDF package be in thi
 
 Copy the file here:
 
-```cp ${NETCDF}/install/include/netcdf.inc .```
+```
+cp ${NETCDF}/install/include/netcdf.inc .
+```
 
 Compile the Fortran and C codes for the purpose of this test (the -c option says to not try to build an executable).
 
@@ -363,7 +396,9 @@ The NetCDF+MPI test requires include files from both of these packages be in thi
 
 Copy the NetCDF include file here:
 
-``cp ${NETCDF}/install/include/netcdf.inc .``
+```
+cp ${NETCDF}/install/include/netcdf.inc .
+```
 
 Note that the MPI executables mpif90 and mpicc are used below when compiling.
 
@@ -392,7 +427,9 @@ Before compiling WRF on a Raspberry Pi you will need to expand the swap file spa
 
 Find the USB drive or external hard drive:
 
-``lsblk``
+```
+lsblk
+```
 
 It is most likely device _sda1_.
 
@@ -404,13 +441,13 @@ sudo mount /dev/sda1 /mnt/usb/
 
 Verify the drive mounted:
 
-````
-
 You should see a new device _sda_. Mounted at _/mnt/usb_.
 
 Now edit the _/etc/dphys-swapfile_ file:
 
-``sudo nano /etc/dphys-swapfile``
+```
+sudo nano /etc/dphys-swapfile
+```
 
 Change:
 
@@ -565,6 +602,8 @@ WRFV3/test/em_real
 
 You can choose to run WRF from either directory.
 
+---
+
 ## Building WPS
 
 After the WRF model is built, the next step is building the WPS program (if you plan to run real cases, as opposed to idealized cases). The WRF model MUST be properly built prior to trying to build the WPS programs. Below is a tar file containing the WPS source code.
@@ -698,6 +737,8 @@ Verify that they are not zero-sized. To see file size, you can type:
 
 ``ls -ls *.exe``
 
+---
+
 ## Static Geography Data
 
 The WRF modeling system is able to create idealized simulations, though most users are interested in the real-data cases. To initiate a real-data case, the domain's physical location on the globe and the static information for that location must be created. This requires a data set that includes such fields as topography and land use catergories. These data are available from the [WRF download page](http://www2.mmm.ucar.edu/wrf/users/download/get_sources_wps_geog.html), but a tar file of the basic complete data set is also available below:
@@ -728,6 +769,8 @@ The directory infomation is given to the geogrid program in the namelist.wps fil
 ``geog_data_path = ´/software/ncar_wrf-3.8.1/build/WPS_GEOG´``
 
 The data expands to approximately 10 GB. This data allows a user to run the geogrid.exe program.
+
+---
 
 ## Real-time Data
 
@@ -761,23 +804,28 @@ cd DATA
 A simple set of interactive commands to grab these files from the NCEP servers in real-time would look like (**Note: This is just an example time/date. Typically on the NCEP data servers, only the most recent 2-3 days are available at any given time. To use up-to-date real-time data, you will need to adjust the commands to reflect current date and time information**):
 
 ```
-curl -s --disable-epsv --connect-timeout 30 -m 60 -u anonymous:USER_ID@INSTITUTION -o GFS_00 ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfs.2014013100/gfs.t00z.pgrb2.0p50.f000
+curl -s --disable-epsv --connect-timeout 30 -m 60 -u anonymous:USER_ID@INSTITUTION -o GFS_00 \
+ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfs.2014013100/gfs.t00z.pgrb2.0p50.f000
 
-curl -s --disable-epsv --connect-timeout 30 -m 60 -u anonymous:USER_ID@INSTITUTION -o GFS_06h ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfs.2014013100/gfs.t00z.pgrb2.0p50.f006
+curl -s --disable-epsv --connect-timeout 30 -m 60 -u anonymous:USER_ID@INSTITUTION -o GFS_06h \
+ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfs.2014013100/gfs.t00z.pgrb2.0p50.f006
 
-curl -s --disable-epsv --connect-timeout 30 -m 60 -u anonymous:USER_ID@INSTITUTION -o GFS_12h ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfs.2014013100/gfs.t00z.pgrb2.0p50.f012
+curl -s --disable-epsv --connect-timeout 30 -m 60 -u anonymous:USER_ID@INSTITUTION -o GFS_12h \
+ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfs.2014013100/gfs.t00z.pgrb2.0p50.f012
 ```
 
 Typically these commands return a complete file within a few seconds. The files returned from these commands (GFS_00h, GFS_06h, GFS_12h) are Grib Edition 2 files, able to be directly used by the ungrib program.
 
 You need to fill in the anonymous login information (which is not private, so there are no security concerns about leaving these scripts around). You will probably end up writing a short script to automatically increment the initialization time.
 
+---
+
 ## Run WPS and WRFV3
 
-**Below are basic instructions for running WPS and WRFV3. For more detailed information, please see the WRF-ARW Online Tutorial
+Below are basic instructions for running WPS and WRFV3. For more detailed information, please see the WRF-ARW Online Tutorial
 
 
-#### Running WPS
+> **Running WPS**
 
 
 You are now ready to begin running WPS and WRFV3. Start by going to the WPS directory:
@@ -810,7 +858,7 @@ You are now ready to run metgrid:
 
 You should now have files with the prefix met_em* for each of the time periods for which you are running.
 
-#### Running WRFV3
+> **Running WRFV3**
 
 You are now ready to run WRFV3. Move into the WRFV3 directory, and then into either the run/ directory, or the test/em_real/
 directory:
