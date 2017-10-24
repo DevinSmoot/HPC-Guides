@@ -482,11 +482,11 @@ This will be a repeatable process when completed. You will setup an initial *com
 
 This will be a repeatable process when completed. You will setup an initial *compute node* image using your saved *head node* image. You will go in and change specific settings to *generic settings*. Doing this will allow you to always access your *generic compute node* image at the same IP address and hostname. You will then be able to set up the compute node image to a specific IP address and hostname. Following this process will allow for prompt and efficient deployment of a cluster.
 
-> ##### Step 1 - Boot image and login
+> #### Step 1 - Boot image and login
 
 Log in with username: **pi** and password **raspberry**
 
-> ##### Step 2 - Enter a generic ip address
+> #### Step 2 - Enter a generic ip address
 
 ```
 sudo nano /etc/dhcpcd.conf
@@ -512,7 +512,7 @@ static routers=192.168.10.5
 
 Save and exit
 
-> ##### Step 3 - Enter a generic hostname
+> #### Step 3 - Enter a generic hostname
 
 ```
 sudo nano /etc/hostname
@@ -532,7 +532,7 @@ nodeX
 
 Save and exit
 
-> ##### Step 4 - Edit hosts file
+> #### Step 4 - Edit hosts file
 
 ```
 sudo nano /etc/hosts
@@ -552,7 +552,7 @@ To:
 
 Save and exit
 
-> ##### Step 5 - Remove wireless connection information
+> #### Step 5 - Remove wireless connection information
 
 Edit *interfaces* file:
 
@@ -595,7 +595,7 @@ key_mgmt=NONE
 }
 ```
 
-> ##### Step 6 - Shutdown and create a new image of the SD
+> #### Step 6 - Shutdown and create a new image of the SD
 
 ```
 sudo shutdown -h now
