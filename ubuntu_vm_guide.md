@@ -1,6 +1,7 @@
-# Ubuntu Supercomputing Virtual Cluster Setup Guide
+# <center>Ubuntu Supercomputing Virtual Cluster Setup Guide</center>
+
 ---
-### Definition of repository
+### <center>Definition of repository</center>
 This repository and guide is designed to guide the setup of a Ubuntu
 supercomputing cluster. This cluster consists of a basic Ubuntu Server install
 that is combined with the MPICH3 system. This gives the cluster MPI capability.
@@ -9,19 +10,21 @@ the process of setting up MPICH3.
 
 ---
 
-## Set up Head Node
+## <center>Set up Head Node</center>
 
-##### Step 1 - Install VirtualBox
+> #### Step 1 - Install VirtualBox
 Download and install Oracle VirtualBox
 https://www.virtualbox.org/wiki/Downloads
 
-
-##### Step 2 - Create Virtual Machine
+> #### Step 2 - Create Virtual Machine
 Create a virtual machine in virtualbox by starting VirtualBox and clicking the **New** button
 
 <img src="images\part1step2.png" alt="Step 2 VirtualBox" style="width: 200px;"/>
 
-##### Step 3 - Create Virtual Machine Continued
+<br>
+<br>
+
+> #### Step 3 - Create Virtual Machine Continued
 Set *Name:* to **Head Node**
 
 Set *Type:* to **Linux**
@@ -36,7 +39,10 @@ Click **Create**
 
 <img src="images\part1step3.png" alt="Step 3 VirtualBox" style="width: 450px;"/>
 
-##### Step 4 - Create Virtual Hard Disk
+<br>
+<br>
+
+> #### Step 4 - Create Virtual Hard Disk
 
 Set *File location* to **Head Node**
 
@@ -52,7 +58,10 @@ Click **Create**
 
 <img src="images\part1step4.png" alt="Step 4 VirtualBox" style="width: 450px;"/>
 
-##### Step 5 - Set Processors and Network Adapters
+<br>
+<br>
+
+> #### Step 5 - Set Processors and Network Adapters
 Right click the VM for *Head Node* in the left column of VirtualBox and click on **Settings**
 
 Click **System** and select the **Processor** tab
@@ -71,7 +80,10 @@ Set *Name:* to **cluster**
 
 <img src="images\part1step5b.png" alt="Step 5b VirtualBox" style="width: 450px;"/>
 
-##### Step 6 - Start-up the Head Node VM
+<br>
+<br>
+
+> #### Step 6 - Start-up the Head Node VM
 Download and install Ubuntu Server 64-bit ISO
 https://www.ubuntu.com/download/server
 
@@ -83,7 +95,10 @@ Click **Start**
 
 <img src="images\part1step6.png" alt="Step 6 VirtualBox" style="width: 450px;"/>
 
-##### Step 7 - Install Ubuntu Server
+<br>
+<br>
+
+> #### Step 7 - Install Ubuntu Server
 
 Select **Install Ubuntu Server**
 
@@ -137,8 +152,10 @@ Select **Yes** to *Install the Grub boot loader to the master boot record*
 
 <img src="images\part1step7.png" alt="Step 7 VirtualBox" style="width: 450px;"/>
 
+<br>
+<br>
 
-##### Step 8 - Set Static IP Address for Secondary Connection
+> #### Step 8 - Set Static IP Address for Secondary Connection
 
 Start the *Head Node* and login using the username and password created during the install process
 
@@ -175,7 +192,7 @@ Add to the end of the file:
 
 Save and exit
 
-##### Step 9 - Set up IPv4 Traffic Forwarding
+> #### Step 9 - Set up IPv4 Traffic Forwarding
 Enable traffic forwarding and make it permanent:
 
 ```
@@ -231,14 +248,14 @@ sudo reboot
 ```
 
 
-##### Step 10 - Update the system packages and kernel
+> #### Step 10 - Update the system packages and kernel
 
 ```
 sudo apt udpate && sudo apt upgrade -y && sudo apt dist-upgrade -y
 ```
 
 
-##### Step 11 - Set up SSH keys
+> #### Step 11 - Set up SSH keys
 
 **VERIFY AT THE COMMAND PROMPT THAT YOU ARE UNDER YOUR USER ACCOUNT AND NOT EXECUTING CODE AS SUPER USER OR ROOT**
 
@@ -259,12 +276,11 @@ Copy SSH keys to authorized keys:
 cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
 ```
 
-
 ---
 
-### MPI
+### <center>MPI</center>
 
-##### Step 1 - Create Directories
+> #### Step 1 - Create Directories
 
 Install some required compilers and packages:
 
@@ -304,7 +320,7 @@ cd /software/lib/mpich_3.2
 mdkir build install
 ```
 
-##### Step 2 - Download and install
+> #### Step 2 - Download and install
 
 Download MPICH3 package and install:
 
@@ -357,7 +373,7 @@ export PATH="$PATH:/software/lib/mpich_3.2/install/bin"
 
 Save and exit
 
-##### Step 3 - Create Node List
+> #### Step 3 - Create Node List
 
 Create a list of nodes for MPI to use:
 
@@ -374,13 +390,13 @@ Add the *head node* ip address to the file:
 192.168.10.5
 ```
 
-##### Step 4 - Test MPI
+> #### Step 4 - Test MPI
 
 ```
 cd ~
 ```
 
-**Test 1**
+##### Test 1
 
 ```
 mpiexec -f nodelist hostname
@@ -388,7 +404,7 @@ mpiexec -f nodelist hostname
 
 Should return **head** on the next line
 
-**Test 2**
+##### Test 2
 
 ```
 mpiexec -f nodelist -n 2 /software/lib/mpich_3.2/build/examples/cpi
@@ -399,9 +415,9 @@ Should give an output similar to the following:
 
 ---
 
-## Set up Cluster Compute Node
+## <center>Set up Cluster Compute Node</center>
 
-##### Step 1 - Clone the Virtual Machine
+> #### Step 1 - Clone the Virtual Machine
 
 In VirtualBox right click the *Head Node* in the left column and select **Clone**
 
@@ -413,7 +429,7 @@ Select **Full clone**
 
 Click **Clone**
 
-##### Step 2 - Set Static IP Address
+> #### Step 2 - Set Static IP Address
 
 In VirtualBox select *Compute Node 1* in the left column
 
@@ -457,7 +473,7 @@ sudo shutdown -h now
 ```
 
 
-##### Step 3 - Change Compute Node 1 Network Adapters
+> #### Step 3 - Change Compute Node 1 Network Adapters
 
 In VirtualBox right click *Compute Node 1* in the left column
 
@@ -474,7 +490,7 @@ Set *Attached to:* to **Internal Network**
 Set *Name:* to **cluster**
 
 
-##### Step 4 - Set hostname
+> #### Step 4 - Set hostname
 
 In VirtualBox select *Compute Node 1* in the left column
 
@@ -511,7 +527,7 @@ sudo reboot
 Wait for *Compute Node 1* to reboot before continuing
 
 
-##### Step 5 - SSH into Compute Node 1 to Acquire Authentication key
+> #### Step 5 - SSH into Compute Node 1 to Acquire Authentication key
 
 In VirtualBox select *Head Node* in the left column
 
@@ -532,7 +548,7 @@ Type ```exit``` and press ```Enter``` to return to *Head Node*
 Verify *Head Node* by checking the command prompt for ```<username>@head:~$```
 
 
-##### Step 6 - Add Compute Node 1 to the nodelist File on Head Node
+> #### Step 6 - Add Compute Node 1 to the nodelist File on Head Node
 
 On the *Head Node* edit the nodelist:
 
@@ -546,7 +562,7 @@ Add ```192.168.10.100``` to the second line
 Save and exit
 
 
-##### Step 7 - Test MPI
+> #### Step 7 - Test MPI
 
 **Test 1**
 On the *Head Node* enter:
@@ -582,9 +598,9 @@ Congratulations! This cluster is ready to execute MPI code.
 
 ---
 
-## Slurm on Head Node
+## <center>Slurm on Head Node</center>
 
-##### Step 1 - Install needed packages
+> #### Step 1 - Install needed packages
 
 Execute:
 
@@ -592,7 +608,7 @@ Execute:
 sudo apt-get install slurm-wlm slurmctld slurmd
 ```
 
-##### Step 2 - Develop configuration file
+> #### Step 2 - Develop configuration file
 
 Edit */etc/slurm-llnl/slurm.conf* and add or edit to match the following:
 
@@ -762,19 +778,19 @@ NodeName=node1 CPUs=1 State=UNKNOWN
 PartitionName=vmcluster Nodes=head,node1 Default=YES MaxTime=INFINITE State=UP
 ```
 
-##### Step 3 - Verify Slurm Controller is running
+> #### Step 3 - Verify Slurm Controller is running
 
 ```
 scontrol show daemons
 ```
 
-##### Step 4 - Create Munge authentication keyboard
+> #### Step 4 - Create Munge authentication keyboard
 
 ```
 sudo /usr/sbin/create-munge-key
 ```
 
-##### Step 5 - Fix Munge issue so it will boot
+> #### Step 5 - Fix Munge issue so it will boot
 
 ```
 sudo systemctl edit --system --full munge
@@ -802,7 +818,7 @@ sudo systemctl start munge
 
 _**Note:**_ The _systemctl enable munge_ may show a failed notification but its fine. Just move to the next command.
 
-##### Step 6 - Enable Slurm Controller
+> #### Step 6 - Enable Slurm Controller
 
 ```
 sudo systemctl enable slurmctld
@@ -814,7 +830,7 @@ Complete the automatic install:
 sudo apt-get upgrade -y
 ```
 
-##### Step 7 - Set create and set permissions on Slurm folder
+> #### Step 7 - Set create and set permissions on Slurm folder
 
 ```
 sudo chown -R slurm:slurm /var/lib/slurmd
@@ -826,7 +842,7 @@ Reboot:
 sudo reboot
 ```
 
-##### Step 8 - Verify Munge and Slurm are running
+> #### Step 8 - Verify Munge and Slurm are running
 
 ```
 sudo service munge status
@@ -840,7 +856,7 @@ sudo service slurmctld status
 
 Should show _Active: active (running)_
 
-##### Step 9 - Verify Slurm has started the PartitionName
+> #### Step 9 - Verify Slurm has started the PartitionName
 
 ```
 sinfo
@@ -848,36 +864,36 @@ sinfo
 
 Should show two entries. Look for _head_ under nodelist. It's state should be _idle_. The other entry is for _node1_ that we have not set up yet.
 
-## Slurm on Compute Node
+## <center>Slurm on Compute Node</center>
 
 **On _head node_**
 
-##### Step 1 - Copy Slurm configuration file and Munge key to _node1_ <username's> home directory:
+> #### Step 1 - Copy Slurm configuration file and Munge key to _node1_ <username's> home directory:
 
 ```
-sudo cat /etc/munge/munge.key | ssh <username>@node1 "cat > ~/munge.key"
+rsync -a --rsync-path="sudo rsync" /etc/munge/munge.key <username>@node1:~/munge.key
 ```
 
 ```
-sudo cat /etc/slurm-llnl/slurm.conf | ssh <username>@node1 "cat > ~/slurm.conf"
+rsync -a --rsync-path="sudo rsync" /etc/slurm-llnl/slurm.conf <username>@node1:~/slurm.conf
 ```
 
 **On _compute node_**
 
-##### Step 2 - Install Slurm
+> #### Step 2 - Install Slurm
 
 ```
 sudo apt-get install slurmd slurm-client
 ```
 
-##### Step 3 - Copy the configuration files to proper locations
+> #### Step 3 - Copy the configuration files to proper locations
 
 ```
 sudo cp ~/munge.key /etc/munge/
 sudo cp ~/slurm.conf /etc/slurm-llnl/
 ```
 
-##### Step 4 - Fix Munge issue so it will boot
+> #### Step 4 - Fix Munge issue so it will boot
 
 ```
 sudo systemctl edit --system --full munge
@@ -905,7 +921,7 @@ sudo systemctl start munge
 
 _**Note:**_ The _systemctl enable munge_ may show a failed notification but its fine. Just move to the next command.
 
-##### Step 5 - Enable Slurm daemon
+> #### Step 5 - Enable Slurm daemon
 
 ```
 sudo systemctl enable slurmd
@@ -917,13 +933,13 @@ Complete Slurm daemon auto install:
 sudo apt-get upgrade -y
 ```
 
-##### Step 6 - Set Slurm folder permissions
+> #### Step 6 - Set Slurm folder permissions
 
 ```
 sudo chown -R slurm:slurm /var/lib/slurmd
 ```
 
-##### Step 7 - Reboot both nodes
+> #### Step 7 - Reboot both nodes
 
 Execute on both nodes:
 
@@ -931,14 +947,13 @@ Execute on both nodes:
 sudo reboot
 ```
 
-
 ---
 
-## Save Your Cluster Snapshot
+## <center>Save Your Cluster Snapshot</center>
 
 Once your cluster is working properly you will want to take a snapshot of all nodes. This will allow you to work forward from here but to have a restore point if things don't work out with future changes.
 
-##### Step 1 - Shutdown All nodes
+> #### Step 1 - Shutdown All nodes
 
 Execute the shutdown on all nodes:
 
@@ -946,7 +961,7 @@ Execute the shutdown on all nodes:
 sudo shutdown -h now
 ```
 
-##### Step 2 - Snapshot Your Nodes
+> #### Step 2 - Snapshot Your Nodes
 
 In VirtualBox right click the node in the left column
 
@@ -962,12 +977,11 @@ Do this for all nodes and you are safe to begin making changes and producing
 
 **_Note:_** You can snapshot the node anywhere you want by following these instructions. In this case take advantage of the description box after naming the snapshot.
 
-
 ---
 
-## Troubleshooting
+## <center>Troubleshooting</center>
 
-#### Host Verification Key Error
+> #### Host Verification Key Error
 
 In case of *host verification key* error when executing MPI follow the steps for deleting and regenerating SSH keys.
 
@@ -1005,7 +1019,7 @@ ssh-agent bash
 ssh-add
 ```
 
-#### Restore VirtualBox snapshot
+> #### Restore VirtualBox snapshot
 
 In VirtualBox right click the node in the left column
 
