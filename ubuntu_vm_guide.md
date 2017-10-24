@@ -1,8 +1,19 @@
-# <center>Ubuntu Supercomputing Virtual Cluster Setup Guide</center>
+<head>
+<style>
+h1 {
+  text-align: center;
+}
+h2 {
+  text-align: center;
+}
+</style>
+</head>
+
+# Ubuntu Supercomputing Virtual Cluster Setup Guide
 
 ---
 
-## <center>Definition of repository</center>
+## Definition of repository
 This repository and guide is designed to guide the setup of a Ubuntu
 supercomputing cluster. This cluster consists of a basic Ubuntu Server install
 that is combined with the MPICH3 system. This gives the cluster MPI capability.
@@ -11,7 +22,7 @@ the process of setting up MPICH3.
 
 ---
 
-## <center>Set up Head Node</center>
+## Set up Head Node
 
 > #### Step 1 - Install VirtualBox
 Download and install Oracle VirtualBox
@@ -397,7 +408,7 @@ Add the *head node* ip address to the file:
 cd ~
 ```
 
-##### Test 1
+**Test 1**
 
 ```
 mpiexec -f nodelist hostname
@@ -405,7 +416,7 @@ mpiexec -f nodelist hostname
 
 Should return **head** on the next line
 
-##### Test 2
+**Test 2**
 
 ```
 mpiexec -f nodelist -n 2 /software/lib/mpich_3.2/build/examples/cpi
@@ -566,6 +577,7 @@ Save and exit
 > #### Step 7 - Test MPI
 
 **Test 1**
+
 On the *Head Node* enter:
 
 ```
