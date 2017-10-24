@@ -1,14 +1,3 @@
-<head>
-<style>
-h1 {
-  text-align: center;
-}
-h2 {
-  text-align: center;
-}
-</style>
-</head>
-
 # Raspberry Pi Cluster Setup Guide
 
 ---
