@@ -1,18 +1,27 @@
+<head>
+<style>
+h1 {
+  text-align: center;
+}
+h2 {
+  text-align: center;
+}
+</style>
+</head>
+
 # Raspberry Pi Cluster Setup Guide
-## Using Raspbian Jessie Lite
 
 ---
 
 ## Considerations to Consider before starting
 
-* SD card size
-	* If your SD card size will vary you will want to build the head node using the smallest size of SD card. This will ensure that the image for that SD card will ALWAYS be able to be written to a similar sized SD or larger. If you start with a 64GB SD card you will not be able to write the image to a 16GB SD card.
+If your SD card size will vary you will want to build the head node using the smallest size of SD card. This will ensure that the image for that SD card will ALWAYS be able to be written to a similar sized SD or larger. If you start with a 64GB SD card you will not be able to write the image to a 16GB SD card.
 
 ---
 
-## Head Node
+#### Head Node
 
-##### Hardware:
+> Hardware:
 *	Raspberry Pi board x 1
 *	WiPi USB dongle	x 1
 *	SD Card 16GB+ x 1
@@ -20,15 +29,15 @@
 *	HDMI cable x 1
 *	Power cable mini-USB x 1
 
-## Compute nodes
+#### Compute nodes
 
-##### Hardware:
+> Hardware:
 *	Raspberry Pi board x 7
 *	SD Card 16GB+ x 1
 *	Ethernet cable x 1
 *	Power cable mini-USB x 1
 
-## Additional Hardware
+#### Additional Hardware
 
 *	10 Port USB hub
 *	16 Port gigabit switch
@@ -37,7 +46,7 @@
 
 ## Setup, Installation, and Testing
 
-> ##### Step 1 - Install operating systems
+> #### Step 1 - Install operating systems
 
 Install Raspbian Lite on SD card for head unit(s) and each compute node
 
@@ -45,7 +54,7 @@ Install Raspbian Lite on SD card for head unit(s) and each compute node
 
 [Raspbian Install Guides](https://www.raspberrypi.org/documentation/installation/installing-images/)
 
-> ##### Step 2 - Configure head node settings
+> #### Step 2 - Configure head node settings
 
 Setup the locale settings to make sure the correct keyboard, language, timezone, etc are set. This will ensure we are able to enter the correct symbols while working on the command line.
 
@@ -56,7 +65,7 @@ Log in with username: **pi** and password **raspberry**
 ```
 sudo raspi-config
 ```
-==9/29/17 - Changed option numbers to correlate with updated OS
+
 Expand the filesystem (_**Option 7**_)
 * Select _**Yes**_
 
@@ -94,9 +103,7 @@ Under Advanced options:
 	* Set _Memory Split_ (_**Option A3**_)
 	* Enter _**16**_
 
-
-* ##### Setup SSH service:
-On the main screen:
+Setup SSH service:
 * Select _**Interfacing Options**_ (_**Option 5**_)
 	* Select _**SSH**_ (_**Option P2**_)
 	* Select _**Yes**_
@@ -104,15 +111,11 @@ On the main screen:
 
 Select _Finish_ and _Yes_ to reboot
 
-==End 9/29/17
-
-> ##### Step 3 - Configure head node network
+> #### Step 3 - Configure head node network
 
 Set a static address for the cluster facing network interface connection _etho0_. Turn on wireless and setup wireless connection on network interface connection _wlan0_. Turn on SSH service and then reboot the head node.
 
-##### Setup *eth0*:
-
-Edit */etc/dhcpcd.conf*:
+Setup *eth0* by editing */etc/dhcpcd.conf*:
 
 ```sudo nano /etc/dhcpcd.conf```
 
@@ -125,15 +128,13 @@ static domain_name_servers=8.8.8.8
 ```
 Save and exit
 
-##### Setup *wlan0*:
-
-Add wireless network credentials:
-
-Edit */etc/wpa_supplicant/wpa_supplicant.conf*:
+Setup *wlan0* by adding wireless network credentials to */etc/wpa_supplicant/wpa_supplicant.conf*:
 
 ```sudo nano /etc/wpa_supplicant/wpa_supplicant.conf```
 
-For connecting to a secure network add the following to the end of the file:
+Choose secure network settings or unsecure network settings and add to the end of the file:
+
+Secure network settings:
 
 ```
 network={
@@ -141,7 +142,8 @@ ssid="<network name>"
 psk="<network password>"
 }
 ```
-For connecting to an unsecure network add the following to the end of the file:
+
+Unsecure network settings:
 
 ```
 network={
@@ -154,7 +156,7 @@ Reboot:
 
 ```sudo reboot```
 
-> ##### Step 4 - Update the system
+> #### Step 4 - Update the system
 
 ```sudo apt update && sudo apt upgrade -y```
 
@@ -162,7 +164,7 @@ Reboot:
 
 ```sudo reboot```
 
-> ##### Step 5 - IP forwarding for nodes to access internet
+> #### Step 5 - IP forwarding for nodes to access internet
 
 Setup IP forwarding so that all compute nodes will have access to the internet for package installation and to download any needed materials on later use.
 
@@ -237,13 +239,13 @@ Reboot:
 
 Install prerequisite *Fortran* which wil be required for compiling MPICH. All other dependencies are already installed.
 
-> ##### Step 1 - Install Fortran
+> #### Step 1 - Install Fortran
 
 ```
 sudo apt install gfortran
 ```
 
-> ##### Step 2 - Install and Setup MPICH3
+> #### Step 2 - Install and Setup MPICH3
 
 Create hpc group:
 
@@ -317,7 +319,7 @@ Add the following to the end of the file:
 export PATH="/software/lib/mpich_3.2/install/bin:$PATH"
 ```
 
-> ##### Step 3 - Create list of nodes for MPI:
+> #### Step 3 - Create list of nodes for MPI:
 
 This list of nodes will need to be updated as you add nodes later. Initially you will only have the head node.
 
@@ -336,9 +338,9 @@ Add the head node ip address to the list:
 
 _**Note:**_ Anytime you need to add a node to the cluster make sure to add it here as well as */etc/hosts* file.
 
-> ##### Step 4 - Test MPI
+> #### Step 4 - Test MPI
 
-###### Test 1 - Hostname Test
+**Test 1 - Hostname Test**
 
 ```
 cd ~
@@ -351,7 +353,7 @@ Should return:
 
 ```head```
 
-###### Test 2 - Calculate Pi
+**Test 2 - Calculate Pi**
 
 ```mpiexec -f nodelist -n 2 /software/lib/mpich_3.2/build/examples/cpi```
 
@@ -365,10 +367,9 @@ pi is approximately 3.1415926544231318, Error is 0.0000000008333387
 wall clock time = 0.003250
 ```
 
-> ##### Step 5 - Setup SSH keys
+> #### Step 5 - Setup SSH keys
 
 _**Note:**_ *Must be executed from head node as pi user*
-
 
 Generate SSH key:
 
@@ -381,7 +382,6 @@ ssh-keygen -t rsa -C "<username>@swosubta" -f ~/.ssh/id_rsa
 Press 'Enter' for passphrase
 
 Press 'Enter' for same passphrase
-
 
 Transfer the key to the authorized_keys file:
 
@@ -405,6 +405,8 @@ At this point you will want to save an image of the head node. This will give yo
 Using the same guide as described in the beginning you will want to reverse the process of writing an image to the SD and *read* an image from the SD and save that image to your PC. Now you have saved your SD like a checkpoint.
 
 Sample name for SD image: ```compute_node_mpi_stage_2017_01_03```
+
+---
 
 ## Create Node image
 
@@ -508,6 +510,7 @@ psk="<network password>"
 
 Remove this section if you have an unsecure network:
 
+
 ```
 network={
 ssid="<network name>"
@@ -529,13 +532,13 @@ Sample name for SD image: ```compute_node_mpi_stage_2017_01_03```
 
 [Raspbian Install Guides](https://www.raspberrypi.org/documentation/installation/installing-images/)
 
-> ##### Step 1 - Copy generic node image created earlier to an SD card using WinDiskImager32.
+> #### Step 1 - Copy generic node image created earlier to an SD card using WinDiskImager32.
 
-> ##### Step 2 - Boot and login to your system
+> #### Step 2 - Boot and login to your system
 
 Log in with username: **pi** and password **raspberry**
 
-> ##### Step 3 - Adjust */etc/hostname* file
+> #### Step 3 - Adjust */etc/hostname* file
 
 ```sudo nano /etc/hostname```
 
@@ -551,7 +554,7 @@ Save and exit
 
 _**Note:**_ This number will increment by one each time you add a node and must be unique on your cluster.
 
-> ##### Step 4 - Adjust */etc/dhcpcd.conf*
+> #### Step 4 - Adjust */etc/dhcpcd.conf*
 
 ```sudo nano /etc/dhcpcd.conf```
 
@@ -565,7 +568,7 @@ To:
 
 Save and exit
 
-> ##### Step 5 - Edit hosts file
+> #### Step 5 - Edit hosts file
 
 ```sudo nano /etc/hosts```
 
@@ -585,11 +588,8 @@ Save and exit
 
 Issue the following command for each node:
 
-```cat ~/.ssh/authorized_keys | ssh pi@nodeX "cat > ~/.ssh/authorized_keys"```
-
-==POSSIBLE CHANGE==
 ```rsync -a --rsync-path="sudo rsync" ~/.ssh/authorized_keys pi@nodeX:~/.ssh/authorized_keys```
-==END CHANGE==
+
 
 _**Note:**_ At this point you will just do this once to develop a compute node image with Slurm installed. After that is complete you will create a new generic image of the compute node. Once that is complete you can use that image to finish deploying your compute nodes for the rest of your cluster.
 
@@ -661,11 +661,11 @@ Restart NTP service:
 ---
 ## Install Slurm on Head Node
 
-> ##### Step 1 - Install Slurm
+> #### Step 1 - Install Slurm
 
 ```sudo apt install slurm-wlm slurmctld```
 
-> ##### Step 2 - Add configuration file
+> #### Step 2 - Add configuration file
 
 Create the new Slurm configuration file */etc/slurm-llnl/slurm.conf*:
 
@@ -737,13 +737,13 @@ Should return:
 
 ```slurmctld slurmd```
 
-> ##### Step 3 - Create Munge key
+> #### Step 3 - Create Munge key
 
 ```sudo /usr/sbin/create-munge-key```
 
 Agree to overwrite.
 
-> ##### Step 4 - Finish installs and start services
+> #### Step 4 - Finish installs and start services
 
 ```
 sudo systemctl enable slurmctld.service
@@ -764,11 +764,11 @@ Verify Munge is running:
 
 Will return feedback to the screen. Verify *Active* line states: _**active (running)**_.
 
-> ##### Step 5 - Add user to Slurm group
+> #### Step 5 - Add user to Slurm group
 
 ```sudo adduser pi slurm```
 
-> ##### Step 6 - Add and take ownership of Slurm log folder
+> #### Step 6 - Add and take ownership of Slurm log folder
 
 ```
 sudo mkdir -p /var/log/slurm/accounting
@@ -782,7 +782,7 @@ sudo chown -R slurm:slurm /var/log/slurm
 
 ## Install Slurm on Compute Node
 
-> ##### Step 1 - Copy Slurm configuration and Munge files from *Head Node*
+> #### Step 1 - Copy Slurm configuration and Munge files from *Head Node*
 
 **On *head node*:**
 
@@ -790,7 +790,7 @@ sudo chown -R slurm:slurm /var/log/slurm
 
 ```rsync -a --rsync-path="sudo rsync" /etc/slurm-llnl/slurm.conf pi@nodeX:/etc/slurm-llnl/slurm.conf```
 
-> ##### Step 2 - Install Slurm daemon
+> #### Step 2 - Install Slurm daemon
 
 **On *node0 node*:**
 
@@ -822,11 +822,11 @@ Verify Munge is running:
 
 Will return feedback to the screen. Verify *Active* line states: _**active (running)**_.
 
-> ##### Step 3 - Add user to Slurm group
+> #### Step 3 - Add user to Slurm group
 
 ```sudo adduser pi slurm```
 
-> ##### Step 4 - Add and take ownership of Slurm log folder
+> #### Step 4 - Add and take ownership of Slurm log folder
 
 ```
 sudo mkdir -p /var/log/slurm/accounting
@@ -849,12 +849,17 @@ sinfo
 
 This should show all nodes in an idle state.
 
+---
+
 ## Deploying the Rest of the Cluster
 
 By now you have developed a head node image that contains both MPI and Slurm. You have also developed a compute node image that contains both MPI and Slurm as well. Now you should go back to the instructions for "Create Node Image" to save both images and then use the compute node image to finish deploying your cluster. Saving these images at each stage gives you different configurations that you can easily deploy in the future and also allows you to have a checkpoint in case something goes wrong. You can write the saved node image to your SD and start from that point rather then starting from the beginning.
 
+---
+
 ## Add an ethernet adapter
 
+> #### Add *eth0*:
 Edit */etc/network/interfaces* file:
 
 ```sudo nano /etc/network/interfaces```
@@ -888,7 +893,7 @@ COMMIT
 # Completed on Wed Sep 20 04:58:42 2017
 ```
 
-### Disable WiFi
+> #### Disable *wlan0*:
 
 Edit */etc/wpa_supplicant/wpa_supplicant.conf* file:
 
@@ -906,11 +911,11 @@ Reboot:
 
 Now all traffic for the cluster is routed through eth0 and out eth1 to the internet. Any returning traffic or downloads come in via eth1 and through eth0 to the cluster unless its meant for the head node.
 
+---
 
+## Troubleshooting Section:
 
-### Troubleshooting Section:
-
-##### NETWORK UNREACHABLE:
+> #### NETWORK UNREACHABLE
 When experiencing network connectivity problems with compute nodes:
 
 * Flush the iptables in Memory
@@ -943,7 +948,7 @@ Make sure that the line below is present and not commented out:
 
 If it is missing then add it to the end of the file. Save and exit.
 
-##### MPI ISSUES:
+> #### MPI ISSUES
 
 If mpiexec command fails to execute, stalls, or displays an error message about an unreadable path file:
 * Mpich3 could be i
@@ -951,7 +956,7 @@ If mpiexec command fails to execute, stalls, or displays an error message about 
 * Make sure the export path correlates to the actual install path for MPICH3
 * Reinstalling MPICH3 and setting up the proper environment variables can fix many problems, re-evaluate the MPICH3 install instructions and verify all settings before attempting a reinstall.
 
-##### SSH ISSUES:
+> #### SSH ISSUES
 
 If the Pi is displaying SSH errors when running the mpiexec command:
 Check the problematic node's authorized_keys file, and compare it with the head node's authorized_keys file.
@@ -972,14 +977,9 @@ The filesize is listed after the owner and group names.
 
 These file should be identical in length, if not redistribute the head node's authorized_keys file to the compute node using the following command:
 
-```sudo cat ~/.ssh/authorized_keys | ssh pi@nodeX "cat > ~/.ssh/authorized_keys" ```
+```rsync -a --rsync-path="sudo rsync" ~/.ssh/authorized_keys pi@nodeX:~/.ssh/authorized_keys```
 
-==POSSIBLE CHANGE==
-Use the new rsync instructions
-==END CHANGE==
-
-
-##### COMMANDS TO CHECK SERVICE STATUSES:
+> #### COMMANDS TO CHECK SERVICE STATUSES
 
 These commands do the same thing, just with a different syntax:
 
@@ -990,7 +990,7 @@ These commands do the same thing, just with a different syntax:
 ```sudo /etc/init.d/<service name> [start,stop,restart,status]```
 
 
-##### ENABLING/DISABLING NETWORK INTERFACE CONNECTIONS:
+> #### ENABLING/DISABLING NETWORK INTERFACE CONNECTIONS
 
 Disable the specified connection
 
@@ -1000,13 +1000,13 @@ Enable the specified connection
 
 ```sudo ifup <connection name> ```
 
-##### SLURM ISSUES:
+> #### SLURM ISSUES
 
 Make sure the slurm.conf file is identical across all nodes.
 
 When running the service status command, read the error messages that are displayed: _**these messages are vital in order to troubleshoot current problems**_.
 
-###### PROBLEMATIC NODES:
+> #### PROBLEMATIC NODES
 
 On many occasions, certain nodes fail to work because of a software/hardware malfunction. This can be fixed by removing and reinstalling the software. Hardware problems can be fixed by reformatting the node's SD card, and rewriting it with a functional node image. Also check each Ethernet cable for weaknesses, and verify that each node in the cluster is properly connected.
 
@@ -1015,29 +1015,34 @@ On many occasions, certain nodes fail to work because of a software/hardware mal
 
 -For Pi 2 Clusters: A Wi-Pi adapter is a tested solution for establishing a wireless connection with a Raspberry Pi model 2. Using other wireless adapters could result in incompatible drivers or other various issues. The head node can also be connected to the Internet via an Ethernet cable.
 
-### Network Diagrams
+---
+## Network Diagrams
 
-Base Equipment Layer (Pictured Below)
+<center>
+
+**Base Equipment Layer (Pictured Below)**
 
 <img src="images\Raspberry_Pi_Cluster_Network_Configuration_-_Base_Equipment_Layer.png">
 
 
-Physical Layer (Pictured Below)
+**Physical Layer (Pictured Below)**
 
 <img src="images\Raspberry_Pi_Cluster_Network_Configuration_-_Physical_Layer.png">
 
 
-Logical Layer (Pictured Below)
+**Logical Layer (Pictured Below)**
 
 <img src="images\Raspberry_Pi_Cluster_Network_Configuration_-_Logical_Layer.png">
 
 
-Physical and Logical Layers (Pictured Below)
+**Physical and Logical Layers (Pictured Below)**
 
 <img src="images\Raspberry_Pi_Cluster_Network_Configuration_-_Physical_and_Logical_Layers.png">
+</center>
+
 ---
 
-## References:
+## References
 
 https://www.modmypi.com/blog/how-to-give-your-raspberry-pi-a-static-ip-address-update
 
