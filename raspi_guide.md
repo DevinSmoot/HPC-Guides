@@ -469,11 +469,11 @@ Save and exit
 
 Change:
 
-```head```
+head
 
 To:
 
-```nodeX```
+nodeX
 
 Save and exit
 
@@ -924,7 +924,9 @@ Now all traffic for the cluster is routed through eth0 and out eth1 to the inter
 
 
 ### Troubleshooting Section:
-
+### Received SIGHUP or SIGTERM from Nano:
+Enter the command:
+```bash```
 ##### NETWORK UNREACHABLE:
 When experiencing network connectivity problems with compute nodes:
 
