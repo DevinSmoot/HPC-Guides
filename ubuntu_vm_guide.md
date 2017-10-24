@@ -22,21 +22,22 @@ the process of setting up MPICH3.
 
 ---
 
+
 ## Set up Head Node
 
 > #### Step 1 - Install VirtualBox
+
 Download and install Oracle VirtualBox
 https://www.virtualbox.org/wiki/Downloads
 
 > #### Step 2 - Create Virtual Machine
+
 Create a virtual machine in virtualbox by starting VirtualBox and clicking the **New** button
 
 <img src="images\part1step2.png" alt="Step 2 VirtualBox" style="width: 200px;"/>
 
-<br>
-<br>
-
 > #### Step 3 - Create Virtual Machine Continued
+
 Set *Name:* to **Head Node**
 
 Set *Type:* to **Linux**
@@ -50,9 +51,6 @@ Set *Hard disk* to **Create a virtual hard disk now**
 Click **Create**
 
 <img src="images\part1step3.png" alt="Step 3 VirtualBox" style="width: 450px;"/>
-
-<br>
-<br>
 
 > #### Step 4 - Create Virtual Hard Disk
 
@@ -70,10 +68,8 @@ Click **Create**
 
 <img src="images\part1step4.png" alt="Step 4 VirtualBox" style="width: 450px;"/>
 
-<br>
-<br>
-
 > #### Step 5 - Set Processors and Network Adapters
+
 Right click the VM for *Head Node* in the left column of VirtualBox and click on **Settings**
 
 Click **System** and select the **Processor** tab
@@ -92,10 +88,8 @@ Set *Name:* to **cluster**
 
 <img src="images\part1step5b.png" alt="Step 5b VirtualBox" style="width: 450px;"/>
 
-<br>
-<br>
-
 > #### Step 6 - Start-up the Head Node VM
+
 Download and install Ubuntu Server 64-bit ISO
 https://www.ubuntu.com/download/server
 
@@ -106,9 +100,6 @@ Click the icon to the right of the drop-down box and navigate to the downloaded 
 Click **Start**
 
 <img src="images\part1step6.png" alt="Step 6 VirtualBox" style="width: 450px;"/>
-
-<br>
-<br>
 
 > #### Step 7 - Install Ubuntu Server
 
@@ -156,16 +147,13 @@ Select **No automatic updates**
 
 Hit *Tab* to move the cursor to **OpenSSH server** and press ```Space``` to select it
 
-**_Note:_** OpenSSH package is selected when a ** \* ** is shown in the box under the cursor
+**_Note:_** OpenSSH package is selected when a * is shown in the box under the cursor
 
 Press ```Enter``` to continue the installation
 
 Select **Yes** to *Install the Grub boot loader to the master boot record*
 
 <img src="images\part1step7.png" alt="Step 7 VirtualBox" style="width: 450px;"/>
-
-<br>
-<br>
 
 > #### Step 8 - Set Static IP Address for Secondary Connection
 
@@ -205,6 +193,7 @@ Add to the end of the file:
 Save and exit
 
 > #### Step 9 - Set up IPv4 Traffic Forwarding
+
 Enable traffic forwarding and make it permanent:
 
 ```
@@ -259,7 +248,6 @@ Now reboot the system:
 sudo reboot
 ```
 
-
 > #### Step 10 - Update the system packages and kernel
 
 ```
@@ -290,7 +278,7 @@ cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
 
 ---
 
-### <center>MPI</center>
+## MPI
 
 > #### Step 1 - Create Directories
 
@@ -427,7 +415,7 @@ Should give an output similar to the following:
 
 ---
 
-## <center>Set up Cluster Compute Node</center>
+## Set up Cluster Compute Node
 
 > #### Step 1 - Clone the Virtual Machine
 
@@ -516,7 +504,7 @@ Edit the hostname file:
 sudo nano /etc/hostname
 ```
 
-Change ```head``` to ```node1```
+Change ```head``` to ```node0```
 
 Save and exit
 
@@ -526,7 +514,7 @@ Edit the hosts file:
 sudo nano /etc/hosts
 ```
 
-Change ```head``` to ```node1```
+Change ```head``` to ```node0```
 
 Save and exit
 
@@ -589,7 +577,7 @@ You should get an output similar to the following:
 
 ```
 head
-node1
+node0
 ```
 
 **Test 2**
@@ -605,13 +593,13 @@ You should get an output similar to the following:
 
 <img src="images\part2step7.png" alt="Step 7 MPI Compute Node" style="width: 450px;"/>
 
-**_Note:_** Each process shows which node it was executed on. You should see both head and node1 displayed. This shows that MPI is sending and executing the script on both nodes in the cluster.
+**_Note:_** Each process shows which node it was executed on. You should see both head and node0 displayed. This shows that MPI is sending and executing the script on both nodes in the cluster.
 
 Congratulations! This cluster is ready to execute MPI code.
 
 ---
 
-## <center>Slurm on Head Node</center>
+## Slurm on Head Node
 
 > #### Step 1 - Install needed packages
 
@@ -787,8 +775,8 @@ SlurmdDebug=3
 #
 # COMPUTE NODES
 NodeName=head CPUs=1 State=UNKNOWN
-NodeName=node1 CPUs=1 State=UNKNOWN
-PartitionName=vmcluster Nodes=head,node1 Default=YES MaxTime=INFINITE State=UP
+NodeName=node0 CPUs=1 State=UNKNOWN
+PartitionName=vmcluster Nodes=head,node0 Default=YES MaxTime=INFINITE State=UP
 ```
 
 > #### Step 3 - Verify Slurm Controller is running
@@ -803,7 +791,7 @@ scontrol show daemons
 sudo /usr/sbin/create-munge-key
 ```
 
-> #### Step 5 - Fix Munge issue so it will boot
+> #### Step 5 - Fix Munge issue so it will load
 
 ```
 sudo systemctl edit --system --full munge
@@ -822,6 +810,8 @@ ExecStart=/usr/sbin/munged --syslog
 ```
 
 Save and exit.
+
+Enable and start Munge:
 
 ```
 sudo systemctl enable munge
@@ -869,7 +859,7 @@ sudo service slurmctld status
 
 Should show _Active: active (running)_
 
-> #### Step 9 - Verify Slurm has started the PartitionName
+> #### Step 9 - Verify Slurm has started the partition
 
 ```
 sinfo
@@ -877,18 +867,20 @@ sinfo
 
 Should show two entries. Look for _head_ under nodelist. It's state should be _idle_. The other entry is for _node1_ that we have not set up yet.
 
-## <center>Slurm on Compute Node</center>
+---
+
+## Slurm on Compute Node
 
 **On _head node_**
 
-> #### Step 1 - Copy Slurm configuration file and Munge key to _node1_ <username's> home directory:
+> #### Step 1 - Copy Slurm configuration file and Munge key to _node0_ <username's> home directory:
 
 ```
-rsync -a --rsync-path="sudo rsync" /etc/munge/munge.key <username>@node1:~/munge.key
+rsync -a --rsync-path="sudo rsync" /etc/munge/munge.key <username>@node0:~/munge.key
 ```
 
 ```
-rsync -a --rsync-path="sudo rsync" /etc/slurm-llnl/slurm.conf <username>@node1:~/slurm.conf
+rsync -a --rsync-path="sudo rsync" /etc/slurm-llnl/slurm.conf <username>@node0:~/slurm.conf
 ```
 
 **On _compute node_**
@@ -962,7 +954,7 @@ sudo reboot
 
 ---
 
-## <center>Save Your Cluster Snapshot</center>
+## Save Your Cluster Snapshot
 
 Once your cluster is working properly you will want to take a snapshot of all nodes. This will allow you to work forward from here but to have a restore point if things don't work out with future changes.
 
@@ -992,7 +984,7 @@ Do this for all nodes and you are safe to begin making changes and producing
 
 ---
 
-## <center>Troubleshooting</center>
+## Troubleshooting
 
 > #### Host Verification Key Error
 
