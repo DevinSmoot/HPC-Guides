@@ -9,7 +9,7 @@ h2 {
 </style>
 </head>
 
-# NCAR-WRF on Ubuntu Virtual Machine Cluster Guide
+# NCAR-WRF on Ubuntu Virtual Machine Cluster
 
 ---
 
