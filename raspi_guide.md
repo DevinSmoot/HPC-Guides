@@ -113,9 +113,31 @@ Select _Finish_ and _Yes_ to reboot
 
 > #### Step 3 - Configure head node network
 
-Set a static address for the cluster facing network interface connection _etho0_. Turn on wireless and setup wireless connection on network interface connection _wlan0_. Turn on SSH service and then reboot the head node.
+Set a static address for the cluster facing network interface connection _eth0_. Turn on wireless and setup wireless connection on network interface connection _wlan0_. Turn on SSH service and then reboot the head node.
 
-Setup *eth0* by editing */etc/dhcpcd.conf*:
+
+Add or edit */etc/network/interface* file to match below:
+```
+# Please note that this file is written to be used with dhcpcd
+# For static IP, consult /etc/dhcpcd.conf and 'man dhcpcd.conf'
+
+# Include files from /etc/network/interfaces.d:
+source-directory /etc/network/interfaces.d
+
+auto lo
+iface lo inet loopback
+
+iface eth0 inet manual
+
+allow-hotplug wlan0
+iface wlan0 inet manual
+    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+```
+
+
+Setup *eth0*:
+
+Edit */etc/dhcpcd.conf*:
 
 ```sudo nano /etc/dhcpcd.conf```
 
@@ -218,10 +240,10 @@ Add the following to the end of the file:
 _**Note:**_ At this point you want to assign and name all of your nodes that **WILL** be in your cluster and enter them in the hosts file. Below is an example of a 6 node cluster including the head node as one of the six. This file will be copied with the image to the compute nodes and will save you a step of developing and deploying the hosts file later.
 
 ```
-127.0.1.1				head
+127.0.1.1	head
 
-192.168.10.3		nodeX
-192.168.10.5		head
+192.168.10.3	nodeX
+192.168.10.5	head
 192.168.10.100	node0
 192.168.10.101	node1
 192.168.10.102	node2
@@ -457,11 +479,11 @@ Save and exit
 
 Change:
 
-```head```
+head
 
 To:
 
-```nodeX```
+nodeX
 
 Save and exit
 
@@ -659,6 +681,7 @@ Restart NTP service:
 ```sudo /etc/init.d/ntp restart```
 
 ---
+
 ## Install Slurm on Head Node
 
 > #### Step 1 - Install Slurm
@@ -915,7 +938,13 @@ Now all traffic for the cluster is routed through eth0 and out eth1 to the inter
 
 ## Troubleshooting Section:
 
-> #### NETWORK UNREACHABLE
+> #### Received SIGHUP or SIGTERM from Nano
+>
+Enter the command:
+```bash```
+
+> #### NETWORK UNREACHABLE:
+>
 When experiencing network connectivity problems with compute nodes:
 
 * Flush the iptables in Memory
