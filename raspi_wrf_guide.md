@@ -191,6 +191,27 @@ Go inside your Build_WRF directory:
 
 ``cd /software/lib``
 
+Edit the *.bashrc* file to add environment variables:
+
+```
+# NETCDF-4.1.3
+export DIR=/software/lib
+export CC=gcc
+export CXX=g++
+export FC=gfortran
+export F77=gfortran
+
+export PATH=$DIR/netcdf_4.1.3/install/bin:$PATH
+export NETCDF=$DIR/netcdf_4.1.3
+
+# MPICH-3.04
+export PATH=$DIR/mpich_3.0.4/install/bin:$PATH
+
+# Zlib-1.2.7
+export LDFLAGS=-L$DIR/grib2/lib
+export CPPFLAGS=-I$DIR/grib2/include
+```
+
 Depending on the type of run you wish to make, there are various libraries that should be installed. Below are 5 libraries.
 
 [mpich-3.0.4](http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/mpich-3.0.4.tar.gz)
@@ -422,10 +443,10 @@ lsblk
 
 It is most likely device _sda1_.
 
-Next mount the drive:
+Create a filesystem on the drive:
 
 ```
-sudo mount /dev/sda1 /mnt/usb/
+sudo mkfs.ext4 /dev/sda1
 ```
 
 Verify the drive mounted:
@@ -456,7 +477,7 @@ Also change _CONF_SWAPFILE_:
 CONF_SWAPFILE=/mnt/usb/swap.file
 ```
 
-Creat the swap file:
+Create the swap file:
 
 ```
 sudo dd if=/dev/zero of=/mnt/usb/swap.file bs=1M count=2048
