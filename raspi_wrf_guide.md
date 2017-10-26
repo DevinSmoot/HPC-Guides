@@ -449,10 +449,6 @@ Create a filesystem on the drive:
 sudo mkfs.ext4 /dev/sda1
 ```
 
-Verify the drive mounted:
-
-You should see a new device _sda_. Mounted at _/mnt/usb_.
-
 Now edit the _/etc/dphys-swapfile_ file:
 
 ```
