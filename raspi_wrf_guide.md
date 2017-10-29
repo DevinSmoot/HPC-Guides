@@ -187,11 +187,13 @@ gzip         rm            m4
 
 Before getting started, you need to make another directory.
 
-Go inside your Build_WRF directory:
-
-``cd /software/lib``
-
 Edit the *.bashrc* file to add environment variables:
+
+```
+sudo nano ~/.bashrc
+```
+
+Add the following to the end of the file:
 
 ```
 # NETCDF-4.1.3
@@ -211,6 +213,10 @@ export PATH=$DIR/mpich_3.0.4/install/bin:$PATH
 export LDFLAGS=-L$DIR/grib2/lib
 export CPPFLAGS=-I$DIR/grib2/include
 ```
+
+Go inside your *build* directory:
+
+``cd /software/lib``
 
 Depending on the type of run you wish to make, there are various libraries that should be installed. Below are 5 libraries.
 
