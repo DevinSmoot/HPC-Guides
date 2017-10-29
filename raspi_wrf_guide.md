@@ -257,7 +257,7 @@ $DIR/netcdf_4.1.3/netcdf-4.1.3/configure --prefix=$DIR/netcdf_4.1.3/install --di
 make
 make install
 export PATH=$DIR/netcdf_4.1.3/install/bin:$PATH
-export NETCDF=$DIR/netcdf_4.1.3
+export NETCDF=$DIR/netcdf_4.1.3/install
 
 cd ../..
 ```
@@ -452,7 +452,7 @@ It is most likely device _sda1_.
 Create a filesystem on the drive:
 
 ```
-sudo mkfs.ext4 /dev/sda1
+sudo mkfs.vfat /dev/sda1 -F
 ```
 
 Now edit the _/etc/dphys-swapfile_ file:
@@ -478,6 +478,13 @@ Also change _CONF_SWAPFILE_:
 ```
 CONF_SWAPFILE=/mnt/usb/swap.file
 ```
+
+Mount the USB drive:
+
+```
+sudo mount /dev/sda1 /mnt/usb/
+```
+
 
 Create the swap file:
 
@@ -526,12 +533,12 @@ tar xfz WRFV3.8.1.TAR
 
 Go into the WRFV3 directory:
 
-``cd /software/ncar_wrf-3.8.1/build/WRFV3``
+``cd WRFV3``
 
 Setup WRF for Raspberry Pi. Edit the configuration files to conform to Raspberry Pi.
 
 ```
-sudo nano /software/ncar_wrf-3.8.1/build/WRFV3/arch/configure_new.defaults
+sudo nano arch/configure_new.defaults
 ```
 
 Use ``Ctrl+W`` then ``Ctrl+R`` to find and replace the following:
@@ -562,6 +569,8 @@ You will see various options. Choose the option that lists the compiler you are 
 
 For the Raspberry Pi you will pick _**34 dmpar gfortran**_.
 
+Accept the default on nesting.
+
 Once your configuration is complete, you should have a configure.wrf file, and you are ready to compile. To compile WRFV3, you will need to decide which type of case you wish to compile.
 
 The options are listed below:
@@ -581,7 +590,9 @@ The options are listed below:
 
 Usage:
 
-``./compile <case_name> >& compile.log``
+```
+./compile <case_name> >& compile.log
+```
 
 Where <case_name> is one of the options listed above.
 
