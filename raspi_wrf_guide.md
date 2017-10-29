@@ -214,10 +214,6 @@ export LDFLAGS=-L$DIR/grib2/lib
 export CPPFLAGS=-I$DIR/grib2/include
 ```
 
-Go inside your *build* directory:
-
-``cd /software/lib``
-
 Depending on the type of run you wish to make, there are various libraries that should be installed. Below are 5 libraries.
 
 [mpich-3.0.4](http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/mpich-3.0.4.tar.gz)
@@ -256,6 +252,7 @@ $DIR/netcdf_4.1.3/netcdf-4.1.3/configure --prefix=$DIR/netcdf_4.1.3/install --di
 
 make
 make install
+make check
 export PATH=$DIR/netcdf_4.1.3/install/bin:$PATH
 export NETCDF=$DIR/netcdf_4.1.3/install
 
