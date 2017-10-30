@@ -253,6 +253,7 @@ $DIR/netcdf_4.1.3/netcdf-4.1.3/configure --prefix=$DIR/netcdf_4.1.3/install --di
 make
 make install
 make check
+
 export PATH=$DIR/netcdf_4.1.3/install/bin:$PATH
 export NETCDF=$DIR/netcdf_4.1.3/install
 
@@ -350,6 +351,29 @@ make install
 cd ../..
 ```
 
+**M4**
+
+```
+sudo apt install m4
+```
+
+**HDF5**
+
+```
+mkdir -p $DIR/hdf5_1.10.1
+cd hdf5_1.10.1
+
+wget https://support.hdfgroup.org/ftp/HDF5/current/src/hdf5-1.10.1.tar.gz
+
+tar xvfz hdf5-10-1.tar.gz
+cd hdf5-1.10.1
+
+./configure
+
+make
+make check
+make install
+```
 ---
 
 ## Library Compatibility Tests
@@ -449,7 +473,7 @@ It is most likely device _sda1_.
 Create a filesystem on the drive:
 
 ```
-sudo mkfs.vfat /dev/sda1 -F
+sudo mkfs.vfat /dev/sda1
 ```
 
 Now edit the _/etc/dphys-swapfile_ file:
@@ -473,13 +497,13 @@ CONF_SWAPSIZE=2048
 Also change _CONF_SWAPFILE_:
 
 ```
-CONF_SWAPFILE=/mnt/usb/swap.file
+CONF_SWAPFILE=/dev/sda1/swap.file
 ```
 
 Mount the USB drive:
 
 ```
-sudo mount /dev/sda1 /mnt/usb/
+sudo mount /dev/sda1
 ```
 
 
@@ -489,18 +513,14 @@ Create the swap file:
 sudo dd if=/dev/zero of=/mnt/usb/swap.file bs=1M count=2048
 ```
 
-Set the permissions so only root has access:
-
-```
-sudo chmod 600 /mnt/usb/swap.file
-```
-
 Next create a swap memory space and turn it on:
 
 ```
 sudo mkswap /mnt/usb/swap.file
 sudo swapon /mnt/usb/swap.file
 ```
+
+Disregard the permissions message.
 
 Now make these changes persistent:
 
@@ -511,7 +531,7 @@ sudo nano /etc/fstab
 Add to the end of the file:
 
 ```
-/dev/sda1        /mnt/usb       ext4      dmask=000,fmask111    0   0
+/mnt/usb/swap.file       none      swap     defaults    0   0
 ```
 
 After ensuring that all libraries are compatible with the compilers, you can now prepare to build WRFV3. If you do not already have a WRFV3 tar file, you can find it below.
@@ -530,7 +550,17 @@ tar xfz WRFV3.8.1.TAR
 
 Go into the WRFV3 directory:
 
-``cd WRFV3``
+```
+cd WRFV3
+```
+
+Install required WRF-Chem package:
+
+```
+wget http://www2.mmm.ucar.edu/wrf/src/WRFV3-Chem-3.8.1.TAR.gz
+
+tar xvfz WRFV3-Chem-3.8.1.TAR.gz
+```
 
 Setup WRF for Raspberry Pi. Edit the configuration files to conform to Raspberry Pi.
 
@@ -557,8 +587,6 @@ Press _**A**_ to replace all.
 Create a configuration file for your computer and compiler:
 
 ```
-cd ..
-
 ./configure
 ```
 
