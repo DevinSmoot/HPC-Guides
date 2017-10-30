@@ -817,10 +817,10 @@ Uncompress and un-tar the file:
 ```
 cd /software/ncar_wrf-3.8.1/build
 
-wget http://www2.mmm.ucar.edu/wrf/src/wps_files/geog_minimum.tar.bz2
+wget http://www2.mmm.ucar.edu/wrf/src/wps_files/geog_complete.tar.bz2
 
 
-tar xfvz geog.tar
+tar xfvj geog_complete.tar.bz2
 ```
 
 When you untar the file, it will be called "geog."
