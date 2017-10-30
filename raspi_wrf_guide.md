@@ -204,7 +204,7 @@ export FC=gfortran
 export F77=gfortran
 
 export PATH=$DIR/netcdf_4.1.3/install/bin:$PATH
-export NETCDF=$DIR/netcdf_4.1.3
+export NETCDF=$DIR/netcdf_4.1.3/install
 
 # MPICH-3.04
 export PATH=$DIR/mpich_3.0.4/install/bin:$PATH
@@ -700,7 +700,11 @@ Save and exit.
 
 Similar to the WRF model, make sure the WPS directory is clean, by issuing:
 
-``./clean``
+```
+cd ..
+
+./clean
+```
 
 The next step is to configure WPS, however, you first need to set some paths for the ungrib libraries:
 
@@ -746,8 +750,21 @@ Add _-lgomp_ to the end:
 ```
 -L$(NETCDF)/lib -lnetcdff -lnetcdf -lgomp
 ```
-
 Now it will invoke OpenMP as needed.
+
+We will also want to use MPI compiler.
+
+Find:
+
+```
+DM_CC               = mpicc -cc=gcc
+```
+
+Change to:
+
+```
+DM_CC               = mpicc -cc=mpicc
+```
 
 You will also need to change the two lines for compression libraries.
 
@@ -758,7 +775,7 @@ COMPRESSION_LIBS
 COMPRESSION_INC
 ```
 
-Change to:
+Change to if it is not already set:
 
 ```
 COMPRESSION_LIBS    = -L/software/grib2/lib -ljasper -lpng -lz
