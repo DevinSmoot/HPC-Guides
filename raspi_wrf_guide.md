@@ -670,7 +670,7 @@ cd /software/ncar_wrf-3.8.1/build
 
 wget http://www2.mmm.ucar.edu/wrf/src/WPSV3.8.1.TAR.gz
 
-tar xfvz WPSV3.8.1.TAR
+tar xfvz WPSV3.8.1.TAR.gz
 ```
 
 Go into the WPS directory:
