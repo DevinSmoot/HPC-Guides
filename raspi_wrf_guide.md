@@ -365,7 +365,7 @@ cd hdf5_1.10.1
 
 wget https://support.hdfgroup.org/ftp/HDF5/current/src/hdf5-1.10.1.tar.gz
 
-tar xvfz hdf5-10-1.tar.gz
+tar xvfz hdf5-1.10.1.tar.gz
 cd hdf5-1.10.1
 
 ./configure
