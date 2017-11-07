@@ -468,7 +468,7 @@ Find the USB drive or external hard drive:
 lsblk
 ```
 
-It is most likely device _sda1_.
+It is most likely device *sda1*. Its physical location on the filesystem is */dev/sda1*.
 
 Create a filesystem on the drive:
 
@@ -476,7 +476,7 @@ Create a filesystem on the drive:
 sudo mkfs.vfat /dev/sda1
 ```
 
-Now edit the _/etc/dphys-swapfile_ file:
+Now edit the */etc/dphys-swapfile* file:
 
 ```
 sudo nano /etc/dphys-swapfile
@@ -494,7 +494,7 @@ To:
 CONF_SWAPSIZE=2048
 ```
 
-Also change _CONF_SWAPFILE_:
+Also change *CONF_SWAPFILE*:
 
 ```
 CONF_SWAPFILE=/mnt/usb/swap.file
@@ -541,7 +541,7 @@ Add to the end of the file:
 
 After ensuring that all libraries are compatible with the compilers, you can now prepare to build WRFV3. If you do not already have a WRFV3 tar file, you can find it below.
 
-Download that file and unpack it in the _build_ directory.
+Download that file and unpack it in the *build* directory.
 
 [WRFV3.8.1](http://www2.mmm.ucar.edu/wrf/src/WRFV3.8.1.TAR.gz)
 
@@ -736,13 +736,13 @@ Above is the default setting. As long as the name of the WRF model's top-level d
 
 Before compiling you need to make one more change to the configuration file.
 
-Edit _configuration.wps_:
+Edit *configuration.wps*:
 
 ```
 sudo nano configure.wps
 ```
 
-Under the _WRF_LIB_ section:
+Under the *WRF_LIB* section:
 
 Find:
 
@@ -750,7 +750,7 @@ Find:
 -L$(NETCDF)/lib -lnetcdff -lnetcdf
 ```
 
-Add _-lgomp_ to the end:
+Add *-lgomp* to the end:
 
 ```
 -L$(NETCDF)/lib -lnetcdff -lnetcdf -lgomp
