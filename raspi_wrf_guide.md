@@ -820,7 +820,8 @@ Download the file, and place it in the Build_WRF directory.
 Uncompress and un-tar the file:
 
 ```
-cd /software/ncar_wrf-3.8.1/build
+cd /software/ncar-wrf_3.8.1/build
+
 
 wget http://www2.mmm.ucar.edu/wrf/src/wps_files/geog_complete.tar.bz2
 
