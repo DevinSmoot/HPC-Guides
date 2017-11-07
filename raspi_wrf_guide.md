@@ -497,15 +497,20 @@ CONF_SWAPSIZE=2048
 Also change _CONF_SWAPFILE_:
 
 ```
-CONF_SWAPFILE=/dev/sda1/swap.file
+CONF_SWAPFILE=/mnt/usb/swap.file
+```
+
+Create the mountpoint folder:
+
+```
+sudo mkdir /mnt/usb
 ```
 
 Mount the USB drive:
 
 ```
-sudo mount /dev/sda1
+sudo mount /dev/sda1 /mnt/usb
 ```
-
 
 Create the swap file:
 
