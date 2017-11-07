@@ -666,7 +666,7 @@ Download that file and unpack it in the Build_WRF directory:
 [WPSV3.8.1](http://www2.mmm.ucar.edu/wrf/src/WPSV3.8.1.TAR.gz)
 
 ```
-cd /software/ncar_wrf-3.8.1/build
+cd /software/ncar-wrf_3.8.1/build
 
 wget http://www2.mmm.ucar.edu/wrf/src/WPSV3.8.1.TAR.gz
 
