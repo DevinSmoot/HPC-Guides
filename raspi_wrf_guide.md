@@ -726,6 +726,8 @@ You should be given a list of various options for compiler types, whether to com
 
 Choose the option that lists a compiler to match what you used to compile WRFV3, serial, and grib2.
 
+The option used for the Raspberry Pi cluster is option 13 for serial gfortran.
+
 **Note: _The option number will likely be different than the number you chose to compile WRFV3_**
 
 the metgrid.exe and geogrid.exe programs rely on the WRF model's I/O libraries. There is a line in the configure.wps file that directs the WPS build system to the location of the I/O libraries from the WRF model:
@@ -784,8 +786,8 @@ COMPRESSION_INC
 Change to if it is not already set:
 
 ```
-COMPRESSION_LIBS    = -L/software/grib2/lib -ljasper -lpng -lz
-COMPRESSION_INC     = -I/software/grib2/include
+COMPRESSION_LIBS    = -L/software/lib/grib2/lib -ljasper -lpng -lz
+COMPRESSION_INC     = -I/software/lib/grib2/include
 ```
 
 Save and exit
