@@ -826,7 +826,7 @@ cd /software/ncar-wrf_3.8.1/build
 wget http://www2.mmm.ucar.edu/wrf/src/wps_files/geog_complete.tar.bz2
 
 
-tar xfvj geog_complete.tar.bz2
+tar xvfz geog_complete.tar.gz
 ```
 
 When you untar the file, it will be called "geog."
