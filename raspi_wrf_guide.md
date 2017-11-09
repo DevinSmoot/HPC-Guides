@@ -774,7 +774,7 @@ DM_CC               = mpicc -cc=mpicc
 
 You will also need to change the two lines for compression libraries.
 
-Find the second set of the following:
+Find the **second** set of the following:
 
 ```
 COMPRESSION_LIBS
