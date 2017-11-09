@@ -755,6 +755,7 @@ Add *-lgomp* to the end:
 ```
 -L$(NETCDF)/lib -lnetcdff -lnetcdf -lgomp
 ```
+
 Now it will invoke OpenMP as needed.
 
 We will also want to use MPI compiler.
