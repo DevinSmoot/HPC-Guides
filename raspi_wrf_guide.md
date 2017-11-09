@@ -835,7 +835,7 @@ Rename the file to "WPS_GEOG."
 
 ``mv geog WPS_GEOG``
 
-The directory infomation is given to the geogrid program in the namelist.wps file in the &geogrid section:
+The directory infomation is given to the geogrid program in the namelist.wps file in the geogrid section:
 
 ``geog_data_path = ´/software/ncar-wrf_3.8.1/build/WPS_GEOG´``
 
