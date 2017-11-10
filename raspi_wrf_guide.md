@@ -967,3 +967,7 @@ To run WRFV3, type something similar to:
 ``mpirun -np 8 ./wrf.exe``
 
 Again, check your "rsl" file for "SUCCESS", and make sure you have all the wrfout* files you anticipated having. If so, the run was successful, and you are ready to do analysis for your project.
+
+## Troubleshooting Section:
+>#### The Node Randomly Reboots:
+> This error is indicated by the node rebooting.Under intensive computation, the board needs a minimum amount of voltage to carry out these tasks. The node then gets stuck in a rebooting process, in which the node's image must be refreshed with a previously working image. This problem is a result of using a low voltage, micro USB cable to power on a pi board. Switch out USB cables, and try from a working SD card image. 
