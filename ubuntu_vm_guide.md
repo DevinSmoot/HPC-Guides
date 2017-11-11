@@ -317,7 +317,7 @@ Change to the *mpich-3.2* directory and create *build* and *install* directories
 ```
 cd /software/lib/mpich_3.2
 
-mdkir build install
+mkdir build install
 ```
 
 > #### Step 2 - Download and install
