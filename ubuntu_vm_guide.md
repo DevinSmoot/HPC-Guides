@@ -44,7 +44,7 @@ Set *Type:* to **Linux**
 
 Set *Version:* to **Ubuntu (64-bit)**
 
-Set *Memory size* to 1/4 of total host system memory or **2048**
+Set *Memory size* to **2048**
 
 Set *Hard disk* to **Create a virtual hard disk now**
 
@@ -58,7 +58,7 @@ Set *File location* to **Head Node**
 
 **_Note:_** File location can be changed by clicking the icon to the right of the *File location* input box
 
-Set *File size* to **20.00**
+Set *File size* to **80.00**
 
 Set *Hard disk file type* to **VDI (VirtualBox Disk Image)**
 
