@@ -871,13 +871,24 @@ Should show two entries. Look for _head_ under nodelist. It's state should be _i
 ---
 
 ## Slurm on Compute Node
-
-**On _head node_**
-
-> #### Step 1 - Copy Slurm configuration file and Munge key to _node0_ <username's> home directory:
+> #### Step 1 - Install Slurm
+**On _compute node_**
 
 ```
-rsync -a --rsync-path="sudo rsync" /etc/munge/munge.key <username>@node0:~/munge.key
+sudo apt-get install slurmd slurm-client
+```
+## Setup Rsync on Head node:
+Edit the /etc/sudoers file:
+Add this line to the end of the file:
+```
+<username> ALL=NOPASSWD: /usr/bin/rsync *
+```
+**On _head node_**
+
+> #### Step 2 - Copy Slurm configuration file and Munge key to _node0_ <username's> home directory:
+
+```
+rsync -a --rsync-path="sudo rsync" /etc/munge/munge.key <username>@node0:/etc/munge/munge.key
 ```
 
 ```
@@ -886,20 +897,8 @@ rsync -a --rsync-path="sudo rsync" /etc/slurm-llnl/slurm.conf <username>@node0:~
 
 **On _compute node_**
 
-> #### Step 2 - Install Slurm
 
-```
-sudo apt-get install slurmd slurm-client
-```
-
-> #### Step 3 - Copy the configuration files to proper locations
-
-```
-sudo cp ~/munge.key /etc/munge/
-sudo cp ~/slurm.conf /etc/slurm-llnl/
-```
-
-> #### Step 4 - Fix Munge issue so it will boot
+> #### Step 3 - Fix Munge issue so it will boot
 
 ```
 sudo systemctl edit --system --full munge
@@ -918,7 +917,12 @@ ExecStart=/usr/sbin/munged --syslog
 ```
 
 Save and exit.
-
+## Setup Rsync on compute node
+Edit the /etc/sudoers file:
+Add this line to the end of the file:
+```
+<username> ALL=NOPASSWD: /usr/bin/rsync *
+```
 ```
 sudo systemctl enable munge
 
@@ -927,7 +931,7 @@ sudo systemctl start munge
 
 _**Note:**_ The _systemctl enable munge_ may show a failed notification but its fine. Just move to the next command.
 
-> #### Step 5 - Enable Slurm daemon
+> #### Step 4 - Enable Slurm daemon
 
 ```
 sudo systemctl enable slurmd
@@ -939,13 +943,13 @@ Complete Slurm daemon auto install:
 sudo apt-get upgrade -y
 ```
 
-> #### Step 6 - Set Slurm folder permissions
+> #### Step 5 - Set Slurm folder permissions
 
 ```
 sudo chown -R slurm:slurm /var/lib/slurmd
 ```
 
-> #### Step 7 - Reboot both nodes
+> #### Step 6 - Reboot both nodes
 
 Execute on both nodes:
 
