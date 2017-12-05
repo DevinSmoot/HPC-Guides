@@ -103,8 +103,6 @@ Click **Start**
 
 > #### Step 7 - Install Ubuntu Server
 
-**NOTE:** Add sub-sections based on screen name. Also add images.
-
 Select **Install Ubuntu Server**
 
 Select **English**
@@ -158,8 +156,6 @@ Select **Yes** to *Install the Grub boot loader to the master boot record*
 <img src="images\part1step7.png" alt="Step 7 VirtualBox" style="width: 450px;"/>
 
 > #### Step 8 - Set Static IP Address for Secondary Connection
-
-**Note:** Add __*Optional*__ section for third device allowing for puTTY were available.
 
 Start the *Head Node* and login using the username and password created during the install process
 
@@ -289,7 +285,7 @@ cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
 Install some required compilers and packages:
 
 ```
-sudo apt install make build-essential gfortran
+sudo apt-get install make build-essential gfortran
 ```
 
 Create */software* directory:
@@ -433,10 +429,6 @@ Select **Full clone**
 
 Click **Clone**
 
-**Note:** Add snapshot instructions here. Base install save point for both nodes.
-
-Also add notes on more than one node.
-
 > #### Step 2 - Set Static IP Address
 
 In VirtualBox select *Compute Node 1* in the left column
@@ -461,8 +453,6 @@ address 192.168.10.5
 netmask 255.255.255.0
 network 192.168.10.0
 ```
-
-**NOTE:** Also remove third interface connection if it was entered on the head node for Putty access.
 
 Under the line ```auto enp0s3``` change or add the following:
 
@@ -524,17 +514,7 @@ Edit the hosts file:
 sudo nano /etc/hosts
 ```
 
-Change:
-
-```
-127.0.1.1     head
-```
-
-To:
-
-```
-127.0.1.1     node0
-```
+Change ```head``` to ```node0```
 
 Save and exit
 
@@ -606,7 +586,7 @@ On the *Head Node* enter:
 
 ```
 cd ~
-mpiexec -f nodelist -n 6 /software/lib/mpich_3.2/build/examples/cpi
+mpiexec -f nodelist -n 6 ~/mpich3/build/examples/cpi
 ```
 
 You should get an output similar to the following:
@@ -626,7 +606,7 @@ Congratulations! This cluster is ready to execute MPI code.
 Execute:
 
 ```
-sudo apt install slurm-wlm slurmctld slurmd
+sudo apt-get install slurm-wlm slurmctld slurmd
 ```
 
 > #### Step 2 - Develop configuration file
@@ -850,14 +830,13 @@ sudo systemctl enable slurmctld
 Complete the automatic install:
 
 ```
-sudo apt upgrade -y
+sudo apt-get upgrade -y
 ```
 
 > #### Step 7 - Set create and set permissions on Slurm folder
 
 ```
 sudo mkdir -p /var/lib/slurmd
-
 sudo chown -R slurm:slurm /var/lib/slurmd
 ```
 
@@ -892,26 +871,32 @@ Should show two entries. Look for _head_ under nodelist. It's state should be _i
 ---
 
 ## Slurm on Compute Node
+> #### Step 1 - Install Slurm
+**On _compute node_**
 
+```
+sudo apt-get install slurmd slurm-client
+```
+## Setup Rsync on Head node:
+Edit the /etc/sudoers file:
+Add this line to the end of the file:
+```
+<username> ALL=NOPASSWD: /usr/bin/rsync *
+```
 **On _head node_**
 
-> #### Step 1 - Copy Slurm configuration file and Munge key to _node0_:
+> #### Step 2 - Copy Slurm configuration file and Munge key to _node0_ <username's> home directory:
 
 ```
-sudo rsync -a --rsync-path="sudo rsync" /etc/munge/munge.key <username>@node0:/etc/munge/
+rsync -a --rsync-path="sudo rsync" /etc/munge/munge.key <username>@node0:/etc/munge/munge.key
 ```
 
 ```
-sudo rsync -a --rsync-path="sudo rsync" /etc/slurm-llnl/slurm.conf <username>@node0:/etc/slurm/
+rsync -a --rsync-path="sudo rsync" /etc/slurm-llnl/slurm.conf <username>@node0:~/slurm.conf
 ```
 
 **On _compute node_**
 
-> #### Step 2 - Install Slurm
-
-```
-sudo apt install slurmd slurm-client
-```
 
 > #### Step 3 - Fix Munge issue so it will boot
 
@@ -932,7 +917,12 @@ ExecStart=/usr/sbin/munged --syslog
 ```
 
 Save and exit.
-
+## Setup Rsync on compute node
+Edit the /etc/sudoers file:
+Add this line to the end of the file:
+```
+<username> ALL=NOPASSWD: /usr/bin/rsync *
+```
 ```
 sudo systemctl enable munge
 
@@ -956,8 +946,6 @@ sudo apt-get upgrade -y
 > #### Step 5 - Set Slurm folder permissions
 
 ```
-sudo mkdir -p /var/lib/slurmd
-
 sudo chown -R slurm:slurm /var/lib/slurmd
 ```
 
@@ -967,16 +955,6 @@ Execute on both nodes:
 
 ```
 sudo reboot
-```
-
-> #### Step 7 - Resume Slurm operations
-
-Execute:
-
-```
-sudo scontrol update nodename="head" state=resume
-
-sudo scontrol update nodename="node0" state=resume
 ```
 
 ---
