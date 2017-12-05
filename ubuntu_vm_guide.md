@@ -872,33 +872,46 @@ Should show two entries. Look for _head_ under nodelist. It's state should be _i
 
 ## Slurm on Compute Node
 > #### Step 1 - Install Slurm
+
 **On _compute node_**
 
 ```
 sudo apt-get install slurmd slurm-client
 ```
-## Setup Rsync on Head node:
+
+> #### Step 2 - Setup Rsync:
+
+**On _head node_**
+
 Edit the /etc/sudoers file:
+
+```
+sudo visudo
+```
+
 Add this line to the end of the file:
+
 ```
 <username> ALL=NOPASSWD: /usr/bin/rsync *
 ```
-**On _head node_**
 
-> #### Step 2 - Copy Slurm configuration file and Munge key to _node0_ <username's> home directory:
+> #### Step 3 - Copy Slurm configuration file and Munge key to _node0_:
 
-```
-rsync -a --rsync-path="sudo rsync" /etc/munge/munge.key <username>@node0:/etc/munge/munge.key
-```
+Copy _munge.key_ file:
 
 ```
-rsync -a --rsync-path="sudo rsync" /etc/slurm-llnl/slurm.conf <username>@node0:~/slurm.conf
+sudo rsync -a --rsync-path="sudo rsync" /etc/munge/munge.key <username>@node0:/etc/munge/munge.key
+```
+
+Copy _slurm.conf_ file:
+
+```
+rsync -a --rsync-path="sudo rsync" /etc/slurm-llnl/slurm.conf <username>@node0:/etc/slurm-llnl/slurm.conf
 ```
 
 **On _compute node_**
 
-
-> #### Step 3 - Fix Munge issue so it will boot
+> #### Step 4 - Fix Munge issue so it will boot
 
 ```
 sudo systemctl edit --system --full munge
@@ -917,12 +930,25 @@ ExecStart=/usr/sbin/munged --syslog
 ```
 
 Save and exit.
-## Setup Rsync on compute node
+
+> #### Step 5 - Setup Rsync:
+
+**On _compute node_**
+
 Edit the /etc/sudoers file:
+
+```
+sudo visudo
+```
+
 Add this line to the end of the file:
+
 ```
 <username> ALL=NOPASSWD: /usr/bin/rsync *
 ```
+
+> #### Step 6 - Finish Munge setup
+
 ```
 sudo systemctl enable munge
 
