@@ -1,13 +1,4 @@
-<head>
-<style>
-h1 {
-  text-align: center;
-}
-h2 {
-  text-align: center;
-}
-</style>
-</head>
+
 
 # Ubuntu Supercomputing Virtual Cluster Setup Guide
 
@@ -560,6 +551,12 @@ sudo nano nodelist
 Add ```192.168.10.100``` to the second line
 
 Save and exit
+
+Deploy Head Node SSH Key
+
+Issue the following command for each node:
+
+rsync -a --rsync-path="sudo rsync" ~/.ssh/authorized_keys pi@nodeX:~/.ssh/authorized_keys
 
 
 > #### Step 7 - Test MPI
