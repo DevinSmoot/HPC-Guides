@@ -1002,6 +1002,23 @@ Do this for all nodes and you are safe to begin making changes and producing
 ---
 
 ## Troubleshooting
+If having trouble with using rsync commands:
+
+> #### Setup Rsync:
+
+**On _Both nodes_**
+
+Edit the /etc/sudoers file:
+
+```
+sudo visudo
+```
+
+Add this line to the end of the file:
+
+```
+<username> ALL=NOPASSWD: /usr/bin/rsync *
+```
 
 > #### Host Verification Key Error
 
@@ -1028,11 +1045,10 @@ ssh-keygen -t rsa -C "cluster@swosu"
 ```Enter``` to confirm blank passphrase
 
 Copy new SSH keys to local system and nodes:
+```
+rsync -a --rsync-path="sudo rsync" ~/.ssh/authorized_keys pi@nodeX:~/.ssh/authorized_keys
+```
 
-```
-cat /home/<username>/.ssh/id_rsa.pub >> /home/<username>/.ssh/authorized_keys
-cat ~/.ssh/id_rsa.pub | ssh <username>@192.168.10.100 "cat >> .ssh/authorized_keys"
-```
 
 Save new SSH keys to keychain:
 
@@ -1056,21 +1072,5 @@ You will be prompted if you want to save a copy of the current machine state. Th
 **_Note:_** Remember the rule to save and save often!
 
 
-> #### Troubleshooting section
-If having trouble with using rsync commands:
 
-> #### Step 5 - Setup Rsync:
 
-**On _Both nodes_**
-
-Edit the /etc/sudoers file:
-
-```
-sudo visudo
-```
-
-Add this line to the end of the file:
-
-```
-<username> ALL=NOPASSWD: /usr/bin/rsync *
-```
