@@ -1122,12 +1122,29 @@ pre-up iptables-restore < /etc/iptables.rules
 ```
 
 If it is missing then add it to the end of the file. Save and exit.
+> ### RSYNC ISSUES:
 
+If having trouble with using rsync commands:
+
+> #### Setup Rsync:
+
+**On _Both nodes_**
+
+Edit the /etc/sudoers file:
+
+```
+sudo visudo
+```
+
+Add this line to the end of the file:
+
+```
+<username> ALL=NOPASSWD: /usr/bin/rsync *
+```
 > #### MPI ISSUES
 
 If mpiexec command fails to execute, stalls, or displays an error message about an unreadable path file:
-* Mpich3 could be i
-*  the wrong directory
+* Mpich3 could be in the wrong directory
 * Make sure the export path correlates to the actual install path for MPICH3
 * Reinstalling MPICH3 and setting up the proper environment variables can fix many problems, re-evaluate the MPICH3 install instructions and verify all settings before attempting a reinstall.
 
