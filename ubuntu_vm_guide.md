@@ -586,7 +586,7 @@ On the *Head Node* enter:
 
 ```
 cd ~
-mpiexec -f nodelist -n 6 ~/mpich3/build/examples/cpi
+mpiexec -f nodelist -n 6 /software/lib/mpich3/build/examples/cpi
 ```
 
 You should get an output similar to the following:
