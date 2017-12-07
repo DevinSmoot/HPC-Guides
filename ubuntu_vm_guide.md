@@ -931,23 +931,9 @@ ExecStart=/usr/sbin/munged --syslog
 
 Save and exit.
 
-> #### Step 5 - Setup Rsync:
 
-**On _compute node_**
 
-Edit the /etc/sudoers file:
-
-```
-sudo visudo
-```
-
-Add this line to the end of the file:
-
-```
-<username> ALL=NOPASSWD: /usr/bin/rsync *
-```
-
-> #### Step 6 - Finish Munge setup
+> #### Step 5 - Finish Munge setup
 
 ```
 sudo systemctl enable munge
@@ -957,7 +943,7 @@ sudo systemctl start munge
 
 _**Note:**_ The _systemctl enable munge_ may show a failed notification but its fine. Just move to the next command.
 
-> #### Step 4 - Enable Slurm daemon
+> #### Step 6 - Enable Slurm daemon
 
 ```
 sudo systemctl enable slurmd
@@ -969,13 +955,13 @@ Complete Slurm daemon auto install:
 sudo apt-get upgrade -y
 ```
 
-> #### Step 5 - Set Slurm folder permissions
+> #### Step 7 - Set Slurm folder permissions
 
 ```
 sudo chown -R slurm:slurm /var/lib/slurmd
 ```
 
-> #### Step 6 - Reboot both nodes
+> #### Step 8 - Reboot both nodes
 
 Execute on both nodes:
 
@@ -1068,3 +1054,23 @@ Click the second icon with the loopback green arrow to restore that snapshot
 You will be prompted if you want to save a copy of the current machine state. This is a personal choice and is advised if you think you may resolve the situation causing the restore later.
 
 **_Note:_** Remember the rule to save and save often!
+
+
+> #### Troubleshooting section
+If having trouble with using rsync commands:
+
+> #### Step 5 - Setup Rsync:
+
+**On _Both nodes_**
+
+Edit the /etc/sudoers file:
+
+```
+sudo visudo
+```
+
+Add this line to the end of the file:
+
+```
+<username> ALL=NOPASSWD: /usr/bin/rsync *
+```
