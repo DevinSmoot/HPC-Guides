@@ -1044,18 +1044,18 @@ ssh-keygen -t rsa -C "cluster@swosu"
 
 ```Enter``` to confirm blank passphrase
 
-Copy new SSH keys to local system and nodes:
+Copy new SSH keys nodes:
+Copy SSH keys to authorized keys:
+
 ```
-rsync -a --rsync-path="sudo rsync" ~/.ssh/authorized_keys pi@nodeX:~/.ssh/authorized_keys
+cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
+```
+```
+sudo rsync -a --rsync-path="sudo rsync" ~/.ssh/authorized_keys pi@nodeX:~/.ssh/authorized_keys
 ```
 
 
-Save new SSH keys to keychain:
 
-```
-ssh-agent bash
-ssh-add
-```
 
 > #### Restore VirtualBox snapshot
 
