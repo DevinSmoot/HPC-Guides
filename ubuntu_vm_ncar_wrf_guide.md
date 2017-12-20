@@ -1,14 +1,3 @@
-<head>
-<style>
-h1 {
-  text-align: center;
-}
-h2 {
-  text-align: center;
-}
-</style>
-</head>
-
 # NCAR-WRF on Ubuntu Virtual Machine Cluster
 
 ---
@@ -640,7 +629,7 @@ Rename the file to "WPS_GEOG."
 
 ``mv geog WPS_GEOG``
 
-The directory infomation is given to the geogrid program in the namelist.wps file in the &geogrid section:
+The directory infomation is given to the geogrid program in the namelist.wps file in the geogrid section:
 
 ``export geog_data_path=/software/ncar-wrf_3.8.1/WPS_GEOG``
 

@@ -1,5 +1,3 @@
-
-
 # Ubuntu Supercomputing Virtual Cluster Setup Guide
 
 ---
@@ -1067,7 +1065,3 @@ Click the second icon with the loopback green arrow to restore that snapshot
 You will be prompted if you want to save a copy of the current machine state. This is a personal choice and is advised if you think you may resolve the situation causing the restore later.
 
 **_Note:_** Remember the rule to save and save often!
-
-
-
-
