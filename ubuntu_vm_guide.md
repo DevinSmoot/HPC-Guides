@@ -13,7 +13,7 @@ the process of setting up MPICH3.
 
 
 ## Set up Head Node
-
+## Starting Notes: You will begin by downloading the VirtualBox software. VirtualBox will allow students' to download Linux operating systems inside of a virtual environment without overwritting the user's current operating system (Windows, macOS).
 > #### Step 1 - Install VirtualBox
 
 Download and install Oracle VirtualBox
