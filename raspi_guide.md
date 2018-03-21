@@ -399,6 +399,8 @@ _**Note:**_ Anytime you need to add a node to the cluster make sure to add it he
 
 **Test 1 - Hostname Test**
 
+Enter on command line:
+
 ```
 cd ~
 
@@ -406,7 +408,7 @@ mpiexec -f nodelist hostname
 ```
 
 
-Should return:
+Output:
 
 ```
 head
@@ -414,12 +416,13 @@ head
 
 **Test 2 - Calculate Pi**
 
+Enter on command line:
+
 ```
 mpiexec -f nodelist -n 2 /software/lib/mpich_3.2/build/examples/cpi
 ```
 
-
-Should return similar:
+Output:
 
 ```
 Process 0 of 2 is on head
