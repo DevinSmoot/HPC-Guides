@@ -997,19 +997,48 @@ raspi2*      up   infinite      7   unk* node[0-6]
 
 **On *head node*:**
 
-```
-rsync -a --rsync-path="sudo rsync" /etc/munge/munge.key pi@node0:/etc/munge/munge.key
-```
+Give rsync proper permission to run:
 
 ```
-rsync -a --rsync-path="sudo rsync" /etc/slurm-llnl/slurm.conf pi@node0:/etc/slurm-llnl/slurm.conf
+sudo visudo
+```
+
+Add the following to the end of the file:
+
+```
+<username> ALL=NOPASSWD: /usr/bin/rsync *
+```
+
+**On *compute node*:**
+
+SSH in to compute node:
+
+```
+ssh pi@node0
+```
+Give rsync proper permission to run:
+
+```
+sudo visudo
+```
+
+Add the following to the end of the file:
+
+```
+<username> ALL=NOPASSWD: /usr/bin/rsync *
+```
+
+Exit back to head node:
+
+```
+exit
 ```
 
 > #### Step 2 - Install Slurm daemon
 
 **Execute on *node0*:**
 
-SSH into *node0*:
+SSH in to *node0*:
 
 ```
 ssh pi@node0
@@ -1034,6 +1063,31 @@ Take ownership of Slurm run folder:
 
 ```
 sudo chown -R slurm:slurm /var/run/slurm-llnl
+```
+
+Exit to head node:
+
+```
+exit
+```
+**On *head node*:**
+
+Copy Munge and Slurm configuration files from head node to compute node:
+
+```
+rsync -a --rsync-path="sudo rsync" /etc/munge/munge.key pi@node0:/etc/munge/munge.key
+```
+
+```
+rsync -a --rsync-path="sudo rsync" /etc/slurm-llnl/slurm.conf pi@node0:/etc/slurm-llnl/slurm.conf
+```
+
+**On *compute node*:**
+
+SSH in to *node0*:
+
+```
+ssh pi@node0
 ```
 
 Finish install and start Slurm and Munge:
@@ -1322,6 +1376,7 @@ On many occasions, certain nodes fail to work because of a software/hardware mal
 **Physical and Logical Layers (Pictured Below)**
 
 <img src="images\Raspberry_Pi_Cluster_Network_Configuration_-_Physical_and_Logical_Layers.png">
+
 </center>
 
 ---
