@@ -717,12 +717,26 @@ Save and exit
 
 Issue the following command from the head node for each node in the cluster:
 
+Only run this command once the node is restarted with a node number.
+
 ```
-rsync -a --rsync-path="sudo rsync" ~/.ssh/authorized_keys pi@nodeX:~/.ssh/authorized_keys
+rsync -a --rsync-path="sudo rsync" ~/.ssh/authorized_keys pi@node0:~/.ssh/authorized_keys
 ```
 
 
 _**Note:**_ At this point you will just do this once to develop a compute node image with Slurm installed. After that is complete you will create a new generic image of the compute node. Once that is complete you can use that image to finish deploying your compute nodes for the rest of your cluster.
+
+SSH in to the new node:
+
+```
+ssh pi@nodeX
+```
+
+Reboot the node:
+
+```
+sudo reboot
+```
 
 ---
 
@@ -751,10 +765,10 @@ sudo nano /etc/ntp.conf
 Change:
 
 ```
-server 0.debian.pool.ntp.org iburst
-server 1.debian.pool.ntp.org iburst
-server 2.debian.pool.ntp.org iburst
-server 3.debian.pool.ntp.org iburst
+pool 0.debian.pool.ntp.org iburst
+pool 1.debian.pool.ntp.org iburst
+pool 2.debian.pool.ntp.org iburst
+pool 3.debian.pool.ntp.org iburst
 ```
 
 To:
@@ -774,6 +788,12 @@ sudo /etc/init.d/ntp restart
 
 
 > ##### Compute Node
+
+SSH in to compute node:
+
+```
+ssh pi@node0
+```
 
 Set Head Node as NTP server.
 
