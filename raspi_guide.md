@@ -56,55 +56,84 @@ Log in with username: **pi** and password **raspberry**
 ```
 sudo raspi-config
 ```
-==9/29/17 - Changed option numbers to correlate with updated OS
-Expand the filesystem (_**Option 7**_)
-* Select _**Yes**_
 
-Setup Localization Options (_**Option 4**_)
+> Setup Advanced Options:
 
-* Set Locale (_**Option I1**_)
-	* Unselect _**en_GB.UTF-8**_
-	* Select _**en_US ISO-8859-1**_
-	* Select _**en_US**_
+Select **7 Advanced Options**
 
-Under Localization Options:
-* Set TimeZone (_**Option I2**_)
-	* Select _**America**_
-	* Select _**Chicago**_
+* Select **A1 Expand Filesystem**
+* Select **Ok**
 
-Under Localization Options:
-* Set Keyboard Layout (_**Option I3**_)
+Select **7 Advanced Options**
+
+* Select **A3 Memory Split**_)
+	* Enter **16**
+	* Press **Enter**
+
+> Setup Localisation Options:
+
+Select **4 Localisation Options**
+
+* Select Locale **I1 Change Locale**
+	* Unselect **en_GB.UTF-8 UTF-8**
+	* Select **en_US.UTF-8 UTF-8**
+	* Press **Enter**
+	* Select **en_US.UTF-8**
+
+Select **4 Localisation Options**
+
+* Select **I2 Change Timezone**
+	* Select **US** (or appropriate country)
+	* Select **Central** (or appropriate local timezone)
+
+Select **4 Localisation Options**
+
+* Select **I3 Change Keyboard Layout**
 	* Use the default selected Keyboard
-	* Select _**English (US)**_
-	* Use the default keyboard Layout
-	* Select _**No compose key**_
-	* Select _**No**_
+	* Press **Enter**
+	* Select **Other**
+	* Select **English (US)**
+	* Select **English (US)**
+	* Select **The default for the keyboard layout**
+	* Select **No compose key**
+	* Press **Enter**
 
-Under Localization Options:
-* Set Wi-Fi country (_**Option I4**_)
-	* Select _**US United States**_
+Select **4 Localisation Options**
 
-On the main settings page (not under advanced options):
-* Set Hostname (_**Option 2**_)
-	*	Set _Hostname_ (_**Option A2**_)
-	* Enter _**head**_
+* Select **I4 Change Wi-fi Country**
+	* Select **US United States**
+	* Select **Ok**
 
-Under Advanced options:
-* Set Memory Split (_**Option 7**_)
-	* Set _Memory Split_ (_**Option A3**_)
-	* Enter _**16**_
+> Setup Network Options:
 
+Select **2 Network Options**
 
-* ##### Setup SSH service:
-On the main screen:
-* Select _**Interfacing Options**_ (_**Option 5**_)
-	* Select _**SSH**_ (_**Option P2**_)
-	* Select _**Yes**_
-	* Select _**Ok**_
+* Select **N1 Hostname**
+	* Select **Ok**
+	*	Enter **head** for the hostname
+	* Press **Enter**
 
-Select _Finish_ and _Yes_ to reboot
+Select **2 Network Options**
 
-==End 9/29/17
+* Select **N2 Wi-fi**
+	* Enter wi-fi SSID
+	* Press **Enter**
+	* Enter wi-fi passphrase
+	* Press **Enter**
+
+> Setup Interfacing Options:
+
+Select **5 Interfacing Options**
+
+* Select **P2 SSH**
+	* Select **Yes**
+	* Select **Ok**
+	* Press **Enter**
+
+_Tab_ to **Finish**
+
+Select **Yes** to reboot
+
 
 > ##### Step 3 - Configure head node network
 
@@ -123,6 +152,7 @@ interface eth0
 static ip_address=192.168.10.5
 static domain_name_servers=8.8.8.8
 ```
+
 Save and exit
 
 ##### Setup *wlan0*:
@@ -199,7 +229,7 @@ sudo iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
 sudo bash -c "iptables-save > /etc/iptables.rules"
 ```
 
-Add settings to */etc/network/interfaces*:
+Add settings to */etc/network/interfaces* file:
 
 ```sudo nano /etc/network/interfaces```
 
@@ -209,7 +239,7 @@ Add the following line at the end of the wlan0 section under wpa-conf line to ma
 
 Save and exit
 
-Update */etc/hosts_ file*:
+Update */etc/hosts* file:
 
 Add the following to the end of the file:
 
