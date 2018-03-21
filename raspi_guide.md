@@ -10,7 +10,7 @@ If your SD card size will vary you will want to build the head node using the sm
 
 #### Head Node
 
-> Hardware:
+Hardware:
 *	Raspberry Pi board x 1
 *	WiPi USB dongle	x 1
 *	SD Card 16GB+ x 1
@@ -20,7 +20,7 @@ If your SD card size will vary you will want to build the head node using the sm
 
 #### Compute nodes
 
-> Hardware:
+Hardware:
 *	Raspberry Pi board x 7
 *	SD Card 16GB+ x 1
 *	Ethernet cable x 1
@@ -43,13 +43,15 @@ Install Raspbian Lite on SD card for head unit(s) and each compute node
 
 [Raspbian Install Guides](https://www.raspberrypi.org/documentation/installation/installing-images/)
 
-> #### Step 2 - Configure head node settings
+> #### Step 2 - Initial Head Node Setup
 
 Setup the locale settings to make sure the correct keyboard, language, timezone, etc are set. This will ensure we are able to enter the correct symbols while working on the command line.
 
 Configure Locale:
 
 Log in with username: **pi** and password **raspberry**
+
+Start the Raspberry Pi configuration tool:
 
 ```
 sudo raspi-config
@@ -132,6 +134,16 @@ _Tab_ to **Finish**
 
 Select **Yes** to reboot
 
+> Setup Network Settings
+
+Edit */etc/network/interfaces*:
+
+```
+sudo nano /etc/network/interfaces
+```
+
+Add the following to the end of the file:
+
 ```
 auto lo
 iface lo inet loopback
@@ -140,11 +152,11 @@ iface eth0 inet manual
 
 allow-hotplug wlan0
 iface wlan0 inet manual
-    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+
+wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
 ```
 
-
-Setup *eth0*:
+Setup *eth0* static ip address:
 
 Edit */etc/dhcpcd.conf*:
 
@@ -161,32 +173,6 @@ static domain_name_servers=8.8.8.8
 ```
 
 Save and exit
-
-Setup *wlan0* by adding wireless network credentials to */etc/wpa_supplicant/wpa_supplicant.conf*:
-
-```
-sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
-```
-
-Choose secure network settings or unsecure network settings and add to the end of the file:
-
-Secure network settings:
-
-```
-network={
-ssid="<network name>"
-psk="<network password>"
-}
-```
-
-Unsecure network settings:
-
-```
-network={
-ssid="<network name>"
-key_mgmt=NONE
-}
-```
 
 Reboot:
 
