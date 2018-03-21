@@ -134,7 +134,7 @@ _Tab_ to **Finish**
 
 Select **Yes** to reboot
 
-> Setup Network Settings
+> #### Step 3 - Configure Network Settings
 
 Edit */etc/network/interfaces*:
 
@@ -253,6 +253,14 @@ Add the following to the end of the file:
 
 _**Note:**_ At this point you want to assign and name all of your nodes that **WILL** be in your cluster and enter them in the hosts file. Below is an example of a 6 node cluster including the head node as one of the six. This file will be copied with the image to the compute nodes and will save you a step of developing and deploying the hosts file later.
 
+Edit */etc/hosts* file:
+
+```
+sudo nano /etc/hosts
+```
+
+Modify or add the following lines to the file:
+
 ```
 127.0.1.1	head
 
@@ -263,6 +271,8 @@ _**Note:**_ At this point you want to assign and name all of your nodes that **W
 192.168.10.102	node2
 192.168.10.103	node3
 192.168.10.104	node4
+192.168.10.105 	node5
+192.168.10.106 	node6
 ```
 
 Reboot:
@@ -317,8 +327,6 @@ sudo chown -R pi:hpc /software
 Create build and install directory inside mpich3 directory:
 
 ```
-cd /software/lib
-
 mkdir mpich_3.2
 
 cd mpich_3.2
@@ -329,9 +337,9 @@ mkdir build install
 Download mpich3 and untar:
 
 ```
-wget http://www.mpich.org/static/downloads/3.2/mpich-3.2.tar.gz
+wget http://www.mpich.org/static/downloads/3.2.1/mpich-3.2.1.tar.gz
 
-tar xvfz mpich-3.2.tar.gz
+tar xvfz mpich-3.2.1.tar.gz
 ```
 
 Compile and install mpich3:
@@ -339,7 +347,7 @@ Compile and install mpich3:
 ```
 cd build
 
-/software/lib/mpich_3.2/mpich-3.2/configure --prefix=/software/lib/mpich_3.2/install
+/software/lib/mpich_3.2/mpich-3.2.1/configure --prefix=/software/lib/mpich_3.2/install
 
 make
 
