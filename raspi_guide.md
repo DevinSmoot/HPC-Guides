@@ -1015,6 +1015,8 @@ SSH into *node0*:
 ssh pi@node0
 ```
 
+Install Slurm daemon and Slurm client:
+
 ```
 sudo apt install slurmd slurm-client
 sudo ln -s /var/lib/slurm-llnl /var/lib/slurm
