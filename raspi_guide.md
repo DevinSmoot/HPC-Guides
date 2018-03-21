@@ -711,6 +711,26 @@ To:
 
 Save and exit
 
+> #### Step 6 - Expand Filesystem
+
+Open configuration tool:
+
+```
+sudo raspi-config
+```
+
+Select **7 Advanced Options**
+
+Select **A1 Expand Filesystem**
+
+Select **Ok**
+
+*Tab* to Select **Finish**
+
+Select **Yes**
+
+All settings should take effect on reboot
+
 ---
 
 ## Deploy Head Node SSH Key
