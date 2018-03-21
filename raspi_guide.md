@@ -1237,7 +1237,7 @@ Now all traffic for the cluster is routed through eth0 and out eth1 to the inter
 
 ---
 
-## Troubleshooting Section:
+## Troubleshooting Section
 
 > #### Received SIGHUP or SIGTERM from Nano
 >
@@ -1355,6 +1355,8 @@ sudo /etc/init.d/<service name> [start,stop,restart,status]
 
 > #### ENABLING/DISABLING NETWORK INTERFACE CONNECTIONS
 
+This is a quick way to bring down and bring back up network interfaces without restarting.
+
 Disable the specified connection
 
 ```
@@ -1370,6 +1372,8 @@ sudo ifup <connection name>
 > #### SLURM ISSUES
 
 Make sure the slurm.conf file is identical across all nodes.
+
+Use ``sudo scontrol reconfigure`` to distribute the slurm.conf from the head node to all compute nodes responding.
 
 When running the service status command, read the error messages that are displayed: _**these messages are vital in order to troubleshoot current problems**_.
 
