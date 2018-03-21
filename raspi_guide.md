@@ -942,7 +942,7 @@ Agree to overwrite.
 ```
 sudo mkdir /var/log/slurm
 
-sudo chown -R pi:hpc /var/log/slurm/
+sudo chown -R slurm:slurm /var/log/slurm/
 ```
 
 > #### Step 5 - Finish installs and start services
@@ -998,11 +998,11 @@ raspi2*      up   infinite      7   unk* node[0-6]
 **On *head node*:**
 
 ```
-rsync -a --rsync-path="sudo rsync" /etc/munge/munge.key pi@nodeX:/etc/slurm-llnl/slurm.conf
+rsync -a --rsync-path="sudo rsync" /etc/munge/munge.key pi@node0:/etc/slurm-llnl/slurm.conf
 ```
 
 ```
-rsync -a --rsync-path="sudo rsync" /etc/slurm-llnl/slurm.conf pi@nodeX:/etc/slurm-llnl/slurm.conf
+rsync -a --rsync-path="sudo rsync" /etc/slurm-llnl/slurm.conf pi@node0:/etc/slurm-llnl/slurm.conf
 ```
 
 > #### Step 2 - Install Slurm daemon
@@ -1018,6 +1018,20 @@ ssh pi@node0
 ```
 sudo apt install slurmd slurm-client
 sudo ln -s /var/lib/slurm-llnl /var/lib/slurm
+```
+
+Create log folders and take ownership:
+
+```
+sudo mkdir -p /var/log/slurm
+
+sudo chown -R slurm:slurm /var/log/slurm
+```
+
+Take ownership of Slurm run folder:
+
+```
+sudo chown -R slurm:slurm /var/run/slurm-llnl
 ```
 
 Finish install and start Slurm and Munge:
@@ -1051,24 +1065,15 @@ Will return feedback to the screen. Verify *Active* line states: _**active (runn
 sudo adduser pi slurm
 ```
 
-> #### Step 4 - Add and take ownership of Slurm log folder
-
-```
-sudo mkdir -p /var/log/slurm/accounting
-
-sudo chown -R slurm:slurm /var/log/slurm
-```
-
 Execute on *head node*:
 
 ```
 sudo scontrol reconfigure
+```
 
-sudo scontrol update nodename="node[0-6]" state=resume
--If this command throws an invalid nodename error:
-try updating each node individually with the command:
-sudo scontrol update NodeName="nodeX" state=resume
+Check node status:
 
+```
 sinfo
 ```
 
