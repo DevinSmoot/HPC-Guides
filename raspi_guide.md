@@ -923,10 +923,10 @@ Check if Slurm controller is running:
 scontrol show daemons
 ```
 
-Should return:
+Output:
 
 ```
-slurmctld slurmd
+slurmctld
 ```
 
 > #### Step 3 - Create Munge key
@@ -937,7 +937,15 @@ sudo /usr/sbin/create-munge-key
 
 Agree to overwrite.
 
-> #### Step 4 - Finish installs and start services
+> #### Step 4 - Create log folder and take ownership
+
+```
+sudo mkdir /var/log/slurm
+
+sudo chown -R pi:hpc /var/log/slurm/
+```
+
+> #### Step 5 - Finish installs and start services
 
 ```
 sudo systemctl enable slurmctld.service
@@ -962,22 +970,23 @@ sudo systemctl status munge.service
 
 Will return feedback to the screen. Verify *Active* line states: _**active (running)**_.
 
-> #### Step 5 - Add user to Slurm group
+> #### Step 6 - Add user to Slurm group
 
 ```
 sudo adduser pi slurm
 ```
 
-> #### Step 6 - Add and take ownership of Slurm log folder
-
-```
-sudo mkdir -p /var/log/slurm/accounting
-
-sudo chown -R slurm:slurm /var/log/slurm
-```
+Check Slurm status:
 
 ```
 sinfo
+```
+
+Output:
+
+```
+PARTITION AVAIL  TIMELIMIT  NODES  STATE NODELIST
+raspi2*      up   infinite      7   unk* node[0-6]
 ```
 
 ---
