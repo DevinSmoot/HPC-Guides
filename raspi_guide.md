@@ -637,6 +637,18 @@ compute_node_mpi_stage_2017_01_03
 
 Log in with username: **pi** and password **raspberry**
 
+SSH into the new node:
+
+```
+ssh pi@nodeX
+```
+
+Enter **yes** to accept the key
+
+Verify you are logged in:
+
+Command prompt should read ``pi@nodeX:~ $``
+
 > #### Step 3 - Adjust */etc/hostname* file
 
 ```
@@ -703,7 +715,7 @@ Save and exit
 
 ## Deploy Head Node SSH Key
 
-Issue the following command for each node:
+Issue the following command from the head node for each node in the cluster:
 
 ```
 rsync -a --rsync-path="sudo rsync" ~/.ssh/authorized_keys pi@nodeX:~/.ssh/authorized_keys
