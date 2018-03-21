@@ -319,7 +319,7 @@ export NETCDF=$DIR/netcdf_4.1.3/install
 
 Reset filesystem location for next library install:
 ```
-cd ../..
+cd $DIR
 ```
 
 **MPICH:** This library is necessary if you are planning to build WRF in parallel. If your machine does not have more than 1 processor, or if you have no need to run WRF with multiple processors, you can skip installing MPICH.
@@ -363,7 +363,7 @@ export PATH=$DIR/mpich_3.0.4/install/bin:$PATH
 
 Reset filesystem location for next library install:
 ```
-cd ../..
+cd $DIR
 ```
 
 **zlib:** This is a compression library necessary for compiling WPS (specifically ungrib) with GRIB2 capability
@@ -404,7 +404,7 @@ make install
 
 Reset filesystem location for next library install:
 ```
-cd ../..
+cd $DIR
 ```
 
 **libpng:** This is a compression library necessary for compiling WPS (specifically ungrib) with GRIB2 capability
@@ -439,7 +439,7 @@ make install
 
 Reset filesystem location for next library install:
 ```
-cd ../..
+cd $DIR
 ```
 
 **JasPer:** This is a compression library necessary for compiling WPS (specifically ungrib) with GRIB2 capability
@@ -474,7 +474,7 @@ make install
 
 Reset filesystem location for next library install:
 ```
-cd ../..
+cd $DIR
 ```
 
 **M4**
