@@ -998,7 +998,7 @@ raspi2*      up   infinite      7   unk* node[0-6]
 **On *head node*:**
 
 ```
-rsync -a --rsync-path="sudo rsync" /etc/munge/munge.key pi@node0:/etc/slurm-llnl/slurm.conf
+rsync -a --rsync-path="sudo rsync" /etc/munge/munge.key pi@node0:/etc/munge/munge.key
 ```
 
 ```
@@ -1311,16 +1311,13 @@ On many occasions, certain nodes fail to work because of a software/hardware mal
 
 <img src="images\Raspberry_Pi_Cluster_Network_Configuration_-_Base_Equipment_Layer.png">
 
-
 **Physical Layer (Pictured Below)**
 
 <img src="images\Raspberry_Pi_Cluster_Network_Configuration_-_Physical_Layer.png">
 
-
 **Logical Layer (Pictured Below)**
 
 <img src="images\Raspberry_Pi_Cluster_Network_Configuration_-_Logical_Layer.png">
-
 
 **Physical and Logical Layers (Pictured Below)**
 
