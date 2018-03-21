@@ -360,7 +360,6 @@ Activate environment variable:
 export PATH=/software/lib/mpich_3.2/install/bin:$PATH
 ```
 
-
 Add path to environment variables for persistance:
 
 ```
