@@ -902,7 +902,7 @@ SelectType=select/linear
 #
 # LOGGING AND ACCOUNTING
 AccountingStorageType=accounting_storage/none
-ClusterName=raspi2
+ClusterName=raspi3
 #JobAcctGatherFrequency=30
 JobAcctGatherType=jobacct_gather/none
 #SlurmctldDebug=3
@@ -914,7 +914,7 @@ SlurmdLogFile=/var/log/slurm/slurmd.log
 # COMPUTE NODES
 NodeName=node[0-6] Procs=1 RealMemory=768 State=UNKNOWN
 
-PartitionName=raspi2 Default=YES  Nodes=node[0-6] State=UP MaxTime=INFINITE
+PartitionName=raspi3 Default=YES  Nodes=node[0-6] State=UP MaxTime=INFINITE
 ```
 
 Check if Slurm controller is running:
@@ -1088,6 +1088,12 @@ SSH in to *node0*:
 
 ```
 ssh pi@node0
+```
+
+Take ownership of *munge.key* file:
+
+```
+sudo chown munge:munge /etc/munge/munge.key
 ```
 
 Finish install and start Slurm and Munge:
