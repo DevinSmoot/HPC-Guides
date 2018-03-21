@@ -67,9 +67,11 @@ Now type:
 ./a.out
 ```
 
-The following should print out to the screen:
+Output:
 
-*SUCCESS test 1 fortran only fixed format*
+```
+SUCCESS test 1 fortran only fixed format
+```
 
 
 **Test #2:** Free Format Fortran: TEST_2_fortran_only_free.f90
@@ -86,10 +88,12 @@ and then type:
 ./a.out
 ```
 
-The following should print out to the screen:
+Output:
 
-*Assume Fortran 2003: has FLUSH, ALLOCATABLE, derived type, and ISO C Binding*
-*SUCCESS test 2 fortran only free format*
+```
+Assume Fortran 2003: has FLUSH, ALLOCATABLE, derived type, and ISO C Binding
+SUCCESS test 2 fortran only free format
+```
 
 **Test #3:** C: TEST_3_c_only.c
 
@@ -103,35 +107,45 @@ and then type:
 
 The following should print out to the screen:
 
-*SUCCESS test 3 c only*
+```
+SUCCESS test 3 c only
+```
 
 **Test #4:** Fortran Calling a C Function:
 TEST_4_fortran+c_c.c, and TEST_4_fortran+x_f.f90
 
 Type the following in the command line:
 
-``gcc -c TEST_4_fortran+c_c.c``
+```
+gcc -c TEST_4_fortran+c_c.c
+```
 
 and then type:
 
-``gfortran -c TEST_4_fortran+c_f.f90``
+```
+gfortran -c TEST_4_fortran+c_f.f90
+```
 
 and then:
 
-``gfortran TEST_4_fortran+c_f.o TEST_4_fortran+c_c.o``
+```
+gfortran TEST_4_fortran+c_f.o TEST_4_fortran+c_c.o
+```
 
 and then issue:
 
-``./a.out``
+```
+./a.out
+```
 
-The following should print out to the screen:
+Output:
 
+```
+C function called by Fortran
+Values are xx = 2.00 and ii = 1
+SUCCESS test 4 fortran calling c
+```
 
-*C function called by Fortran*
-
-*Values are xx = 2.00 and ii = 1*
-
-*SUCCESS test 4 fortran calling c*
 
 
 In addition to the compilers required to manufacture the WRF executables, the WRF build system has scripts as the top level for the user interface. The WRF scripting system uses, and therefore having the following is necessary:
@@ -144,29 +158,53 @@ To test whether these scripting languages are working properly on the system, th
 
 **Test #5:** csh in the command line, type:
 
-``./TEST_csh.csh``
+Error:
 
-The result should be:
+```
+-bash: ./TEST_csh.csh: /bin/csh: bad interpreter: No such file or directory
+```
 
-*SUCCESS csh test*
+Resolution
 
-**NOTE:** can be resolved by ``sudo apt install csh``
+```
+sudo apt install csh
+```
+
+Actual test:
+
+```
+./TEST_csh.csh
+```
+
+Output:
+
+```
+SUCCESS csh test
+```
 
 **Test #6:** perl in the command line, type:
 
-``./TEST_perl.pl``
+```
+./TEST_perl.pl
+```
 
-The result should be:
+Output:
 
-*SUCCESS perl test*
+```
+SUCCESS perl test
+```
 
 **Test #7:** sh in the command line, type:
 
-``./TEST_sh.sh``
+```
+./TEST_sh.sh
+```
 
-The result should be:
+Output:
 
-*SUCCESS sh test*
+```
+SUCCESS sh test
+```
 
 Finally, inside the scripts are quite a few UNIX commands that are available regardless of which shell is used. The following standard UNIX commands are mandatory:
 
@@ -231,32 +269,56 @@ It is important to note that these libraries must all be installed with the same
 
 **NetCDF:** This library is always necessary!
 
+Set environment variables:
+
 ```
 export DIR=/software/lib
 export CC=gcc
 export CXX=g++
 export FC=gfortran
 export F77=gfortran
+```
 
+Create installation directory:
+
+```
 cd $DIR
 mkdir -p $DIR/netcdf_4.1.3/build
 mkdir -p $DIR/netcdf_4.1.3/install
 cd netcdf_4.1.3
+```
 
+Get library files:
+
+```
 wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/netcdf-4.1.3.tar.gz
+```
 
+Untar files:
+
+```
 tar xzvf netcdf-4.1.3.tar.gz
 cd build
+```
 
+Install:
+
+```
 $DIR/netcdf_4.1.3/netcdf-4.1.3/configure --prefix=$DIR/netcdf_4.1.3/install --disable-dap --disable-netcdf-4 --disable-shared
 
 make
 make install
 make check
+```
 
+Activate environment variables:
+```
 export PATH=$DIR/netcdf_4.1.3/install/bin:$PATH
 export NETCDF=$DIR/netcdf_4.1.3/install
+```
 
+Reset filesystem location for next library install:
+```
 cd ../..
 ```
 
@@ -266,22 +328,41 @@ In principle, any implementation of the MPI-2 standard should work with WRF; how
 
 Assuming all the 'export' commands were already issued while setting up NetCDF, you can continue on to install MPICH, issuing each of the following commands:
 
+_**NOTE:**_ This is only required if no other MPICH or MPI library is installed
+
+Create installation directory:
 ```
 mkdir -p $DIR/mpich_3.0.4/build
 mkdir -p $DIR/mpich_3.0.4/install
 cd mpich_3.0.4
+```
 
+Get library files:
+```
 wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/mpich-3.0.4.tar.gz
+```
 
+Untar files:
+```
 tar xzvf mpich-3.0.4.tar.gz
 cd build
+```
 
+Install:
+```
 $DIR/mpich_3.0.4/mpich-3.0.4/configure --prefix=$DIR/mpich_3.0.4/install
 
 make
 make install
-export PATH=$DIR/mpich_3.0.4/install/bin:$PATH
+```
 
+Set environment variables:
+```
+export PATH=$DIR/mpich_3.0.4/install/bin:$PATH
+```
+
+Reset filesystem location for next library install:
+```
 cd ../..
 ```
 
@@ -289,23 +370,40 @@ cd ../..
 
 Assuming all the "export" commands from the NetCDF install are already set, you can move on to the commands to install zlib.
 
+Set environment variables:
 ```
 export LDFLAGS=-L$DIR/grib2/lib
 export CPPFLAGS=-I$DIR/grib2/include
+```
 
+Create installation directory:
+```
 mkdir -p $DIR/grib2
 cd grib2
+```
 
+Get library files:
+```
 wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/zlib-1.2.7.tar.gz
+```
 
+Untar files:
+```
 tar xzvf zlib-1.2.7.tar.gz
+```
+
+Install:
+```
 cd zlib-1.2.7
 
 ./configure --prefix=$DIR/grib2
 
 make
 make install
+```
 
+Reset filesystem location for next library install:
+```
 cd ../..
 ```
 
@@ -313,20 +411,34 @@ cd ../..
 
 Assuming all the "export" commands from the NetCDF install are already set, you can move on to the commands to install zlib.
 
+Create installation directory:
 ```
 mkdir -p $DIR/libpng_1.2.50
 cd libpng_1.2.50
+```
 
+Get library files:
+```
 wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/libpng-1.2.50.tar.gz
+```
 
+Untar files:
+```
 tar xzvf libpng-1.2.50.tar.gz
+```
+
+Install:
+```
 cd libpng-1.2.50
 
 ./configure --prefix=$DIR/grib2
 
 make
 make install
+```
 
+Reset filesystem location for next library install:
+```
 cd ../..
 ```
 
@@ -334,38 +446,64 @@ cd ../..
 
 Assuming all the "export" commands from the NetCDF install are already set, you can move on to the commands to install zlib.
 
+Create installation directory:
 ```
 mkdir -p $DIR/jasper_1.900.1
 cd jasper_1.900.1
+```
 
+Get library files:
+```
 wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/jasper-1.900.1.tar.gz
+```
 
+Untar files:
+```
 tar xzvf jasper-1.900.1.tar.gz
+```
+
+Install:
+```
 cd jasper-1.900.1
 
 ./configure --prefix=$DIR/grib2
 
 make
 make install
+```
 
+Reset filesystem location for next library install:
+```
 cd ../..
 ```
 
 **M4**
 
+Install m4 library:
 ```
 sudo apt install m4
 ```
 
 **HDF5**
 
+Create installation directory:
 ```
 mkdir -p $DIR/hdf5_1.10.1
 cd hdf5_1.10.1
+```
 
+Get library files:
+```
 wget https://support.hdfgroup.org/ftp/HDF5/current/src/hdf5-1.10.1.tar.gz
+```
 
+Untar files:
+```
 tar xvfz hdf5-1.10.1.tar.gz
+```
+
+Install:
+```
 cd hdf5-1.10.1
 
 ./configure
@@ -374,6 +512,7 @@ make
 make check
 make install
 ```
+
 ---
 
 ## Library Compatibility Tests
@@ -970,4 +1109,4 @@ Again, check your "rsl" file for "SUCCESS", and make sure you have all the wrfou
 
 ## Troubleshooting Section:
 >#### The Node Randomly Reboots:
-> This error is indicated by the node rebooting.Under intensive computation, the board needs a minimum amount of voltage to carry out these tasks. The node then gets stuck in a rebooting process, in which the node's image must be refreshed with a previously working image. This problem is a result of using a low voltage, micro USB cable to power on a pi board. Switch out USB cables, and try from a working SD card image. 
+> This error is indicated by the node rebooting.Under intensive computation, the board needs a minimum amount of voltage to carry out these tasks. The node then gets stuck in a rebooting process, in which the node's image must be refreshed with a previously working image. This problem is a result of using a low voltage, micro USB cable to power on a pi board. Switch out USB cables, and try from a working SD card image.
