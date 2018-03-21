@@ -795,9 +795,19 @@ SSH in to compute node:
 ssh pi@node0
 ```
 
+Install NTP on comput node:
+
+```
+sudo apt install ntp
+```
+
 Set Head Node as NTP server.
 
 Edit */etc/ntp.conf*:
+
+```
+sudo nano /etc/ntp.conf
+```
 
 Under ``restrict ::1`` add:
 
@@ -817,10 +827,18 @@ To:
 broadcast 192.168.10.255
 ```
 
+Save and exit
+
 Restart NTP service:
 
 ```
 sudo /etc/init.d/ntp restart
+```
+
+Exit to head node:
+
+```
+exit
 ```
 
 ---
