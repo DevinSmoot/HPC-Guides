@@ -64,7 +64,7 @@ Select **7 Advanced Options**
 
 Select **7 Advanced Options**
 
-* Select **A3 Memory Split**_)
+* Select **A3 Memory Split**
 	* Enter **16**
 	* Press **Enter**
 
@@ -132,7 +132,7 @@ _Tab_ to **Finish**
 
 Select **Yes** to reboot
 
-
+```
 auto lo
 iface lo inet loopback
 
