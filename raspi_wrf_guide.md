@@ -1126,6 +1126,7 @@ http://www2.mmm.ucar.edu/wrf/OnLineTutorial/index.htm
 Katrina example:
 http://www2.mmm.ucar.edu/wrf/OnLineTutorial/CASES/SingleDomain/index.html
 
+
 ## Troubleshooting Section:
 >#### The Node Randomly Reboots:
 > This error is indicated by the node rebooting.Under intensive computation, the board needs a minimum amount of voltage to carry out these tasks. The node then gets stuck in a rebooting process, in which the node's image must be refreshed with a previously working image. This problem is a result of using a low voltage, micro USB cable to power on a pi board. Switch out USB cables, and try from a working SD card image.
