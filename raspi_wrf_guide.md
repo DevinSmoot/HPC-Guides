@@ -776,7 +776,7 @@ Usage:
 
 Where <case_name> is one of the options listed above.
 
-Compilation should take about 20-30 minutes.
+Compilation should take about 30-45 minutes.
 
 Once the compilation completes, to check whether it was successful, you need to look for executables in the WRFV3/main directory:
 
@@ -882,7 +882,7 @@ The option used for the Raspberry Pi cluster is option 13 for serial gfortran.
 
 the metgrid.exe and geogrid.exe programs rely on the WRF model's I/O libraries. There is a line in the configure.wps file that directs the WPS build system to the location of the I/O libraries from the WRF model:
 
-``WRF_DIR = ../WRFV3``
+``WRF_DIR = ../../WRFV3``
 
 Above is the default setting. As long as the name of the WRF model's top-level directory is "WRFV3" and the WPS and WRFV3 directories are at the same level (which they should be if you have followed exactly as instructed on this page so far), then the existing default setting is correct and there is no need to change it. If it is not correct, you must modify the configure file and then save the changes before compiling.
 
@@ -966,7 +966,7 @@ Verify that they are not zero-sized. To see file size, you can type:
 
 The WRF modeling system is able to create idealized simulations, though most users are interested in the real-data cases. To initiate a real-data case, the domain's physical location on the globe and the static information for that location must be created. This requires a data set that includes such fields as topography and land use catergories. These data are available from the [WRF download page](http://www2.mmm.ucar.edu/wrf/users/download/get_sources_wps_geog.html), but a tar file of the basic complete data set is also available below:
 
-[Geography Static Data](http://www2.mmm.ucar.edu/wrf/src/wps_files/geog_minimum.tar.bz2)
+[Geography Static Data](http://www2.mmm.ucar.edu/wrf/src/wps_files/geog_new3.9.tar.bz2)
 
 Download the file, and place it in the Build_WRF directory.
 
@@ -976,7 +976,7 @@ Uncompress and un-tar the file:
 cd /software/ncar-wrf_3.8.1/build
 
 
-wget http://www2.mmm.ucar.edu/wrf/src/wps_files/geog_complete.tar.bz2
+wget http://www2.mmm.ucar.edu/wrf/src/wps_files/geog_complete.tar.gz
 
 
 tar xvfz geog_complete.tar.gz
@@ -1117,6 +1117,14 @@ To run WRFV3, type something similar to:
 ``mpirun -np 8 ./wrf.exe``
 
 Again, check your "rsl" file for "SUCCESS", and make sure you have all the wrfout* files you anticipated having. If so, the run was successful, and you are ready to do analysis for your project.
+
+## Where to get started
+
+WRF online tutorial:
+http://www2.mmm.ucar.edu/wrf/OnLineTutorial/index.htm
+
+Katrina example:
+http://www2.mmm.ucar.edu/wrf/OnLineTutorial/CASES/SingleDomain/index.html
 
 ## Troubleshooting Section:
 >#### The Node Randomly Reboots:
