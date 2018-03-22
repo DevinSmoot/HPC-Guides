@@ -516,7 +516,7 @@ Reboot before testing:
 sudo reboot
 ```
 
-Complete test and install: (Testing will take quite some time to complete: 2+ hours)
+Complete test and install: (Testing will take quite some time to complete: 3+ hours)
 ```
 make check
 make install
@@ -567,13 +567,13 @@ gfortran 01_fortran+c+netcdf_f.o 01_fortran+c+netcdf_c.o -L${NETCDF}/lib -lnetcd
 ./a.out
 ```
 
-The following should be displayed on your screen:
+Output:
 
-*C function called by Fortran*
-
-*Values are xx = 2.00 and ii = 1*
-
-*SUCCESS test 1 fortran + c + netcdf*
+```
+C function called by Fortran
+Values are xx = 2.00 and ii = 1
+SUCCESS test 1 fortran + c + netcdf
+```
 
 **Test #2:** Fortran + C + NetCDF + MPI
 
@@ -596,15 +596,13 @@ mpif90 02_fortran+c+netcdf+mpi_f.o 02_fortran+c+netcdf+mpi_c.o -L${NETCDF}/lib -
 mpirun ./a.out
 ```
 
-The following should be displayed on your screen:
-
-*C function called by Fortran*
-
-*Values are xx = 2.00 and ii = 1*
-
-*status = 2*
-
-*SUCCESS test 2 fortran + c + netcdf + mpi*
+Output:
+```
+C function called by Fortran
+Values are xx = 2.00 and ii = 1
+status = 2
+SUCCESS test 2 fortran + c + netcdf + mpi
+```
 
 ## Building WRFV3
 
@@ -657,6 +655,8 @@ sudo mkdir /mnt/usb
 Mount the USB drive:
 
 ```
+sudo mkdir -p /mnt/usb
+
 sudo mount /dev/sda1 /mnt/usb
 ```
 
@@ -698,7 +698,7 @@ cd /software/ncar_wrf-3.8.1/build
 
 wget http://www2.mmm.ucar.edu/wrf/src/WRFV3.8.1.TAR.gz
 
-tar xfz WRFV3.8.1.TAR
+tar xfvz WRFV3.8.1.TAR.gz
 ```
 
 Go into the WRFV3 directory:
@@ -736,6 +736,8 @@ armv7l
 The end character is a lowercase L.
 
 Press _**A**_ to replace all.
+
+Save and exit
 
 Create a configuration file for your computer and compiler:
 
