@@ -488,7 +488,7 @@ sudo apt install m4
 
 Create installation directory:
 ```
-mkdir -p $DIR/hdf5_1.10.1
+mkdir -p $DIR/hdf5_1.10.1/install
 cd hdf5_1.10.1
 ```
 
@@ -506,9 +506,18 @@ Install:
 ```
 cd hdf5-1.10.1
 
-./configure
+$DIR/hdf5_1.10.1/hdf5-1.10.1/configure --prefix=$DIR/hdf5_1.10.1/install
 
 make
+```
+Reboot before testing:
+
+```
+sudo reboot
+```
+
+Complete test and install: (Testing will take quite some time to complete: 2+ hours)
+```
 make check
 make install
 ```
