@@ -112,8 +112,8 @@ Apply those changes:
 Apply routing to iptables:
 
 ```
-sudo iptables -t nat -A POSTROUTING -o enp0s3 -j MASQUERADE
-sudo iptables -t nat -A POSTROUTING -o enp0s8 -j MASQUERADE
+sudo iptables -t nat -A POSTROUTING -o eno1 -j MASQUERADE
+sudo iptables -t nat -A POSTROUTING -o eno2 -j MASQUERADE
 
 sudo bash -c "iptables-save > /etc/iptables.rules"
 ```
@@ -137,9 +137,20 @@ Now reboot the system:
 
 ``sudo apt udpate && sudo apt upgrade -y && sudo apt dist-upgrade -y``
 
-==CHANGES
-Add edit /etc/hosts section
-==END CHANGES
+Edit */etc/hosts* file:
+
+Add the following to the end of the file:
+
+```
+192.168.10.5    head
+192.168.10.100  node0
+192.168.10.101  node1
+192.168.10.102  node2
+192.168.10.103  node3
+192.168.10.104  node4
+192.168.10.105  node5
+192.168.10.106  node6
+```
 
 ##### Step 5 - Set up SSH key
 
@@ -159,10 +170,6 @@ Press ``Enter`` to confirm blank passphrase
 Copy SSH keys to authorized keys:
 
 ``cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys``
-
-==CHANGES
-Add edit /etc/hosts stuff
-==END CHANGES
 
 ---
 
