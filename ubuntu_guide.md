@@ -128,15 +128,6 @@ Add the following line to the end of the file:
 
 Save and exit
 
-Now reboot the system:
-
-``sudo reboot``
-
-
-##### Step 4 - Update the system packages and kernel
-
-``sudo apt udpate && sudo apt upgrade -y && sudo apt dist-upgrade -y``
-
 Edit */etc/hosts* file:
 
 Add the following to the end of the file:
@@ -152,15 +143,30 @@ Add the following to the end of the file:
 192.168.10.106  node6
 ```
 
+Now reboot the system:
+
+``sudo reboot``
+
+
+##### Step 4 - Update the system packages and kernel
+
+Execute system updates:
+
+```
+sudo apt udpate && sudo apt upgrade -y && sudo apt dist-upgrade -y
+```
+
 ##### Step 5 - Set up SSH key
 
 ** \*\* VERIFY AT THE COMMAND PROMPT THAT YOU ARE UNDER YOUR USER ACCOUNT AND NOT EXECUTING CODE AS SUPER USER OR ROOT \*\* **
 
 Generate an SSH key:
+
 ```
 cd ~
 ssh-keygen -t rsa -C "cluster@swosu"
 ```
+
 Press ``Enter`` to select default install location
 
 Press ``Enter`` to leave passphrase blank
@@ -169,7 +175,9 @@ Press ``Enter`` to confirm blank passphrase
 
 Copy SSH keys to authorized keys:
 
-``cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys``
+```
+cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
+```
 
 ---
 
@@ -179,60 +187,73 @@ Copy SSH keys to authorized keys:
 
 Install some required compilers and packages:
 
-``sudo apt install make build-essential gfortran``
+```
+sudo apt install make build-essential gfortran
+```
 
 Create software directory for multiple users:
 
-``sudo mkdir -p /software/lib``
+```
+sudo mkdir -p /software/lib
+```
 
 Create hpc user group:
 
-``sudo groupadd hpc``
+```
+sudo groupadd hpc
+```
 
 Add user to hpc user group:
 
-``sudo usermod -aG hpc <username>``
+```
+sudo usermod -aG hpc <username>
+```
 
 Take ownership of */software*:
 
-``sudo chown -R <username>:hpc /software``
+```
+sudo chown -R <username>:hpc /software
+```
 
 Change to *software* directory and create *mpich-3.2* directory:
 
 ```
 cd /software/lib
 
-mkdir mpich-3.2
+mkdir mpich_3.2
 ```
 
 Change to the *mpich-3.2* directory and create *build* and *install* directories:
 
 ```
-cd mpich-3.2
+cd mpich_3.2
 
 mkdir build install
 ```
 
-
-##### Step 2 - Download and install
+##### Step 2 - Download and install MPICH3
 
 Download MPICH3 package and install:
 http://www.mpich.org/downloads/
 
 ```
-wget http://www.mpich.org/static/downloads/3.2/mpich-3.2.tar.gz
+wget http://www.mpich.org/static/downloads/3.2.1/mpich-3.2.1.tar.gz
 ```
 
 Untar the package:
 
-``tar xvfz mpich-3.2.tar.gz``
+```
+tar xvfz mpich-3.2.tar.gz
+```
 
 Change to *build* directory to begin building the install:
 
-``cd build``
+```
+cd build
+```
 
 ```
-/software/lib/mpich-3.2/mpich-3.2/configure  --prefix=/software/lib/mpich-3.2/install
+/software/lib/mpich_3.2/mpich-3.2/configure  --prefix=/software/lib/mpich_3.2/install
 
 make
 make install
@@ -240,15 +261,21 @@ make install
 
 Add MPI location to system environment variable PATH:
 
-``export PATH=$PATH:/software/lib/mpich-3.2/install/bin``
+```
+export PATH=$PATH:/software/lib/mpich_3.2/install/bin
+```
 
 Make the PATH change permanent by adding it to the profile file:
 
-``sudo nano ~/.bashrc``
+```
+sudo nano ~/.bashrc
+```
 
 Add the following to the end of the file:
 
-``export PATH="$PATH:/software/lib/mpich-3.2/install/bin"``
+```
+export PATH="$PATH:/software/lib/mpich_3.2/install/bin"
+```
 
 Save and exit
 
