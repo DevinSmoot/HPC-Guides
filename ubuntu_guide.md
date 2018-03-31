@@ -274,6 +274,7 @@ sudo nano ~/.bashrc
 Add the following to the end of the file:
 
 ```
+# MPICH-3.2.1
 export PATH="$PATH:/software/lib/mpich_3.2/install/bin"
 ```
 
@@ -303,25 +304,15 @@ Should return **head** on the next line
 
 **Test 2**
 
-``mpiexec -f nodelist -n 2 /software/lib/mpich-3.2/build/examples/cpi``
+``mpiexec -f nodelist -n 2 /software/lib/mpich_3.2/build/examples/cpi``
 
-Should give an output similar to the following:
+Output:
 [image]
 
 ![Step 4](https://github.com/swosu/MAPSS/blob/dev/WinterCamp/Ubuntu%20Cluster%20Guide/images/part2step4.png)
 
-Shutdown head node:
-
-``sudo shutdown -h now``
-
 
 ##### Step 5 - SSH into Compute Node 0 to Acquire Authentication key
-
-In VirtualBox select *Head Node* in the left column
-
-With *Head Node* selected click **Start** in the toolbar
-
-Login to *Head Node*
 
 On *Head Node* enter:
 
