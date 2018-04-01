@@ -640,51 +640,11 @@ To:
 CONF_SWAPSIZE=2048
 ```
 
-Also change *CONF_SWAPFILE*:
+Restart *dphys-swapfile*:
 
 ```
-CONF_SWAPFILE=/mnt/usb/swap.file
-```
-
-Create the mountpoint folder:
-
-```
-sudo mkdir /mnt/usb
-```
-
-Mount the USB drive:
-
-```
-sudo mkdir -p /mnt/usb
-
-sudo mount /dev/sda1 /mnt/usb
-```
-
-Create the swap file:
-
-```
-sudo dd if=/dev/zero of=/mnt/usb/swap.file bs=1M count=2048
-```
-
-Next create a swap memory space and turn it on:
-
-```
-sudo mkswap /mnt/usb/swap.file
-sudo swapon /mnt/usb/swap.file
-```
-
-Disregard the permissions message.
-
-Now make these changes persistent:
-
-```
-sudo nano /etc/fstab
-```
-
-Add to the end of the file:
-
-```
-/mnt/usb/swap.file       none      swap     defaults    0   0
+sudo /etc/init.d/dphys-swapfile stop
+sudo /etc/init.d/dphys-swapfile start
 ```
 
 After ensuring that all libraries are compatible with the compilers, you can now prepare to build WRFV3. If you do not already have a WRFV3 tar file, you can find it below.
