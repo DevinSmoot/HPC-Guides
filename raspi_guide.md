@@ -1236,7 +1236,38 @@ sudo reboot
 Now all traffic for the cluster is routed through eth0 and out eth1 to the internet. Any returning traffic or downloads come in via eth1 and through eth0 to the cluster unless its meant for the head node.
 
 ---
+## Scripts
 
+Create a */software/scripts* folder:
+
+```
+sudo mkdir /software/scripts
+```
+
+Edit *.bashrc* file:
+
+```
+sudo nano ~/.bashrc
+```
+
+Add to the end of the file:
+
+```
+# SCRIPTS
+export PATH="/software/scripts:$PATH"
+```
+
+Add scripts to the */software/scripts* folder to use as commands system wide.
+
+#### Deploy file to all compute nodes
+
+
+
+```
+
+
+
+---
 ## Troubleshooting Section
 
 > #### Received SIGHUP or SIGTERM from Nano
