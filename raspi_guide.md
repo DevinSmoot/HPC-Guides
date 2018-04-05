@@ -1245,14 +1245,15 @@ Now all traffic for the cluster is routed through eth0 and out eth1 to the inter
 Create a */software/scripts* folder:
 
 ```
-sudo mkdir /software/scripts
-sudo mkdir /software/files
+mkdir -p /software/scripts
+mkdir -p /software/code
+mkdir -p /software/data
 ```
 
 Edit *.bashrc* file:
 
 ```
-sudo nano ~/.bashrc
+nano ~/.bashrc
 ```
 
 Add to the end of the file:
@@ -1273,32 +1274,33 @@ This script will deploy files to all nodes to a folder defined by the user.
 if [ "$1" == "-help" ] || [ "$1" == "" ]; then
     echo -e "Command    \tExample"
     echo "----------------------------------------------------------"
-    echo "deploy_file   deploy_file <filename> <destination folder>"
+    echo "deploy_file   deploy_file <filename> <option> <destination folder>"
     echo -e "\t\tNote:Default destination folder is '/software/files'"
     echo "Help          deploy -help"
     exit
 fi
 
+case "$1"
 if [ "$1" != "" ]; then
   if [ "$2" == "" ]; then
-        filelocation=/software/files
+        filelocation=/software/data
   else
         filelocation=$2
   fi
     echo "Transferring file: $1 to node0:$filelocation"
-    rsync $1 pi@node0:$filelocation
+    rsync -ar $1 pi@node0:$filelocation
     echo "Transferring file: $1 to node1:$filelocation"
-    rsync $1 pi@node1:$filelocation
+    rsync -ar $1 pi@node1:$filelocation
     echo "Transferring file: $1 to node2:$filelocation"
-    rsync $1 pi@node2:$filelocation
+    rsync -ar $1 pi@node2:$filelocation
     echo "Transferring file: $1 to node3:$filelocation"
-    rsync $1 pi@node3:$filelocation
+    rsync -ar $1 pi@node3:$filelocation
     echo "Transferring file: $1 to node4:$filelocation"
-    rsync $1 pi@node4:$filelocation
+    rsync -ar $1 pi@node4:$filelocation
     echo "Transferring file: $1 to node5:$filelocation"
-    rsync $1 pi@node5:$filelocation
+    rsync -ar $1 pi@node5:$filelocation
     echo "Transferring file: $1 to node6:$filelocation"
-    rsync $1 pi@node6:$filelocation
+    rsync -ar $1 pi@node6:$filelocation
 else
     echo "All nodes are already defined in the script"
     echo "Please enter a filename and destination folder: ie. deploy_file <filename> <destination folder>"
