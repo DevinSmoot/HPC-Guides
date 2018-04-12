@@ -143,13 +143,15 @@ Start the *Head Node* and login using the username and password created during t
 
 Edit the network interfaces file:
 
-``sudo nano /etc/network/interfaces``
+```
+sudo nano /etc/network/interfaces
+```
 
 Add the secondary interface to the file:
 
 ```
 # Secondary Interface - cluster connection enp0s8
-auto enp0s8
+auto eno2
 iface enp0s8 inet static
 address 192.168.10.5
 netmask 255.255.255.0
@@ -161,7 +163,9 @@ Save and exit
 ##### Step 3 - Set up IPv4 Traffic Forwarding
 Enable traffic forwarding and make it permanent:
 
-``sudo nano /etc/sysctl.conf``
+```
+sudo nano /etc/sysctl.conf
+```
 
 Add the following to the end of the file:
 
@@ -179,7 +183,9 @@ Save and exit
 
 Apply those changes:
 
-``sudo sysctl -p``
+```
+sudo sysctl -p
+```
 
 Apply routing to iptables:
 
@@ -190,25 +196,32 @@ sudo iptables -t nat -A POSTROUTING -o enp0s8 -j MASQUERADE
 sudo bash -c "iptables-save > /etc/iptables.rules"
 ```
 
-Open the network interfaces file:
+Edit */etc/network/interfaces* file:
 
-``sudo nano /etc/network/interfaces``
+```
+sudo nano /etc/network/interfaces
+```
 
 Add the following line to the end of the file:
 
-``pre-up iptables-restore < /etc/iptables.rules``
+```
+pre-up iptables-restore < /etc/iptables.rules
+```
 
 Save and exit
 
 Now reboot the system:
 
-``sudo reboot``
+```
+sudo reboot
+```
 
 
 ##### Step 4 - Update the system packages and kernel
 
-``sudo apt udpate && sudo apt upgrade -y && sudo apt dist-upgrade -y``
-
+```
+sudo apt udpate && sudo apt upgrade -y && sudo apt dist-upgrade -y
+```
 
 ##### Step 5 - Set up SSH key
 
