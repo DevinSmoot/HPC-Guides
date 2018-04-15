@@ -240,7 +240,9 @@ Press ``Enter`` to confirm blank passphrase
 
 Copy SSH keys to authorized keys:
 
-``cat /home/<username>/.ssh/id_rsa.pub > /home/<username>/.ssh/authorized_keys``
+```
+cat /home/<username>/.ssh/id_rsa.pub > /home/<username>/.ssh/authorized_keys
+```
 
 ---
 
@@ -250,23 +252,33 @@ Copy SSH keys to authorized keys:
 
 Install some required compilers and packages:
 
-``sudo apt-get install make build-essential``
+```
+sudo apt-get install make build-essential
+```
 
 Create software directory for multiple users:
 
-``sudo mkdir -p /software/lib``
+```
+sudo mkdir -p /software/lib
+```
 
 Create hpc user group:
 
-``sudo groupadd hpc``
+```
+sudo groupadd hpc
+```
 
 Add user to hpc user group:
 
-``sudo usermod -aG hpc <username>``
+```
+sudo usermod -aG hpc <username>
+```
 
 Take ownership of */software*:
 
-``sudo chown -R <username>:hpc /software``
+```
+sudo chown -R <username>:hpc /software
+```
 
 Change to *software* directory and create *mpich-3.2* directory:
 
@@ -276,10 +288,10 @@ cd /software/lib
 mkdir mpich-3.2
 ```
 
-Change to the *mpich-3.2* directory and create *build* and *install* directories:
+Change to the *mpich_3.2* directory and create *build* and *install* directories:
 
 ```
-cd mpich-3.2
+cd mpich_3.2
 
 mkdir build install
 ```
@@ -288,25 +300,31 @@ mkdir build install
 
 Install Fortran which is requred by MPICH3:
 
-``sudo apt-get install gfortran``
+```
+sudo apt-get install gfortran
+```
 
 Download MPICH3 package and install:
 http://www.mpich.org/downloads/
 
 ```
-sudo wget http://www.mpich.org/static/downloads/3.2/mpich-3.2.tar.gz
+sudo wget http://www.mpich.org/static/downloads/3.2/mpich-3.2.1.tar.gz
 ```
 
 Untar the package:
 
-``sudo tar xvfz mpich-3.2.tar.gz``
+```
+sudo tar xvfz mpich-3.2.1.tar.gz
+```
 
 Change to *build* directory to begin building the install:
 
-``cd build``
+```
+cd build
+```
 
 ```
-/software/lib/mpich-3.2/mpich-3.2/configure  --prefix=/software/lib/mpich-3.2/install
+/software/lib/mpich_3.2/mpich-3.2/configure  --prefix=/software/lib/mpich_3.2/install
 
 make
 make install
@@ -314,16 +332,20 @@ make install
 
 Add MPI location to system environment variable PATH:
 
-``export PATH=$PATH:/software/lib/mpich-3.2/install/bin``
+```
+export PATH=$PATH:/software/lib/mpich_3.2/install/bin
+```
 
 Make the PATH change permanent by adding it to the profile file:
 
-``sudo nano ~/.bashrc``
+```
+sudo nano ~/.bashrc
+```
 
 Add the following to the end of the file:
 
 ```
-export PATH="$PATH:/software/lib/mpich-3.2/install/bin"
+export PATH="$PATH:/software/lib/mpich_3.2/install/bin"
 ```
 
 Save and exit
@@ -340,28 +362,40 @@ sudo nano nodelist
 
 Add the *head node* ip address to the file:
 
-``192.168.10.5``
+```
+192.168.10.5
+```
 
 ##### Step 4 - Test MPI
 
 **Test 1**
 
-``mpiexec -f nodelist hostname``
+```
+mpiexec -f nodelist hostname
+```
 
-Should return **head** on the next line
+Output:
+
+```
+head
+```
 
 **Test 2**
 
-``mpiexec -f nodelist -n 2 /software/lib/mpich-3.2/build/examples/cpi``
+```
+mpiexec -f nodelist -n 2 /software/lib/mpich_3.2/build/examples/cpi
+```
 
-Should give an output similar to the following:
+Ouput:
 [image]
 
 ![Step 4](https://github.com/swosu/MAPSS/blob/dev/WinterCamp/Ubuntu%20Cluster%20Guide/images/part2step4.png)
 
 Shutdown head node:
 
-``sudo shutdown -h now``
+```
+sudo shutdown -h now
+```
 
 ---
 
