@@ -421,9 +421,11 @@ With *Compute Node 1* selected click **Start** in the toolbar
 
 Login to *Compute Node 1*
 
-At the terminal enter:
+Edit */etc/network/interfaces* file:
 
-``sudo nano /etc/network/interfaces``
+```
+sudo nano /etc/network/interfaces
+```
 
 Remove all of the following lines:
 
@@ -436,7 +438,7 @@ netmask 255.255.255.0
 network 192.168.10.0
 ```
 
-Under the line ``auto enp0s3`` change or add the following:
+Under the line *auto enp0s3* change or add the following:
 
 ```
 iface enp0s3 inet static
@@ -450,7 +452,9 @@ Save and exit
 
 Shutdown the *Compute Node 1*:
 
-``sudo shutdown -h now``
+```
+sudo shutdown -h now
+```
 
 
 ##### Step 3 - Change Compute Node 1 Network Adapters
@@ -480,7 +484,9 @@ Login to *Compute Node 1*
 
 Edit the hostname file:
 
-``sudo nano /etc/hostname``
+```
+sudo nano /etc/hostname
+```
 
 Change ``head`` to ``node1``
 
@@ -488,7 +494,9 @@ Save and exit
 
 Edit the hosts file:
 
-``sudo nano /etc/hosts``
+```
+sudo nano /etc/hosts
+```
 
 Change ``head`` to ``node1``
 
@@ -496,7 +504,9 @@ Save and exit
 
 Now reboot *Compute Node 1*
 
-``sudo reboot``
+```
+sudo reboot
+```
 
 Wait for *Compute Node 1* to reboot before continuing
 
@@ -511,7 +521,9 @@ Login to *Head Node*
 
 On *Head Node* enter:
 
-``ssh <username>@node0``
+```
+ssh <username>@node0
+```
 
 Type ``yes`` and press ``Enter`` when asked *Are you sure you want to continue connection (yes/no)?*
 
