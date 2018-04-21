@@ -215,7 +215,9 @@ Start the *Head Node* and login using the username and password created during t
 
 Edit the network interfaces file:
 
-``sudo nano /etc/network/interfaces``
+```
+sudo nano /etc/network/interfaces
+```
 
 Add the secondary interface to the file:
 
@@ -237,7 +239,7 @@ Add to the end of the file:
 
 ```
 192.168.10.5    head
-192.168.10.100  node1
+192.168.10.100  node0
 ```
 
 Save and exit
@@ -259,6 +261,12 @@ net.ipv4.ip_forward = 1
 net.ipv6.conf.all.disable_ipv6 = 1
 net.ipv6.conf.default.disable_ipv6 = 1
 net.ipv6.conf.lo.disable_ipv6 = 1
+```
+
+Save settings:
+
+```
+sudo sysctl -p
 ```
 
 Save and exit
@@ -385,17 +393,17 @@ Install some required compilers and packages:
 
 ``sudo apt-get install make build-essential``
 
-Change to *home* directory and create *mpich3* directory:
+Change to *home* directory and create *mpich_3.2* directory:
 
 ```
 cd ~
-mkdir mpich3
+mkdir -p /software/lib/mpich_3.2
 ```
 
 Change to the *mpich3* directory and create *build* and *install* directories:
 
 ```
-cd mpich3
+cd /software/lib/mpich_3.2
 mkdir build install
 ```
 
