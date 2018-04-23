@@ -311,10 +311,15 @@ mkdir build install
 
 > #### Step 2 - Download and install
 
-Download MPICH3 package and install:
+Install prerequisites, download MPICH3 package and install:
 
 ```
-wget http://www.mpich.org/static/downloads/3.2/mpich-3.2.tar.gz
+sudo apt install gfortran
+```
+
+Download MPICH3 package:
+```
+wget http://www.mpich.org/static/downloads/3.2/mpich-3.2.1.tar.gz
 ```
 
 Untar the package:
