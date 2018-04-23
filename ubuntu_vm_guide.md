@@ -217,7 +217,7 @@ sudo iptables -t nat -A POSTROUTING -o enp0s8 -j MASQUERADE
 sudo bash -c "iptables-save > /etc/iptables.rules"
 ```
 
-Open the network interfaces file:
+Edit */etc/network/interfaces* file:
 
 ```
 sudo nano /etc/network/interfaces
@@ -242,7 +242,6 @@ sudo reboot
 ```
 sudo apt udpate && sudo apt upgrade -y && sudo apt dist-upgrade -y
 ```
-
 
 > #### Step 11 - Set up SSH keys
 
@@ -289,29 +288,16 @@ Create hpc user group:
 sudo groupadd hpc
 ```
 
-<<<<<<< HEAD
-Change to *home* directory and create *mpich_3.2* directory:
-
-```
-cd ~
-mkdir -p /software/lib/mpich_3.2
-=======
 Add user to hpc user group:
 
 ```
 sudo usermod -aG hpc <username>
->>>>>>> 9dc7094fedd4a1cb77f52a63c398061c593aa773
 ```
 
 Take ownership of */software*:
 
 ```
-<<<<<<< HEAD
-cd /software/lib/mpich_3.2
-mkdir build install
-=======
 sudo chown -R <username>:hpc /software
->>>>>>> 9dc7094fedd4a1cb77f52a63c398061c593aa773
 ```
 
 Change to the *mpich-3.2* directory and create *build* and *install* directories:
@@ -324,10 +310,15 @@ mkdir build install
 
 > #### Step 2 - Download and install
 
-Download MPICH3 package and install:
+Install prerequisites, download MPICH3 package and install:
 
 ```
-wget http://www.mpich.org/static/downloads/3.2/mpich-3.2.tar.gz
+sudo apt install gfortran
+```
+
+Download MPICH3 package:
+```
+wget http://www.mpich.org/static/downloads/3.2/mpich-3.2.1.tar.gz
 ```
 
 Untar the package:
@@ -404,7 +395,11 @@ cd ~
 mpiexec -f nodelist hostname
 ```
 
-Should return **head** on the next line
+Output:
+
+```
+head
+```
 
 **Test 2**
 
@@ -412,7 +407,7 @@ Should return **head** on the next line
 mpiexec -f nodelist -n 2 /software/lib/mpich_3.2/build/examples/cpi
 ```
 
-Should give an output similar to the following:
+Output:
 <img src="images\part2step4.png" alt="Step 4 MPI" style="width: 450px;"/>
 
 ---
@@ -439,7 +434,7 @@ With *Compute Node 1* selected click **Start** in the toolbar
 
 Login to *Compute Node 1*
 
-At the terminal enter:
+Edit */etc/network/interfaces* file:
 
 ```
 sudo nano /etc/network/interfaces
