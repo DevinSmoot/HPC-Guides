@@ -239,12 +239,12 @@ sudo apt udpate && sudo apt upgrade -y && sudo apt dist-upgrade -y
 
 ##### Step 5 - Set up SSH key
 
-** \*\* VERIFY AT THE COMMAND PROMPT THAT YOU ARE UNDER YOUR USER ACCOUNT AND NOT EXECUTING CODE AS SUPER USER OR ROOT \*\* **
+**VERIFY AT THE COMMAND PROMPT THAT YOU ARE UNDER YOUR USER ACCOUNT AND NOT EXECUTING CODE AS SUPER USER OR ROOT**
 
 Generate an SSH key:
 ```
 cd ~
-ssh-keygen -t rsa -C "cluster@swosu"
+ssh-keygen -t rsa -C "edison@swosu"
 ```
 Press ``Enter`` to select default install location
 
@@ -255,7 +255,7 @@ Press ``Enter`` to confirm blank passphrase
 Copy SSH keys to authorized keys:
 
 ```
-cat /home/<username>/.ssh/id_rsa.pub > /home/<username>/.ssh/authorized_keys
+cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
 ```
 
 ---
@@ -270,10 +270,10 @@ Install some required compilers and packages:
 sudo apt-get install make build-essential
 ```
 
-Create software directory for multiple users:
+Create */software* directory:
 
 ```
-sudo mkdir -p /software/lib
+sudo mkdir -p /software/lib/mpich_3.2
 ```
 
 Create hpc user group:
@@ -294,18 +294,10 @@ Take ownership of */software*:
 sudo chown -R <username>:hpc /software
 ```
 
-Change to *software* directory and create *mpich-3.2* directory:
-
-```
-cd /software/lib
-
-mkdir mpich-3.2
-```
-
 Change to the *mpich_3.2* directory and create *build* and *install* directories:
 
 ```
-cd mpich_3.2
+cd /software/lib/mpich_3.2
 
 mkdir build install
 ```
