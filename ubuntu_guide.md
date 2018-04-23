@@ -304,23 +304,22 @@ mkdir build install
 
 ##### Step 2 - Download and install
 
-Install Fortran which is requred by MPICH3:
+Install prerequisites, download MPICH3 package and install:
 
 ```
-sudo apt-get install gfortran
+sudo apt install gfortran
 ```
 
-Download MPICH3 package and install:
-http://www.mpich.org/downloads/
+Download MPICH3 package:
 
 ```
-sudo wget http://www.mpich.org/static/downloads/3.2/mpich-3.2.1.tar.gz
+wget http://www.mpich.org/static/downloads/3.2/mpich-3.2.1.tar.gz
 ```
 
 Untar the package:
 
 ```
-sudo tar xvfz mpich-3.2.1.tar.gz
+tar xvfz mpich-3.2.1.tar.gz
 ```
 
 Change to *build* directory to begin building the install:
@@ -331,7 +330,11 @@ cd build
 
 ```
 /software/lib/mpich_3.2/mpich-3.2/configure  --prefix=/software/lib/mpich_3.2/install
+```
 
+Compile the install:
+
+```
 make
 make install
 ```
