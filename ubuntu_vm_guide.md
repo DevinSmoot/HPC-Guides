@@ -289,13 +289,6 @@ Create hpc user group:
 sudo groupadd hpc
 ```
 
-Change to *home* directory and create *mpich_3.2* directory:
-
-```
-cd ~
-mkdir -p /software/lib/mpich_3.2
-```
-
 Add user to hpc user group:
 
 ```
@@ -305,9 +298,6 @@ sudo usermod -aG hpc <username>
 Take ownership of */software*:
 
 ```
-cd /software/lib/mpich_3.2
-mkdir build install
-
 sudo chown -R <username>:hpc /software
 ```
 
