@@ -396,7 +396,11 @@ cd ~
 mpiexec -f nodelist hostname
 ```
 
-Should return **head** on the next line
+Output:
+
+```
+head
+```
 
 **Test 2**
 
@@ -404,7 +408,7 @@ Should return **head** on the next line
 mpiexec -f nodelist -n 2 /software/lib/mpich_3.2/build/examples/cpi
 ```
 
-Should give an output similar to the following:
+Output:
 <img src="images\part2step4.png" alt="Step 4 MPI" style="width: 450px;"/>
 
 ---
@@ -431,7 +435,7 @@ With *Compute Node 1* selected click **Start** in the toolbar
 
 Login to *Compute Node 1*
 
-At the terminal enter:
+Edit */etc/network/interfaces* file:
 
 ```
 sudo nano /etc/network/interfaces
