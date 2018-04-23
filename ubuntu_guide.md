@@ -152,11 +152,26 @@ Add the secondary interface to the file:
 ```
 # Secondary Interface - cluster connection enp0s8
 auto eno2
-iface enp0s8 inet static
+iface eno2 inet static
 address 192.168.10.5
 netmask 255.255.255.0
 network 192.168.10.0
+dns-nameserver 8.8.8.8
 ```
+
+Edit the hosts file:
+
+```
+sudo nano /etc/hosts
+```
+
+Add to the end of the file:
+
+```
+192.168.10.5    head
+192.168.10.100  node0
+```
+
 Save and exit
 
 
@@ -181,18 +196,17 @@ net.ipv6.conf.lo.disable_ipv6 = 1
 
 Save and exit
 
-Apply those changes:
+Enable the new rules:
 
 ```
 sudo sysctl -p
 ```
 
-Apply routing to iptables:
+Enter iptables rules:
 
 ```
-sudo iptables -t nat -A POSTROUTING -o enp0s3 -j MASQUERADE
-sudo iptables -t nat -A POSTROUTING -o enp0s8 -j MASQUERADE
-
+sudo iptables -t nat -A POSTROUTING -o eno1 -j MASQUERADE
+sudo iptables -t nat -A POSTROUTING -o eno2 -j MASQUERADE
 sudo bash -c "iptables-save > /etc/iptables.rules"
 ```
 
