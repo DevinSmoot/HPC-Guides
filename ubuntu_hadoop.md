@@ -43,11 +43,15 @@ wget http://apache.osuosl.org/hadoop/common/hadoop-2.7.3/hadoop-2.7.3.tar.gz
 
 Extract files:
 
-``tar xvfz hadoop-2.7.3.tar.gz``
+```
+tar xvfz hadoop-2.7.3.tar.gz
+```
 
 Create Hadoop folder under /usr/local:
 
-``sudo mkdir /usr/local/hadoop``
+```
+sudo mkdir /usr/local/hadoop
+```
 
 Move the Hadoop folder to /usr/local/hadoop:
 
