@@ -156,7 +156,6 @@ iface eno2 inet static
 address 192.168.10.5
 netmask 255.255.255.0
 network 192.168.10.0
-dns-nameserver 8.8.8.8
 ```
 
 Edit the hosts file:
