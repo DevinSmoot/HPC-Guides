@@ -243,6 +243,7 @@ sudo reboot
 sudo apt udpate && sudo apt upgrade -y && sudo apt dist-upgrade -y
 ```
 
+
 > #### Step 11 - Set up SSH keys
 
 **VERIFY AT THE COMMAND PROMPT THAT YOU ARE UNDER YOUR USER ACCOUNT AND NOT EXECUTING CODE AS SUPER USER OR ROOT**
