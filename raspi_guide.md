@@ -1318,35 +1318,35 @@ When experiencing network connectivity problems with compute nodes:
 1. Flush the iptables in Memory
 
 ```
-sudo iptables --flush
+sudo iptables -F
 ```
 
-2. Delete the rules file
-
-```
-sudo rm -rf /etc/iptables.rules
-```
-
-3. Rebuild the rules and file
+2. Rebuild the rules and file
 Repeat the IP tables section of the guide, starting with the commands:
 
 ```
 sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-sudo iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
+sudo iptables -t nat -A POSTROUTING -o eth1 -j MASQUERADE
 ```
 
-4. Save the iptables.rules file:
+3. Save the iptables_wired.rules file:
 
 ```
-sudo bash -c "iptables-save > /etc/iptables.rules"
+sudo bash -c "iptables-save > /etc/iptables_wired.rules"
 ```
 
-5. Check for the iptable rules in the */etc/network/interfaces file*:
+4. Check for the iptable rules in the */etc/network/interfaces file*:
 
 Make sure that the line below is present and not commented out:
 
 ```
-pre-up iptables-restore < /etc/iptables.rules
+pre-up iptables-restore < /etc/iptables_wired.rules
+```
+
+5. Reboot:
+
+```
+sudo reboot
 ```
 
 If it is missing then add it to the end of the file. Save and exit.
