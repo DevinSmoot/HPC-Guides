@@ -152,11 +152,25 @@ Add the secondary interface to the file:
 ```
 # Secondary Interface - cluster connection enp0s8
 auto eno2
-iface enp0s8 inet static
+iface eno2 inet static
 address 192.168.10.5
 netmask 255.255.255.0
 network 192.168.10.0
 ```
+
+Edit the hosts file:
+
+```
+sudo nano /etc/hosts
+```
+
+Add to the end of the file:
+
+```
+192.168.10.5    head
+192.168.10.100  node0
+```
+
 Save and exit
 
 
@@ -181,18 +195,17 @@ net.ipv6.conf.lo.disable_ipv6 = 1
 
 Save and exit
 
-Apply those changes:
+Enable the new rules:
 
 ```
 sudo sysctl -p
 ```
 
-Apply routing to iptables:
+Enter iptables rules:
 
 ```
-sudo iptables -t nat -A POSTROUTING -o enp0s3 -j MASQUERADE
-sudo iptables -t nat -A POSTROUTING -o enp0s8 -j MASQUERADE
-
+sudo iptables -t nat -A POSTROUTING -o eno1 -j MASQUERADE
+sudo iptables -t nat -A POSTROUTING -o eno2 -j MASQUERADE
 sudo bash -c "iptables-save > /etc/iptables.rules"
 ```
 
@@ -230,7 +243,7 @@ __*VERIFY AT THE COMMAND PROMPT THAT YOU ARE UNDER YOUR USER ACCOUNT AND NOT EXE
 Generate an SSH key:
 ```
 cd ~
-ssh-keygen -t rsa -C "cluster@swosu"
+ssh-keygen -t rsa -C "edison@swosu"
 ```
 Press ``Enter`` to select default install location
 
@@ -241,7 +254,7 @@ Press ``Enter`` to confirm blank passphrase
 Copy SSH keys to authorized keys:
 
 ```
-cat /home/<username>/.ssh/id_rsa.pub > /home/<username>/.ssh/authorized_keys
+cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
 ```
 
 ---
@@ -256,10 +269,10 @@ Install some required compilers and packages:
 sudo apt-get install make build-essential
 ```
 
-Create software directory for multiple users:
+Create */software* directory:
 
 ```
-sudo mkdir -p /software/lib
+sudo mkdir -p /software/lib/mpich_3.2
 ```
 
 Create hpc user group:
@@ -280,41 +293,32 @@ Take ownership of */software*:
 sudo chown -R <username>:hpc /software
 ```
 
-Change to *software* directory and create *mpich-3.2* directory:
-
-```
-cd /software/lib
-
-mkdir mpich-3.2
-```
-
 Change to the *mpich_3.2* directory and create *build* and *install* directories:
 
 ```
-cd mpich_3.2
+cd /software/lib/mpich_3.2
 
 mkdir build install
 ```
 
 ##### Step 2 - Download and install
 
-Install Fortran which is requred by MPICH3:
+Install prerequisites, download MPICH3 package and install:
 
 ```
-sudo apt-get install gfortran
+sudo apt install gfortran
 ```
 
-Download MPICH3 package and install:
-http://www.mpich.org/downloads/
+Download MPICH3 package:
 
 ```
-sudo wget http://www.mpich.org/static/downloads/3.2/mpich-3.2.1.tar.gz
+wget http://www.mpich.org/static/downloads/3.2/mpich-3.2.1.tar.gz
 ```
 
 Untar the package:
 
 ```
-sudo tar xvfz mpich-3.2.1.tar.gz
+tar xvfz mpich-3.2.1.tar.gz
 ```
 
 Change to *build* directory to begin building the install:
@@ -325,7 +329,11 @@ cd build
 
 ```
 /software/lib/mpich_3.2/mpich-3.2/configure  --prefix=/software/lib/mpich_3.2/install
+```
 
+Compile the install:
+
+```
 make
 make install
 ```
@@ -368,6 +376,10 @@ Add the *head node* ip address to the file:
 
 ##### Step 4 - Test MPI
 
+```
+cd ~
+```
+
 **Test 1**
 
 ```
@@ -387,39 +399,11 @@ mpiexec -f nodelist -n 2 /software/lib/mpich_3.2/build/examples/cpi
 ```
 
 Ouput:
-[image]
-
-![Step 4](https://github.com/swosu/MAPSS/blob/dev/WinterCamp/Ubuntu%20Cluster%20Guide/images/part2step4.png)
-
-Shutdown head node:
-
-```
-sudo shutdown -h now
-```
+<img src="images\part2step4.png" alt="Step 4 MPI" style="width:450px;"/>
 
 ---
 
 ## Set up Cluster Compute Node
-
-##### Step 1 - Clone the Virtual Machine
-
-In VirtualBox right click the *Head Node* in the left column and select **Clone**
-
-Set *Name* to **Compute Node 1**
-
-Click **Next**
-
-Select **Full clone**
-
-Click **Clone**
-
-##### Step 2 - Set Static IP Address
-
-In VirtualBox select *Compute Node 1* in the left column
-
-With *Compute Node 1* selected click **Start** in the toolbar
-
-Login to *Compute Node 1*
 
 Edit */etc/network/interfaces* file:
 
@@ -427,21 +411,10 @@ Edit */etc/network/interfaces* file:
 sudo nano /etc/network/interfaces
 ```
 
-Remove all of the following lines:
+Edit the file by changing or adding the following:
 
 ```
-# Secondary Interface - cluster connection enp0s8
-auto enp0s8
-iface enp0s8 inet static
-address 192.168.10.5
-netmask 255.255.255.0
-network 192.168.10.0
-```
-
-Under the line *auto enp0s3* change or add the following:
-
-```
-iface enp0s3 inet static
+iface eno1 inet static
 address 192.168.10.100
 netmask 255.255.255.0
 gateway 192.168.10.5
@@ -450,89 +423,210 @@ dns-nameservers 8.8.8.8
 
 Save and exit
 
-Shutdown the *Compute Node 1*:
-
-```
-sudo shutdown -h now
-```
-
-
-##### Step 3 - Change Compute Node 1 Network Adapters
-
-In VirtualBox right click *Compute Node 1* in the left column
-
-Select **Settings**
-
-Click **Network** and select **Adapter 2**
-
-Uncheck the **Enable Network Adapter** box
-
-Next, select **Adapter 1** tab
-
-Set *Attached to:* to **Internal Network**
-
-Set *Name:* to **cluster**
-
-
-##### Step 4 - Set hostname
-
-In VirtualBox select *Compute Node 1* in the left column
-
-With *Compute Node 1* selected click **Start** in the toolbar
-
-Login to *Compute Node 1*
-
-Edit the hostname file:
+Edit */etc/hostname* file:
 
 ```
 sudo nano /etc/hostname
 ```
 
-Change ``head`` to ``node1``
+Change:
+
+```
+head
+```
+
+To:
+NOTE: This will be a sequential number that increases as you add nodes to the cluster.
+
+```
+node0
+```
 
 Save and exit
 
-Edit the hosts file:
+Edit */etc/hosts* file:
 
 ```
 sudo nano /etc/hosts
 ```
 
-Change ``head`` to ``node1``
+Change:
+
+```
+head
+```
+
+To:
+NOTE: This will be a sequential number that increases as you add nodes to the cluster.
+
+```
+node0
+```
 
 Save and exit
 
-Now reboot *Compute Node 1*
+Reset the network connection to apply the settings:
 
 ```
-sudo reboot
+sudo ifdown eno1
+sudo ifup eno1
 ```
 
-Wait for *Compute Node 1* to reboot before continuing
-
-
-##### Step 5 - SSH into Compute Node 1 to Acquire Authentication key
-
-In VirtualBox select *Head Node* in the left column
-
-With *Head Node* selected click **Start** in the toolbar
-
-Login to *Head Node*
-
-On *Head Node* enter:
+Check the ip address of eno1:
 
 ```
-ssh <username>@node0
+ifconfig
 ```
 
-Type ``yes`` and press ``Enter`` when asked *Are you sure you want to continue connection (yes/no)?*
+Check that *eno1* connection has the ip address *192.168.10.100*.
 
-Type ``exit`` and press ``Enter`` to return to *Head Node*
+---
 
-Verify *Head Node* by checking the command prompt for ``<username>@head:~$``
+### MPI
 
+> #### Step 1 - Create Directories
 
-##### Step 6 - Add Compute Node 1 to the nodelist File on Head Node
+Install some required compilers and packages:
+
+```
+sudo apt-get install make build-essential
+```
+
+Create */software* directory:
+
+```
+sudo mkdir -p /software/lib/mpich_3.2
+```
+
+Create hpc user group:
+
+```
+sudo groupadd hpc
+```
+
+Add user to hpc user group:
+
+```
+sudo usermod -aG hpc <username>
+```
+
+Take ownership of */software*:
+
+```
+sudo chown -R <username>:hpc /software
+```
+
+Change to the *mpich_3.2* directory and create *build* and *install* directories:
+
+```
+cd /software/lib/mpich_3.2
+
+mkdir build install
+```
+
+> #### Step 2 - Download and install
+
+Install prerequisites, download MPICH3 package and install:
+
+```
+sudo apt install gfortran
+```
+
+Download MPICH3 package:
+
+```
+wget http://www.mpich.org/static/downloads/3.2/mpich-3.2.1.tar.gz
+```
+
+Untar the package:
+
+```
+tar xvfz mpich-3.2.1.tar.gz
+```
+
+Change to *build* directory to begin building the install:
+
+```
+cd build
+```
+
+```
+/software/lib/mpich_3.2/mpich-3.2/configure  --prefix=/software/lib/mpich_3.2/install
+```
+
+Compile the install:
+
+```
+make
+make install
+```
+
+Add MPI location to system environment variable PATH:
+
+```
+export PATH=$PATH:/software/lib/mpich_3.2/install/bin
+```
+
+Make the PATH change permanent by adding it to the profile file:
+
+```
+sudo nano ~/.bashrc
+```
+
+Add the following to the end of the file:
+
+```
+export PATH="$PATH:/software/lib/mpich_3.2/install/bin"
+```
+
+Save and exit
+
+> #### Step 3 - Create Node List
+
+Create a list of nodes for MPI to use:
+
+```
+cd ~
+
+sudo nano nodelist
+```
+
+Add the *head node* ip address to the file:
+
+```
+192.168.10.5
+```
+
+> #### Step 4 - Test MPI
+
+```
+cd ~
+```
+
+**Test 1**
+
+```
+mpiexec -f nodelist hostname
+```
+
+Output:
+
+```
+head
+```
+
+**Test 2**
+
+```
+mpiexec -f nodelist -n 2 /software/lib/mpich_3.2/build/examples/cpi
+```
+
+Ouput:
+<img src="images\part2step4.png" alt="Step 4 MPI" style="width:450px;"/>
+
+---
+
+### Test the cluster so far
 
 On the *Head Node* edit the nodelist:
 
@@ -542,25 +636,48 @@ cd ~
 sudo nano nodelist
 ```
 
-Add ``192.168.10.100`` to the second line
+Add to the end of the file:
+
+```
+192.168.10.100
+```
 
 Save and exit
 
-
-##### Step 7 - Test MPI
-
-On the *Head Node* enter:
+Test MPI:
 
 ```
-mpiexec -f nodelist -n 6 /software/lib/mpich-3.2/build/examples/cpi
+cd ~
 ```
 
-You should get an output similar to the following:
-[image]
+**Test 1**
 
-**_Note:_** Each process shows which node it was executed on. You should see both head and node1 displayed. This shows that MPI is sending and executing the script on both nodes in the cluster.
+```
+mpiexec -f nodelist hostname
+```
+
+Output:
+
+```
+head
+```
+
+**Test 2**
+
+```
+mpiexec -f nodelist -n 2 /software/lib/mpich_3.2/build/examples/cpi
+```
+
+Ouput:
+<img src="images\part2step4.png" alt="Step 4 MPI" style="width:450px;"/>
+
+**_Note:_** Each process shows which node it was executed on. You should see both head and node0 displayed, plus any others that you setup after this guide. This shows that MPI is sending and executing the script on both nodes in the cluster.
 
 Congratulations! This cluster is ready to execute MPI code.
+
+### Adding more nodes
+
+After completing the guide to this point you can now repeat the node setup process for setting up more compute nodes. There are three things to sequence. Those are: hostname, hostname in hosts file, and ip address in the interfaces file. Also make sure to add any new nodes to the hosts file on all nodes and share the ssh key from the head node to all nodes for ease of access on the command line.
 
 ---
 
