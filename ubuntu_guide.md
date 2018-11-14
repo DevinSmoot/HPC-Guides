@@ -225,7 +225,7 @@ sudo apt udpate && sudo apt upgrade -y && sudo apt dist-upgrade -y
 
 ##### Step 5 - Set up SSH key
 
-** \*\* VERIFY AT THE COMMAND PROMPT THAT YOU ARE UNDER YOUR USER ACCOUNT AND NOT EXECUTING CODE AS SUPER USER OR ROOT \*\* **
+__*VERIFY AT THE COMMAND PROMPT THAT YOU ARE UNDER YOUR USER ACCOUNT AND NOT EXECUTING CODE AS SUPER USER OR ROOT*__
 
 Generate an SSH key:
 ```
@@ -630,7 +630,8 @@ NodeName=node1 Procs=1 State=UNKNOWN
 PartitionName=TEST Default=YES Nodes=head,node1 State=UP
 ```
 
-==POSSIBLE CHANGES==
+Create and take ownership of Slurm folders:
+
 ```
 sudo mkdir /var/lib/slurm
 
@@ -640,7 +641,6 @@ sudo mkdir /var/log/slurm
 
 sudo chown -R slurm:slurm /var/log/slurm
 ```
-==END CHANGES==
 
 ##### Step 4 - Create Munge authentication keyboard
 
