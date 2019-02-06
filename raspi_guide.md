@@ -71,9 +71,9 @@ Select **4 Localisation Options**
 
 -   Select Locale **I1 Change Locale**
     		_ Unselect **en_GB.UTF-8 UTF-8**
-    		_ Select **en_US.UTF-8 UTF-8**
+    		_ Select **en_US ISO-8859-1**
     		_ Press **Enter**
-    		_ Select **en_US.UTF-8**
+    		_ Select **en_US**
 
 Select **4 Localisation Options**
 
@@ -105,8 +105,8 @@ Select **2 Network Options**
 
 -   Select **N1 Hostname**
     		_ Select **Ok**
-    		_	Enter **head** for the hostname
-    		\* Press **Enter**
+    		_ Enter **head** for the hostname
+    		_ Press **Enter**
 
 Select **2 Network Options**
 
@@ -123,7 +123,7 @@ Select **5 Interfacing Options**
 -   Select **P2 SSH**
     		_ Select **Yes**
     		_ Select **Ok**
-    		\* Press **Enter**
+    		_ Press **Enter**
 
 _Tab_ to **Finish**
 
@@ -133,41 +133,53 @@ Select **Yes** to reboot
 
 Edit _/etc/network/interfaces_:
 
-    sudo nano /etc/network/interfaces
+```
+sudo nano /etc/network/interfaces
+```
 
 Add the following to the end of the file:
 
-    auto lo
-    iface lo inet loopback
+```
+auto lo
+iface lo inet loopback
 
-    iface eth0 inet manual
+iface eth0 inet manual
 
-    allow-hotplug wlan0
-    iface wlan0 inet manual
+allow-hotplug wlan0
+iface wlan0 inet manual
 
-    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+```
 
 Setup _eth0_ static ip address:
 
 Edit _/etc/dhcpcd.conf_:
 
-    sudo nano /etc/dhcpcd.conf
+```
+sudo nano /etc/dhcpcd.conf
+```
 
 Add to the end of the file:
 
-    interface eth0
-    static ip_address=192.168.10.5
-    static domain_name_servers=8.8.8.8
+```
+interface eth0
+static ip_address=192.168.10.5
+static domain_name_servers=8.8.8.8
+```
 
 Save and exit
 
 Reboot:
 
-    sudo reboot
+```
+sudo reboot
+```
 
 > #### Step 4 - Update the system
 
-    sudo apt update && sudo apt upgrade -y
+```
+sudo apt update && sudo apt upgrade -y
+```
 
 Reboot:
 
