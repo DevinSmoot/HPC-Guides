@@ -438,15 +438,13 @@ The overview of this process:
 
 At this point you have a copy of both the _head node_ and _generic comput node_ at the MPI stage. This is a checkpoint that you can fall back to if there are errors after this point.
 
-This will be a repeatable process when completed. You will setup an initial _compute node_ image using your saved _head node_ image. You will go in and change specific settings to _generic settings_. Doing this will allow you to always access your _generic compute node_ image at the same IP address and hostname. You will then be able to set up the compute node image to a specific IP address and hostname. Following this process will allow for prompt and efficient deployment of a cluster.
-
 [Raspbian Install Guides](https://www.raspberrypi.org/documentation/installation/installing-images/)
 
 * * *
 
 ## Create Generic Node image
 
-This will be a repeatable process when completed. You will setup an initial _compute node_ image using your saved _head node_ image. You will go in and change specific settings to _generic settings_. Doing this will allow you to always access your _generic compute node_ image at the same IP address and hostname. You will then be able to set up the compute node image to a specific IP address and hostname. Following this process will allow for prompt and efficient deployment of a cluster.
+Completing this step will give you a node image that can be quickly written to an SD card and distributed to expand your cluster. This will be a repeatable process when completed. You will setup an initial _compute node_ image using your saved _head node_ image. You will go in and change the hostname, hosts file (to match the hostname), and ip address (to a generic, always easy to find ip address for when you need to configure the node after deployment) to _generic settings_. Doing this will allow you to always access your _generic compute node_ image at the same IP address and hostname. You will then be able to set up the compute node image to a specific IP address and hostname. Following this process will allow for prompt and efficient deployment of a cluster.
 
 > #### Step 1 - Boot image and login
 
@@ -543,6 +541,8 @@ Sample name for SD image:
 * * *
 
 ## Setup Generic Node image
+
+In this step you will configure a newly deployed node from your generic node image you created. With this you will ssh in to the generic node's ip address and configure the hostname, hosts file, and ip address. Each of these will be set to the node's new permanent settings within the cluster. When completing this step if you are deploying multiple new nodes you will need to power them up one at a time and configure them one at a time. This is due to all of the nodes using the same ip address. This allows for all nodes to use a single point of reference to quickly find and deploy them.
 
 [Raspbian Install Guides](https://www.raspberrypi.org/documentation/installation/installing-images/)
 
