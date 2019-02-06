@@ -268,8 +268,8 @@ Modify or add the following lines to the file:
 192.168.10.102      node2
 192.168.10.103      node3
 192.168.10.104      node4
-192.168.10.105 	node5
-192.168.10.106 	node6
+192.168.10.105 	    node5
+192.168.10.106 	    node6
 ```
 
 Reboot:
