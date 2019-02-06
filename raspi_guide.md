@@ -351,7 +351,7 @@ make install
 Activate environment variable:
 
 ```
-export PATH=/software/lib/mpich_3.3/install/bin:$PATH
+export PATH=/software/lib/mpich_3/install/bin:$PATH
 ```
 
 Add path to environment variables for persistance:
@@ -364,7 +364,7 @@ Add the following to the end of the file:
 
 ```
 # MPICH-3.3
-export PATH="/software/lib/mpich_3.3/install/bin:$PATH"
+export PATH="/software/lib/mpich_3/install/bin:$PATH"
 ```
 
 > #### Step 3 - Create list of nodes for MPI:
