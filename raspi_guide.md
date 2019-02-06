@@ -62,68 +62,68 @@ Start the Raspberry Pi configuration tool:
 Select **7 Advanced Options**
 
 -   Select **A3 Memory Split**
-    		_ Enter **16**
-    		_ Press **Enter**
+    		Enter **16**
+    		Press **Enter**
 
 > Setup Localisation Options:
 
 Select **4 Localisation Options**
 
 -   Select Locale **I1 Change Locale**
-    		_ Unselect **en_GB.UTF-8 UTF-8**
-    		_ Select **en_US ISO-8859-1**
-    		_ Press **Enter**
-    		_ Select **en_US**
+    		Unselect **en_GB.UTF-8 UTF-8**
+    		Select **en_US ISO-8859-1**
+    		Press **Enter**
+    		Select **en_US**
 
 Select **4 Localisation Options**
 
 -   Select **I2 Change Timezone**
-    		_ Select **US** (or appropriate country)
-    		_ Select **Central** (or appropriate local timezone)
+    		Select **US** (or appropriate country)
+    		Select **Central** (or appropriate local timezone)
 
 Select **4 Localisation Options**
 
 -   Select **I3 Change Keyboard Layout**
-    		_ Use the default selected Keyboard
-    		_ Press **Enter**
-    		_ Select **Other**
-    		_ Select **English (US)**
-    		_ Select **English (US)**
-    		_ Select **The default for the keyboard layout**
-    		_ Select **No compose key**
-    		_ Press **Enter**
+    		Use the default selected Keyboard
+    		Press **Enter**
+    		 Select **Other**
+    		Select **English (US)**
+    		Select **English (US)**
+    		Select **The default for the keyboard layout**
+    		Select **No compose key**
+    		Press **Enter**
 
 Select **4 Localisation Options**
 
 -   Select **I4 Change Wi-fi Country**
-    		_ Select **US United States**
-    		_ Select **Ok**
+    		Select **US United States**
+    		Select **Ok**
 
 > Setup Network Options:
 
 Select **2 Network Options**
 
 -   Select **N1 Hostname**
-    		_ Select **Ok**
-    		_ Enter **head** for the hostname
-    		_ Press **Enter**
+    		Select **Ok**
+    		Enter **head** for the hostname
+    		Press **Enter**
 
 Select **2 Network Options**
 
 -   Select **N2 Wi-fi**
-    		_ Enter wi-fi SSID
-    		_ Press **Enter**
-    		_ Enter wi-fi passphrase
-    		_ Press **Enter**
+    		Enter wi-fi SSID
+    		Press **Enter**
+    		Enter wi-fi passphrase
+    		Press **Enter**
 
 > Setup Interfacing Options:
 
 Select **5 Interfacing Options**
 
 -   Select **P2 SSH**
-    		_ Select **Yes**
-    		_ Select **Ok**
-    		_ Press **Enter**
+    		Select **Yes**
+    		Select **Ok**
+    		Press **Enter**
 
 _Tab_ to **Finish**
 
