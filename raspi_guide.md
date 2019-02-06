@@ -61,11 +61,6 @@ Start the Raspberry Pi configuration tool:
 
 Select **7 Advanced Options**
 
--   Select **A1 Expand Filesystem**
--   Select **Ok**
-
-Select **7 Advanced Options**
-
 -   Select **A3 Memory Split**
     		_ Enter **16**
     		_ Press **Enter**
@@ -281,23 +276,23 @@ Take ownership of /software:
 
 Create build and install directory inside mpich3 directory:
 
-    mkdir mpich_3.2
+    mkdir mpich_3.3
 
-    cd mpich_3.2
+    cd mpich_3.3
 
     mkdir build install
 
 Download mpich3 and untar:
 
-    wget http://www.mpich.org/static/downloads/3.2.1/mpich-3.2.1.tar.gz
+    wget http://www.mpich.org/static/downloads/3.3/mpich-3.3.tar.gz
 
-    tar xvfz mpich-3.2.1.tar.gz
+    tar xvfz mpich-3.3.tar.gz
 
 Compile and install mpich3:
 
     cd build
 
-    /software/lib/mpich_3.2/mpich-3.2.1/configure --prefix=/software/lib/mpich_3.2/install
+    /software/lib/mpich_3.3/mpich-3.3/configure --prefix=/software/lib/mpich_3.3/install
 
     make
 
@@ -305,7 +300,7 @@ Compile and install mpich3:
 
 Activate environment variable:
 
-    export PATH=/software/lib/mpich_3.2/install/bin:$PATH
+    export PATH=/software/lib/mpich_3.3/install/bin:$PATH
 
 Add path to environment variables for persistance:
 
@@ -313,8 +308,8 @@ Add path to environment variables for persistance:
 
 Add the following to the end of the file:
 
-    # MPICH-3.2
-    export PATH="/software/lib/mpich_3.2/install/bin:$PATH"
+    # MPICH-3.3
+    export PATH="/software/lib/mpich_3.3/install/bin:$PATH"
 
 > #### Step 3 - Create list of nodes for MPI:
 
@@ -349,7 +344,7 @@ Output:
 
 Enter on command line:
 
-    mpiexec -f nodelist -n 2 /software/lib/mpich_3.2/build/examples/cpi
+    mpiexec -f nodelist -n 2 /software/lib/mpich_3.3/build/examples/cpi
 
 Output:
 
