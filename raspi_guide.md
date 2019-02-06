@@ -55,75 +55,77 @@ Log in with username: **pi** and password **raspberry**
 
 Start the Raspberry Pi configuration tool:
 
-    sudo raspi-config
+```
+sudo raspi-config
+```
 
 > Setup Advanced Options:
 
 Select **7 Advanced Options**
 
--   Select **A3 Memory Split**
-    		Enter **16**
-    		Press **Enter**
+- Select **A3 Memory Split**
+     - Enter **16**
+     - Press **Enter**
 
 > Setup Localisation Options:
 
 Select **4 Localisation Options**
 
--   Select Locale **I1 Change Locale**
-    		Unselect **en_GB.UTF-8 UTF-8**
-    		Select **en_US ISO-8859-1**
-    		Press **Enter**
-    		Select **en_US**
+- Select Locale **I1 Change Locale**
+     - Unselect **en_GB.UTF-8 UTF-8**
+     - Select **en_US ISO-8859-1**
+     - Press **Enter**
+     - Select **en_US**
 
 Select **4 Localisation Options**
 
--   Select **I2 Change Timezone**
-    		Select **US** (or appropriate country)
-    		Select **Central** (or appropriate local timezone)
+- Select **I2 Change Timezone**
+     - Select **US** (or appropriate country)
+     - Select **Central** (or appropriate local timezone)
 
 Select **4 Localisation Options**
 
--   Select **I3 Change Keyboard Layout**
-    		Use the default selected Keyboard
-    		Press **Enter**
-    		 Select **Other**
-    		Select **English (US)**
-    		Select **English (US)**
-    		Select **The default for the keyboard layout**
-    		Select **No compose key**
-    		Press **Enter**
+- Select **I3 Change Keyboard Layout**
+     - Use the default selected Keyboard
+     - Press **Enter**
+     - Select **Other**
+     - Select **English (US)**
+     - Select **English (US)**
+     - Select **The default for the keyboard layout**
+     - Select **No compose key**
+     - Press **Enter**
 
 Select **4 Localisation Options**
 
--   Select **I4 Change Wi-fi Country**
-    		Select **US United States**
-    		Select **Ok**
+- Select **I4 Change Wi-fi Country**
+     - Select **US United States**
+     - Select **Ok**
 
 > Setup Network Options:
 
 Select **2 Network Options**
 
--   Select **N1 Hostname**
-    		Select **Ok**
-    		Enter **head** for the hostname
-    		Press **Enter**
+- Select **N1 Hostname**
+     - Select **Ok**
+     - Enter **head** for the hostname
+     - Press **Enter**
 
 Select **2 Network Options**
 
--   Select **N2 Wi-fi**
-    		Enter wi-fi SSID
-    		Press **Enter**
-    		Enter wi-fi passphrase
-    		Press **Enter**
+- Select **N2 Wi-fi**
+     - Enter wi-fi SSID
+     - Press **Enter**
+     - Enter wi-fi passphrase
+     - Press **Enter**
 
 > Setup Interfacing Options:
 
 Select **5 Interfacing Options**
 
--   Select **P2 SSH**
-    		Select **Yes**
-    		Select **Ok**
-    		Press **Enter**
+- Select **P2 SSH**
+     - Select **Yes**
+     - Select **Ok**
+     - Press **Enter**
 
 _Tab_ to **Finish**
 
