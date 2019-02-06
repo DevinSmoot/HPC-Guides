@@ -409,7 +409,7 @@ head
 Enter on command line:
 
 ```
-mpiexec -f nodelist -n 2 /software/lib/mpich_3.3/build/examples/cpi
+mpiexec -f nodelist -n 2 /software/lib/mpich_3/build/examples/cpi
 ```
 
 Output:
