@@ -282,68 +282,90 @@ sudo reboot
 
 ## Install MPICH-3.2
 
-Install prerequisite _Fortran_ which wil be required for compiling MPICH. All other dependencies are already installed.
+Install prerequisite _Fortran_ which will be required for compiling MPICH. All other dependencies are already installed.
 
 > #### Step 1 - Install Fortran
 
-    sudo apt install gfortran
+```
+sudo apt install gfortran
+```
 
 > #### Step 2 - Install and Setup MPICH3
 
 Create hpc group:
 
-    sudo groupadd hpc
+```
+sudo groupadd hpc
+```
 
 Add pi user to hpc group:
 
-    sudo usermod -aG hpc pi
+```
+sudo usermod -aG hpc pi
+```
 
 Create hpc directory in root:
 
-    sudo mkdir -p /software/lib
+```
+sudo mkdir -p /software/lib
 
-    cd /software/lib
+cd /software/lib
+```
 
 Take ownership of /software:
 
-    sudo chown -R pi:hpc /software
+```
+sudo chown -R pi:hpc /software
+```
 
 Create build and install directory inside mpich3 directory:
 
-    mkdir mpich_3.3
+```
+mkdir mpich_3
 
-    cd mpich_3.3
+cd mpich_3.3
 
-    mkdir build install
+mkdir build install
+```
 
 Download mpich3 and untar:
 
-    wget http://www.mpich.org/static/downloads/3.3/mpich-3.3.tar.gz
+```
+wget http://www.mpich.org/static/downloads/3.3/mpich-3.3.tar.gz
 
-    tar xvfz mpich-3.3.tar.gz
+tar xvfz mpich-3.3.tar.gz
+```
 
 Compile and install mpich3:
 
-    cd build
+```
+cd build
 
-    /software/lib/mpich_3.3/mpich-3.3/configure --prefix=/software/lib/mpich_3.3/install
+/software/lib/mpich_3/mpich-3.3/configure --prefix=/software/lib/mpich_3/install
 
-    make
+make
 
-    make install
+make install
+```
 
 Activate environment variable:
 
-    export PATH=/software/lib/mpich_3.3/install/bin:$PATH
+```
+export PATH=/software/lib/mpich_3.3/install/bin:$PATH
+```
 
 Add path to environment variables for persistance:
 
-    sudo nano ~/.bashrc
+```
+sudo nano ~/.bashrc
+```
 
 Add the following to the end of the file:
 
-    # MPICH-3.3
-    export PATH="/software/lib/mpich_3.3/install/bin:$PATH"
+```
+# MPICH-3.3
+export PATH="/software/lib/mpich_3.3/install/bin:$PATH"
+```
 
 > #### Step 3 - Create list of nodes for MPI:
 
@@ -351,12 +373,16 @@ This list of nodes will need to be updated as you add nodes later. Initially you
 
 Create node list:
 
-    cd ~
-    sudo nano nodelist
+```
+cd ~
+sudo nano nodelist
+```
 
 Add the head node ip address to the list:
 
-    192.168.10.5
+```
+192.168.10.5
+```
 
 _**Note:**_ Anytime you need to add a node to the cluster make sure to add it here as well as _/etc/hosts_ file.
 
@@ -366,26 +392,34 @@ _**Note:**_ Anytime you need to add a node to the cluster make sure to add it he
 
 Enter on command line:
 
-    cd ~
+```
+cd ~
 
-    mpiexec -f nodelist hostname
+mpiexec -f nodelist hostname
+```
 
 Output:
 
-    head
+```
+head
+```
 
 **Test 2 - Calculate Pi**
 
 Enter on command line:
 
-    mpiexec -f nodelist -n 2 /software/lib/mpich_3.3/build/examples/cpi
+```
+mpiexec -f nodelist -n 2 /software/lib/mpich_3.3/build/examples/cpi
+```
 
 Output:
 
-    Process 0 of 2 is on head
-    Process 1 of 2 is on head
-    pi is approximately 3.1415926544231318, Error is 0.0000000008333387
-    wall clock time = 0.003250
+```
+Process 0 of 2 is on head
+Process 1 of 2 is on head
+pi is approximately 3.1415926544231318, Error is 0.0000000008333387
+wall clock time = 0.003250
+```
 
 > #### Step 5 - Setup SSH keys
 
@@ -393,17 +427,21 @@ _**Note:**_ _Must be executed from head node as pi user_
 
 Generate SSH key:
 
-    cd ~
+```
+cd ~
 
-    ssh-keygen -t rsa -C "<username>@swosubta" -f ~/.ssh/id_rsa
+ssh-keygen -t rsa -C "<username>@swosubta" -f ~/.ssh/id_rsa
+```
 
-Press 'Enter' for passphrase
+Press **Enter** for passphrase
 
-Press 'Enter' for same passphrase
+Press **Enter** for same passphrase
 
 Transfer the key to the authorized_keys file:
 
-    cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
+```
+cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
+```
 
 * * *
 
@@ -411,7 +449,9 @@ Transfer the key to the authorized_keys file:
 
 Shutdown the head node:
 
-    sudo shutdown -h now
+```
+sudo shutdown -h now
+```
 
 * * *
 
@@ -423,7 +463,7 @@ Using the same guide as described in the beginning you will want to reverse the 
 
 Sample name for SD image:
 
-    compute_node_mpi_stage_2017_01_03
+compute_node_mpi_stage_2017_01_03
 
 * * *
 
@@ -452,7 +492,7 @@ Log in with username: **pi** and password **raspberry**
 
 > #### Step 2 - Enter a generic ip address
 
-    sudo nano /etc/dhcpcd.conf
+sudo nano /etc/dhcpcd.conf
 
 Change the _eth0_ ip address from:
 
