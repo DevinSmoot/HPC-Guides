@@ -185,7 +185,9 @@ sudo apt update && sudo apt upgrade -y
 
 Reboot:
 
-    sudo reboot
+```
+sudo reboot
+```
 
 > #### Step 5 - IP forwarding for nodes to access internet
 
@@ -195,38 +197,50 @@ Log in with username: **pi** and password **raspberry**
 
 Enable IPv4 Forwarding and Disable IPv6:
 
-    sudo nano /etc/sysctl.conf
+```
+sudo nano /etc/sysctl.conf
+```
 
 Add the following lines to the end of the file (this includes the IP forwarding rule from above):
 
-    # Enable IPv4 forwarding
-    net.ipv4.ip_forward = 1
+```
+# Enable IPv4 forwarding
+net.ipv4.ip_forward = 1
 
-    # Disable IPv6
-    net.ipv6.conf.all.disable_ipv6 = 1
-    net.ipv6.conf.default.disable_ipv6 = 1
-    net.ipv6.conf.lo.disable_ipv6 = 1
+# Disable IPv6
+net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+net.ipv6.conf.lo.disable_ipv6 = 1
+```
 
 Save and exit
 
 Update the configuration files:
 
-    sudo sysctl -p
+```
+sudo sysctl -p
+```
 
 Edit and Save the iptables:
 
-    sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-    sudo iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
+```
+sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+sudo iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
 
-    sudo bash -c "iptables-save > /etc/iptables.rules"
+sudo bash -c "iptables-save > /etc/iptables.rules"
+```
 
 Add settings to _/etc/network/interfaces_ file:
 
-    sudo nano /etc/network/interfaces
+```
+sudo nano /etc/network/interfaces
+```
 
 Add the following line at the end of the wlan0 section under wpa-conf line to make the changes persistent:
 
-    pre-up iptables-restore < /etc/iptables.rules
+```
+pre-up iptables-restore < /etc/iptables.rules
+```
 
 Save and exit
 
@@ -238,25 +252,31 @@ _**Note:**_ At this point you want to assign and name all of your nodes that **W
 
 Edit _/etc/hosts_ file:
 
-    sudo nano /etc/hosts
+```
+sudo nano /etc/hosts
+```
 
 Modify or add the following lines to the file:
 
-    127.0.1.1	head
+```
+127.0.1.1	head
 
-    192.168.10.3	nodeX
-    192.168.10.5	head
-    192.168.10.100	node0
-    192.168.10.101	node1
-    192.168.10.102	node2
-    192.168.10.103	node3
-    192.168.10.104	node4
-    192.168.10.105 	node5
-    192.168.10.106 	node6
+192.168.10.3        nodeX
+192.168.10.5        head
+192.168.10.100      node0
+192.168.10.101      node1
+192.168.10.102      node2
+192.168.10.103      node3
+192.168.10.104      node4
+192.168.10.105 	node5
+192.168.10.106 	node6
+```
 
 Reboot:
 
-    sudo reboot
+```
+sudo reboot
+```
 
 * * *
 
