@@ -478,7 +478,7 @@ The overview of this process:
 3.  Boot the second SD you just created from the head node and make the following changes for "Creating a Generic Node Image".
 4.  Save image of newly created _generic compute node_.
 
-At this point you have a copy of both the _head node_ and _generic comput node_ at the MPI stage. This is a checkpoint that you can fall back to if there are errors after this point.
+At this point you have a copy of both the _head node_ and _generic compute node_ at the MPI stage. This is a checkpoint that you can fall back to if there are errors after this point.
 
 [Raspbian Install Guides](https://www.raspberrypi.org/documentation/installation/installing-images/)
 
@@ -704,7 +704,9 @@ Save and exit
 
 Open configuration tool:
 
-    sudo raspi-config
+```
+sudo raspi-config
+```
 
 Select **7 Advanced Options**
 
