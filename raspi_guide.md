@@ -463,7 +463,9 @@ Using the same guide as described in the beginning you will want to reverse the 
 
 Sample name for SD image:
 
+```
 compute_node_mpi_stage_2017_01_03
+```
 
 * * *
 
@@ -492,19 +494,27 @@ Log in with username: **pi** and password **raspberry**
 
 > #### Step 2 - Enter a generic ip address
 
+```
 sudo nano /etc/dhcpcd.conf
+```
 
 Change the _eth0_ ip address from:
 
-    static ip_address=192.168.10.5
+```
+static ip_address=192.168.10.5
+```
 
 To:
 
-    static ip_address=192.168.10.3
+```
+static ip_address=192.168.10.3
+```
 
 Also add to the end of the file:
 
-    static routers=192.168.10.5
+```
+static routers=192.168.10.5
+```
 
 Save and exit
 
@@ -514,25 +524,35 @@ Save and exit
 
 Change:
 
-    head
+```
+head
+```
 
 To:
 
-    nodeX
+```
+nodeX
+```
 
 Save and exit
 
 > #### Step 4 - Edit hosts file
 
-    sudo nano /etc/hosts
+```
+sudo nano /etc/hosts
+```
 
 Change:
 
-    127.0.1.1				head
+```
+127.0.1.1				head
+```
 
 To:
 
-    127.0.1.1				nodeX
+```
+127.0.1.1				nodeX
+```
 
 Save and exit
 
@@ -540,43 +560,57 @@ Save and exit
 
 Edit _interfaces_ file:
 
-    sudo nano /etc/network/interfaces
+```
+sudo nano /etc/network/interfaces
+```
 
 Remove:
 
-    allow-hotplug wlan0
-    iface wlan0 inet manual
-    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+```
+allow-hotplug wlan0
+iface wlan0 inet manual
+wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
 
-    pre-up iptables-restore < /etc/iptables.rules
+pre-up iptables-restore < /etc/iptables.rules
+```
 
 Edit _wpa_supplicant.conf_:
 
-    sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
+```
+sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
+```
 
 Remove this section if you have a secure network:
 
-    network={
-    ssid="<network name>"
-    psk="<network password>"
-    }
+```
+network={
+ssid="<network name>"
+psk="<network password>"
+}
+```
 
 Remove this section if you have an unsecure network:
 
-    network={
-    ssid="<network name>"
-    key_mgmt=NONE
-    }
+```
+network={
+ssid="<network name>"
+key_mgmt=NONE
+}
+```
 
 > #### Step 6 - Shutdown and create a new image of the SD
 
-    sudo shutdown -h now
+```
+sudo shutdown -h now
+```
 
 Now you will go back to WinDiskImager32 and save the image as a node image. This is a generic node image that you can quickly deploy and use to set up your cluster with.
 
 Sample name for SD image:
 
-    compute_node_mpi_stage_2017_01_03
+```
+compute_node_mpi_stage_2017_01_03
+```
 
 * * *
 
@@ -594,7 +628,9 @@ Log in with username: **pi** and password **raspberry**
 
 SSH into the new node:
 
-    ssh pi@nodeX
+```
+ssh pi@nodeX
+```
 
 Enter **yes** to accept the key
 
@@ -604,15 +640,21 @@ Command prompt should read `pi@nodeX:~ $`
 
 > #### Step 3 - Adjust _/etc/hostname_ file
 
-    sudo nano /etc/hostname
+```
+sudo nano /etc/hostname
+```
 
 Change:
 
-    nodeX
+```
+nodeX
+```
 
 To:
 
-    node0
+```
+node0
+```
 
 Save and exit
 
@@ -620,29 +662,41 @@ _**Note:**_ This number will increment by one each time you add a node and must 
 
 > #### Step 4 - Adjust _/etc/dhcpcd.conf_
 
-    sudo nano /etc/dhcpcd.conf
+```
+sudo nano /etc/dhcpcd.conf
+```
 
 Change the _eth0_ ip address from:
 
-    static ip_address=192.168.10.3
+```
+static ip_address=192.168.10.3
+```
 
 To:
 
-    static ip_address=192.168.10.100
+```
+static ip_address=192.168.10.100
+```
 
 Save and exit
 
 > #### Step 5 - Edit hosts file
 
-    sudo nano /etc/hosts
+```
+sudo nano /etc/hosts
+```
 
 Change:
 
-    127.0.1.1				nodeX
+```
+127.0.1.1				nodeX
+```
 
 To:
 
-    127.0.1.1				node0
+```
+127.0.1.1				node0
+```
 
 Save and exit
 
@@ -672,17 +726,23 @@ Issue the following command from the head node for each node in the cluster:
 
 Only run this command once the node is restarted with a node number.
 
-    rsync -a --rsync-path="sudo rsync" ~/.ssh/authorized_keys pi@node0:~/.ssh/authorized_keys
+```
+rsync -a --rsync-path="sudo rsync" ~/.ssh/authorized_keys pi@node0:~/.ssh/authorized_keys
+```
 
 _**Note:**_ At this point you will just do this once to develop a compute node image with Slurm installed. After that is complete you will create a new generic image of the compute node. Once that is complete you can use that image to finish deploying your compute nodes for the rest of your cluster.
 
 SSH in to the new node:
 
-    ssh pi@nodeX
+```
+ssh pi@nodeX
+```
 
 Reboot the node:
 
-    sudo reboot
+```
+sudo reboot
+```
 
 * * *
 
@@ -698,71 +758,98 @@ Reference:
 >
 > Install NTP:
 
-    sudo apt install ntp
+```
+sudo apt install ntp
+```
 
 Edit the _/etc/ntp.conf_:
 
-    sudo nano /etc/ntp.conf
+```
+sudo nano /etc/ntp.conf
+```
 
 Change:
 
-    pool 0.debian.pool.ntp.org iburst
-    pool 1.debian.pool.ntp.org iburst
-    pool 2.debian.pool.ntp.org iburst
-    pool 3.debian.pool.ntp.org iburst
+```
+pool 0.debian.pool.ntp.org iburst
+pool 1.debian.pool.ntp.org iburst
+pool 2.debian.pool.ntp.org iburst
+pool 3.debian.pool.ntp.org iburst
+```
 
 To:
 
-    server 0.north-america.pool.ntp.org
-    server 1.north-america.pool.ntp.org
-    server 2.north-america.pool.ntp.org
-    server 3.north-america.pool.ntp.org
-
+```
+server 0.north-america.pool.ntp.org
+server 1.north-america.pool.ntp.org
+server 2.north-america.pool.ntp.org
+server 3.north-america.pool.ntp.org
+```
 Restart NTP:
 
-    sudo /etc/init.d/ntp restart
+```
+sudo /etc/init.d/ntp restart
+```
 
 > ##### Compute Node
 
 SSH in to compute node:
 
-    ssh pi@node0
+```
+ssh pi@node0
+```
 
 Install NTP on comput node:
 
-    sudo apt install ntp
+```
+sudo apt install ntp
+```
 
 Set Head Node as NTP server.
 
 Edit _/etc/ntp.conf_:
 
-    sudo nano /etc/ntp.conf
+```
+sudo nano /etc/ntp.conf
+```
 
-Under `restrict ::1` add:
+Under ``restrict ::1`` add:
 
-    restrict 192.168.10.0 mask 255.255.255.0
+```
+restrict 192.168.10.0 mask 255.255.255.0
+```
 
 Change:
 
-    #broadcast 192.168.123.255
+```
+#broadcast 192.168.123.255
+```
 
 To:
 
-    broadcast 192.168.10.255
+```
+broadcast 192.168.10.255
+```
 
 Save and exit
 
 Restart NTP service:
 
-    sudo /etc/init.d/ntp restart
+```
+sudo /etc/init.d/ntp restart
+```
 
 Exit to head node:
 
-    exit
+```
+exit
+```
 
 * * *
 
 ## Install Slurm on Head Node
+
+Slurm is the scheduler that organizes jobs to be run on the cluster. This interfaces with MPI and finds the most efficient ways to run jobs according to available resources. This must be installed after creating the base generic image as there is a Slurm controller that must be run on the head node. This is different from the Slurm client that is run on compute nodes.
 
 > #### Step 1 - Install Slurm
 
