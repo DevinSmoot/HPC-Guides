@@ -854,6 +854,7 @@ exit
 Slurm is the scheduler that organizes jobs to be run on the cluster. This interfaces with MPI and finds the most efficient ways to run jobs according to available resources. This must be installed after creating the base generic image as there is a Slurm controller that must be run on the head node. This is different from the Slurm client that is run on compute nodes.
 
 [Slurm scontrol command]https://slurm.schedmd.com/scontrol.html
+[Slurm configuration information]https://wiki.fysik.dtu.dk/niflheim/Slurm_configuration
 
 > #### Step 1 - Install Slurm
 
@@ -962,6 +963,7 @@ sudo systemctl enable slurmctld.service
 sudo ln -s /var/lib/slurm-llnl /var/lib/slurm
 sudo systemctl start slurmctld.service
 sudo systemctl enable munge.service
+sudo systemctl restart munge.service
 ```
 
 Verify Slurm controller is running:
@@ -1064,7 +1066,7 @@ Exit to head node:
 
 Copy Munge and Slurm configuration files from head node to compute node:
 
-    rsync -a --rsync-path="sudo rsync" /etc/munge/munge.key pi@node0:/etc/munge/munge.key
+    See "Generate and distribute Munge key script" in the Troubleshooting section
 
     rsync -a --rsync-path="sudo rsync" /etc/slurm-llnl/slurm.conf pi@node0:/etc/slurm-llnl/slurm.conf
 
