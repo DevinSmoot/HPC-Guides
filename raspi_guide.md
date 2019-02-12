@@ -1,6 +1,12 @@
 # Raspberry Pi Cluster Setup Guide
 
-* * *
+***
+## Acknowledgements
+
+Project lead: __Devin Smoot__, *SWOSU, Weatherford, OK*
+Contributor/Implementation tester: __Madison Matli__, *SWOSU, Weatherford, OK*
+
+***
 
 ## Considerations to Consider before starting
 
