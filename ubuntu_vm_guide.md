@@ -18,7 +18,7 @@ the process of setting up MPICH3.
 
 __*This guide is built to work with Ubuntu 18.04 with the alternate installer*__
 
-[Ubuntu 18.04.1 Alternate Installer](http://cdimage.ubuntu.com/releases/18.04.1/release/ubuntu-18.04.1-server-amd64.iso)
+[Ubuntu Server 16.04.5](http://releases.ubuntu.com/xenial/ubuntu-16.04.5-server-amd64.iso)
 
 ---
 
