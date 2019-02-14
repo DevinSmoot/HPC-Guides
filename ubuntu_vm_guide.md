@@ -249,17 +249,13 @@ sudo apt udpate && sudo apt upgrade -y && sudo apt dist-upgrade -y
 **VERIFY AT THE COMMAND PROMPT THAT YOU ARE UNDER YOUR USER ACCOUNT AND NOT EXECUTING CODE AS SUPER USER OR ROOT**
 
 Generate an SSH key:
+
 ```
 cd ~
-ssh-keygen -t rsa -C "vmcluster@swosu"
+ssh-keygen -f ~/.ssh/id_rsa -t rsa -N ''
 ```
-Press ```Enter``` to select default install location
 
-Press ```Enter``` to leave passphrase blank
-
-Press ```Enter``` to confirm blank passphrase
-
-Copy SSH keys to authorized keys:
+Copy the key to the authorized_keys file:
 
 ```
 cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
@@ -1030,7 +1026,7 @@ Generate new SSH keys:
 
 ```
 cd ~
-ssh-keygen -t rsa -C "cluster@swosu"
+ssh-keygen -f ~/.ssh/id_rsa -t rsa -N ''
 ```
 
 ```Enter``` to select default install location
