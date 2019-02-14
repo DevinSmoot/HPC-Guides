@@ -177,12 +177,6 @@ network 192.168.10.0
 ```
 Save and exit
 
-Install the ifupdown package:
-
-```
-sudo apt install ifupdown
-```
-
 Restart the interface:
 
 ```
@@ -263,7 +257,7 @@ sudo reboot
 > #### Step 10 - Update the system packages and kernel
 
 ```
-sudo apt udpate && sudo apt upgrade -y && sudo apt dist-upgrade -y
+sudo apt udpate && sudo apt upgrade -y
 ```
 
 
@@ -293,13 +287,13 @@ cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
 Install some required compilers and packages:
 
 ```
-sudo apt-get install make build-essential gfortran
+sudo apt install make build-essential gfortran
 ```
 
 Create */software* directory:
 
 ```
-sudo mkdir -p /software/lib/mpich_3.2
+sudo mkdir -p /software/lib/mpich_3
 ```
 
 Create hpc user group:
@@ -323,28 +317,22 @@ sudo chown -R <username>:hpc /software
 Change to the *mpich-3.2* directory and create *build* and *install* directories:
 
 ```
-cd /software/lib/mpich_3.2
+cd /software/lib/mpich_3
 
 mkdir build install
 ```
 
 > #### Step 2 - Download and install
 
-Install prerequisites, download MPICH3 package and install:
-
-```
-sudo apt install gfortran
-```
-
 Download MPICH3 package:
 ```
-wget http://www.mpich.org/static/downloads/3.2/mpich-3.2.1.tar.gz
+wget http://www.mpich.org/static/downloads/3.3/mpich-3.3.tar.gz
 ```
 
 Untar the package:
 
 ```
-tar xvfz mpich-3.2.tar.gz
+tar xvfz mpich-3.3.tar.gz
 ```
 
 Change to *build* directory to begin building the install:
@@ -356,7 +344,7 @@ cd build
 Configure the install:
 
 ```
-/software/lib/mpich_3.2/mpich-3.2/configure  --prefix=/software/lib/mpich_3.2/install
+/software/lib/mpich_3/mpich-3.3/configure  --prefix=/software/lib/mpich_3/install
 ```
 
 Compile the install:
@@ -369,7 +357,7 @@ make install
 Add MPI location to system environment variable PATH:
 
 ```
-export PATH=$PATH:/software/lib/mpich_3.2/install/bin
+export PATH=$PATH:/software/lib/mpich_3/install/bin
 ```
 
 Make the PATH change permanent by adding it to the profile file:
@@ -381,7 +369,7 @@ sudo nano ~/.bashrc
 Add the following to the end of the file:
 
 ```
-export PATH="$PATH:/software/lib/mpich_3.2/install/bin"
+export PATH="$PATH:/software/lib/mpich_3/install/bin"
 ```
 
 Save and exit
