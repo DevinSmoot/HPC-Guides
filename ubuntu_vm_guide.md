@@ -177,6 +177,18 @@ network 192.168.10.0
 ```
 Save and exit
 
+Install the ifupdown package:
+
+```
+sudo apt install ifupdown
+```
+
+Restart the interface:
+
+```
+sudo ifup enp0s8
+```
+
 Edit the hosts file:
 
 ```
