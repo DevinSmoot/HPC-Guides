@@ -1049,12 +1049,6 @@ cd ~
 ssh-keygen -f ~/.ssh/id_rsa -t rsa -N ''
 ```
 
-```Enter``` to select default install location
-
-```Enter``` to leave passphrase blank
-
-```Enter``` to confirm blank passphrase
-
 Copy new SSH keys nodes:
 Copy SSH keys to authorized keys:
 
