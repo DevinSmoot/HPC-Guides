@@ -1056,7 +1056,7 @@ Copy SSH keys to authorized keys:
 cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
 ```
 ```
-sudo rsync -a --rsync-path="sudo rsync" ~/.ssh/authorized_keys pi@nodeX:~/.ssh/authorized_keys
+sudo rsync -a --rsync-path="sudo rsync" ~/.ssh/authorized_keys <username>@nodeX:~/.ssh/authorized_keys
 ```
 
 
