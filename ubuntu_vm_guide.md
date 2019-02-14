@@ -2,6 +2,13 @@
 
 ---
 
+## Acknowledgements
+
+Project lead: __Devin Smoot__, *SWOSU, Weatherford, OK*
+Contributor/Implementation tester: __Madison Matli__, *SWOSU, Weatherford, OK*
+Contributor/Implementation tester: __Hayden Webb__, *SWOSU, Weatherford, OK*
+
+---
 ## Definition of repository
 This repository and guide is designed to guide the setup of a Ubuntu
 supercomputing cluster. This cluster consists of a basic Ubuntu Server install
@@ -9,11 +16,15 @@ that is combined with the MPICH3 system. This gives the cluster MPI capability.
 By default OpenMP libraries are included with GCC which is also installed in
 the process of setting up MPICH3.
 
+__*This guide is built to work with Ubuntu 18.04 with the alternate installer*__
+
+[Ubuntu 18.04.1 Alternate Installer](http://cdimage.ubuntu.com/releases/18.04.1/release/ubuntu-18.04.1-server-amd64.iso)
+
 ---
 
 
 ## Set up Head Node
-
+## Starting Notes: You will begin by downloading the VirtualBox software. VirtualBox will allow students' to download Linux operating systems inside of a virtual environment without overwritting the user's current operating system (Windows, macOS).
 > #### Step 1 - Install VirtualBox
 
 Download and install Oracle VirtualBox
@@ -217,7 +228,7 @@ sudo iptables -t nat -A POSTROUTING -o enp0s8 -j MASQUERADE
 sudo bash -c "iptables-save > /etc/iptables.rules"
 ```
 
-Open the network interfaces file:
+Edit */etc/network/interfaces* file:
 
 ```
 sudo nano /etc/network/interfaces
@@ -307,10 +318,15 @@ mkdir build install
 
 > #### Step 2 - Download and install
 
-Download MPICH3 package and install:
+Install prerequisites, download MPICH3 package and install:
 
 ```
-wget http://www.mpich.org/static/downloads/3.2/mpich-3.2.tar.gz
+sudo apt install gfortran
+```
+
+Download MPICH3 package:
+```
+wget http://www.mpich.org/static/downloads/3.2/mpich-3.2.1.tar.gz
 ```
 
 Untar the package:
@@ -387,7 +403,11 @@ cd ~
 mpiexec -f nodelist hostname
 ```
 
-Should return **head** on the next line
+Output:
+
+```
+head
+```
 
 **Test 2**
 
@@ -395,7 +415,7 @@ Should return **head** on the next line
 mpiexec -f nodelist -n 2 /software/lib/mpich_3.2/build/examples/cpi
 ```
 
-Should give an output similar to the following:
+Output:
 <img src="images\part2step4.png" alt="Step 4 MPI" style="width: 450px;"/>
 
 ---
@@ -422,7 +442,7 @@ With *Compute Node 1* selected click **Start** in the toolbar
 
 Login to *Compute Node 1*
 
-At the terminal enter:
+Edit */etc/network/interfaces* file:
 
 ```
 sudo nano /etc/network/interfaces
