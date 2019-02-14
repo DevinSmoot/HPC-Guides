@@ -412,7 +412,7 @@ head
 **Test 2**
 
 ```
-mpiexec -f nodelist -n 2 /software/lib/mpich_3.2/build/examples/cpi
+mpiexec -f nodelist -n 2 /software/lib/mpich_3/build/examples/cpi
 ```
 
 Output:
