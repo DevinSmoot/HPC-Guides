@@ -494,7 +494,6 @@ Shutdown the *Compute Node 1*:
 sudo shutdown -h now
 ```
 
-
 > #### Step 3 - Change Compute Node 1 Network Adapters
 
 In VirtualBox right click *Compute Node 1* in the left column
@@ -510,7 +509,6 @@ Next, select **Adapter 1** tab
 Set *Attached to:* to **Internal Network**
 
 Set *Name:* to **cluster**
-
 
 > #### Step 4 - Set hostname
 
@@ -557,7 +555,6 @@ sudo reboot
 
 Wait for *Compute Node 1* to reboot before continuing
 
-
 > #### Step 5 - SSH into Compute Node 1 to Acquire Authentication key
 
 In VirtualBox select *Head Node* in the left column
@@ -577,7 +574,6 @@ Type ```yes``` and press ```Enter``` when asked *Are you sure you want to contin
 Type ```exit``` and press ```Enter``` to return to *Head Node*
 
 Verify *Head Node* by checking the command prompt for ```<username>@head:~$```
-
 
 > #### Step 6 - Add Compute Node 1 to the nodelist File on Head Node
 
