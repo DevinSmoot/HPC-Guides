@@ -1071,9 +1071,6 @@ cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
 sudo rsync -a --rsync-path="sudo rsync" ~/.ssh/authorized_keys <username>@nodeX:~/.ssh/authorized_keys
 ```
 
-
-
-
 > #### Restore VirtualBox snapshot
 
 In VirtualBox right click the node in the left column
