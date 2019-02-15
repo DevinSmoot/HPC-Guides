@@ -928,16 +928,18 @@ sudo apt-get install slurmd slurm-client
 
 > #### Step 2 - Copy Slurm configuration file and Munge key to _node0_:
 
+**On _head node_**
+
 Copy _munge.key_ file:
 
 ```
-rsync --rsync-path="sudo rsync" /etc/munge/munge.key <username>@node0:/etc/munge/munge.key
+sudo rsync --rsync-path="sudo rsync" /etc/munge/munge.key <username>@node0:/etc/munge/munge.key
 ```
 
 Copy _slurm.conf_ file:
 
 ```
-rsync -a --rsync-path="sudo rsync" /etc/slurm-llnl/slurm.conf <username>@node0:/etc/slurm-llnl/slurm.conf
+sudo rsync -a --rsync-path="sudo rsync" /etc/slurm-llnl/slurm.conf <username>@node0:/etc/slurm-llnl/slurm.conf
 ```
 
 **On _compute node_**
@@ -962,13 +964,9 @@ ExecStart=/usr/sbin/munged --syslog
 
 Save and exit.
 
-
-
 > #### Step 4 - Finish Munge setup
 
 ```
-sudo systemctl enable munge
-
 sudo systemctl start munge
 ```
 
@@ -980,15 +978,10 @@ _**Note:**_ The _systemctl enable munge_ may show a failed notification but its 
 sudo systemctl enable slurmd
 ```
 
-Complete Slurm daemon auto install:
-
-```
-sudo apt-get upgrade -y
-```
-
 > #### Step 6 - Set Slurm folder permissions
 
 ```
+sudo mkdir -p /var/lib/slurmd
 sudo chown -R slurm:slurm /var/lib/slurmd
 ```
 
