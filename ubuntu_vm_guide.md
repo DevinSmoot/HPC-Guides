@@ -19,7 +19,7 @@ that is combined with the MPICH3 system. This gives the cluster MPI capability.
 By default OpenMP libraries are included with GCC which is also installed in
 the process of setting up MPICH3.
 
-__*This guide is built to work with Ubuntu 18.04 with the alternate installer*__
+__*This guide is built to work with Ubuntu 16.04 with the alternate installer*__
 
 [Ubuntu Server 16.04.5](http://releases.ubuntu.com/xenial/ubuntu-16.04.5-server-amd64.iso)
 
