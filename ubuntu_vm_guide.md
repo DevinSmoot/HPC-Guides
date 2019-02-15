@@ -943,6 +943,14 @@ sudo rsync -a --rsync-path="sudo rsync" /etc/slurm-llnl/slurm.conf <username>@no
 ```
 
 **On _compute node_**
+> #### Step 3 - Set ownership
+
+Set ownership properties:
+
+```
+sudo chown slurm:slurm /etc/slurm-llnl/slurm.conf
+sudo chown munge:munge /etc/munge/munge.key
+```
 
 > #### Step 3 - Fix Munge issue so it will boot
 
