@@ -589,7 +589,21 @@ Add ```192.168.10.100``` to the second line
 
 Save and exit
 
-Deploy Head Node SSH Key
+**On _Both nodes_**
+
+Edit the /etc/sudoers file:
+
+```
+sudo visudo
+```
+
+Add this line to the end of the file:
+
+```
+<username> ALL=NOPASSWD: /usr/bin/rsync *
+```
+
+On the *Head Node* deploy Head Node SSH Key to the compute node.
 
 Issue the following command for each node:
 
@@ -621,7 +635,7 @@ On the *Head Node* enter:
 
 ```
 cd ~
-mpiexec -f nodelist -n 6 /software/lib/mpich3/build/examples/cpi
+mpiexec -f nodelist -n 6 /software/lib/mpich_3/build/examples/cpi
 ```
 
 You should get an output similar to the following:
