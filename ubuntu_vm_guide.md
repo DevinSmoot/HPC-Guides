@@ -25,7 +25,6 @@ __*This guide is built to work with Ubuntu Server 16.04.5*__
 
 ---
 
-
 ## Set up Head Node
 
 Starting Notes: You will begin by downloading the VirtualBox software. VirtualBox will allow students' to download Linux operating systems inside of a virtual environment without overwritting the user's current operating system (Windows, macOS).
@@ -429,7 +428,6 @@ Shutdown the head node:
 ```
 sudo shutdown -h now
 ```
-
 
 ---
 
