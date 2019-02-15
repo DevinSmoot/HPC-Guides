@@ -5,10 +5,13 @@
 ## Acknowledgements
 
 Project lead: __Devin Smoot__, *SWOSU, Weatherford, OK*
+
 Contributor/Implementation tester: __Madison Matli__, *SWOSU, Weatherford, OK*
+
 Contributor/Implementation tester: __Hayden Webb__, *SWOSU, Weatherford, OK*
 
 ---
+
 ## Definition of repository
 This repository and guide is designed to guide the setup of a Ubuntu
 supercomputing cluster. This cluster consists of a basic Ubuntu Server install
