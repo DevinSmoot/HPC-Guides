@@ -418,6 +418,14 @@ mpiexec -f nodelist -n 2 /software/lib/mpich_3/build/examples/cpi
 Output:
 <img src="images\part2step4.png" alt="Step 4 MPI" style="width: 450px;"/>
 
+
+Shutdown the head node:
+
+```
+sudo shutdown -h now
+```
+
+
 ---
 
 ## Set up Cluster Compute Node
@@ -457,6 +465,12 @@ iface enp0s8 inet static
 address 192.168.10.5
 netmask 255.255.255.0
 network 192.168.10.0
+```
+
+Also remove the line below:
+
+```
+pre-up iptables-restore < /etc/iptables.rules
 ```
 
 Under the line ```auto enp0s3``` change or add the following:
@@ -519,7 +533,16 @@ Edit the hosts file:
 sudo nano /etc/hosts
 ```
 
-Change ```head``` to ```node0```
+Change
+```
+127.0.0.1      head
+```
+
+to
+
+```
+127.0.0.1      node0
+```
 
 Save and exit
 
@@ -570,8 +593,9 @@ Deploy Head Node SSH Key
 
 Issue the following command for each node:
 
-rsync -a --rsync-path="sudo rsync" ~/.ssh/authorized_keys pi@nodeX:~/.ssh/authorized_keys
-
+```
+rsync -a --rsync-path="sudo rsync" ~/.ssh/authorized_keys <username>@nodeX:~/.ssh/authorized_keys
+```
 
 > #### Step 7 - Test MPI
 
