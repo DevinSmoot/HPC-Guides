@@ -5,10 +5,13 @@
 ## Acknowledgements
 
 Project lead: __Devin Smoot__, *SWOSU, Weatherford, OK*
+
 Contributor/Implementation tester: __Madison Matli__, *SWOSU, Weatherford, OK*
+
 Contributor/Implementation tester: __Hayden Webb__, *SWOSU, Weatherford, OK*
 
 ---
+
 ## Definition of repository
 This repository and guide is designed to guide the setup of a Ubuntu
 supercomputing cluster. This cluster consists of a basic Ubuntu Server install
@@ -16,15 +19,16 @@ that is combined with the MPICH3 system. This gives the cluster MPI capability.
 By default OpenMP libraries are included with GCC which is also installed in
 the process of setting up MPICH3.
 
-__*This guide is built to work with Ubuntu 18.04 with the alternate installer*__
+__*This guide is built to work with Ubuntu Server 16.04.5*__
 
 [Ubuntu Server 16.04.5](http://releases.ubuntu.com/xenial/ubuntu-16.04.5-server-amd64.iso)
 
 ---
 
-
 ## Set up Head Node
-## Starting Notes: You will begin by downloading the VirtualBox software. VirtualBox will allow students' to download Linux operating systems inside of a virtual environment without overwritting the user's current operating system (Windows, macOS).
+
+Starting Notes: You will begin by downloading the VirtualBox software. VirtualBox will allow students' to download Linux operating systems inside of a virtual environment without overwritting the user's current operating system (Windows, macOS).
+
 > #### Step 1 - Install VirtualBox
 
 Download and install Oracle VirtualBox
@@ -425,7 +429,6 @@ Shutdown the head node:
 sudo shutdown -h now
 ```
 
-
 ---
 
 ## Set up Cluster Compute Node
@@ -491,7 +494,6 @@ Shutdown the *Compute Node 1*:
 sudo shutdown -h now
 ```
 
-
 > #### Step 3 - Change Compute Node 1 Network Adapters
 
 In VirtualBox right click *Compute Node 1* in the left column
@@ -507,7 +509,6 @@ Next, select **Adapter 1** tab
 Set *Attached to:* to **Internal Network**
 
 Set *Name:* to **cluster**
-
 
 > #### Step 4 - Set hostname
 
@@ -554,7 +555,6 @@ sudo reboot
 
 Wait for *Compute Node 1* to reboot before continuing
 
-
 > #### Step 5 - SSH into Compute Node 1 to Acquire Authentication key
 
 In VirtualBox select *Head Node* in the left column
@@ -574,7 +574,6 @@ Type ```yes``` and press ```Enter``` when asked *Are you sure you want to contin
 Type ```exit``` and press ```Enter``` to return to *Head Node*
 
 Verify *Head Node* by checking the command prompt for ```<username>@head:~$```
-
 
 > #### Step 6 - Add Compute Node 1 to the nodelist File on Head Node
 
@@ -1079,9 +1078,6 @@ cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
 ```
 sudo rsync -a --rsync-path="sudo rsync" ~/.ssh/authorized_keys <username>@nodeX:~/.ssh/authorized_keys
 ```
-
-
-
 
 > #### Restore VirtualBox snapshot
 
