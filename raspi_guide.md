@@ -19,6 +19,11 @@ Contributor/Implementation tester: **Madison Matli**, _SWOSU, Weatherford, OK_
     -   Conventions
     -   Errata (Include known issues)
     -   Fleshed out troubleshooting guide
+-   Add NFS section
+-   Multi-user setup section
+-   Script section for ease of cluster management
+-   Look at IPv4 forwarding for better solution
+    -   Router type setup with computer nodes on LAN side
 
 * * *
 
