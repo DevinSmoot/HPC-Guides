@@ -733,6 +733,13 @@ Press _**A**_ to replace all.
 
 Save and exit
 
+Configure Jasper environment variables:
+
+```
+$ export JASPERLIB=$DIR/grib2/lib
+$ export JASPERINC=$DIR/grib2/include
+```
+
 Create a configuration file for your computer and compiler:
 
 ```
