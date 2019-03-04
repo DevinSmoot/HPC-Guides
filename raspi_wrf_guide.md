@@ -775,7 +775,7 @@ The options are listed below:
 Usage:
 
 ```
-$ ./compile <case_name> >& compile.log
+$ ./compile <case_name> >& wrf_compile.log
 ```
 
 Where `<case_name>` is one of the options listed above.
