@@ -251,6 +251,9 @@ export PATH=$DIR/mpich_3.0.4/install/bin:$PATH
 # Zlib-1.2.7
 export LDFLAGS=-L$DIR/grib2/lib
 export CPPFLAGS=-I$DIR/grib2/include
+
+# HDF5
+export PATH=$DIR/hdf5_1.10.5/bin:$PATH
 ```
 
 Depending on the type of run you wish to make, there are various libraries that should be installed. Below are 5 libraries.
