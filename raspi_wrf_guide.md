@@ -778,7 +778,7 @@ Usage:
 $ ./compile <case_name> >& compile.log
 ```
 
-Where &lt;case_name> is one of the options listed above.
+Where `<case_name>` is one of the options listed above.
 
 Compilation should take about 30-45 minutes.
 
@@ -840,7 +840,7 @@ Edit the configuration files to work with Raspberry Pi:
 ```
 $ cd arch
 
-# nano configure.defaults
+# nano configure_new.defaults
 ```
 
 Use `Ctrl+W` then `Ctrl+R` to find and replace the following:
