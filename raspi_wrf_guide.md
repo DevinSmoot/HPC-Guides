@@ -869,14 +869,7 @@ $ cd ..
 $ ./clean
 ```
 
-The next step is to configure WPS, however, you first need to set some paths for the ungrib libraries:
-
-```
-$ export JASPERLIB=$DIR/grib2/lib
-$ export JASPERINC=$DIR/grib2/include
-```
-
-and then you can configure:
+and then configure:
 
 ```
 $ ./configure
