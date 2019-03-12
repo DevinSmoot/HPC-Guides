@@ -1162,6 +1162,9 @@ WRF online tutorial:
 Katrina example:
 <http://www2.mmm.ucar.edu/wrf/OnLineTutorial/CASES/SingleDomain/index.html>
 
+Realtime Datasets from NOAA:
+http://www2.mmm.ucar.edu/wrf/users/download/free_data.html#realtime
+
 ## Troubleshooting Section:
 
 > #### The Node Randomly Reboots:
