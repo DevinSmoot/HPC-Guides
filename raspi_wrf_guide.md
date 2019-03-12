@@ -1065,7 +1065,7 @@ You are now ready to begin running WPS and WRFV3. Start by going to the WPS dire
 $ cd /software/ncar-wrf_3.8.1/build/WPS
 ```
 
-Make any changes to the namelist.wps file, to reflect information for your particular run
+Make any changes to the `namelist.wps` file, to reflect information for your particular run
 
 Before running geogrid, make sure that you have your geog_data_path set to the location where you put your geography static data. Once that is set, you can run geogrid.
 
@@ -1073,7 +1073,7 @@ Before running geogrid, make sure that you have your geog_data_path set to the l
 $ ./geogrid.exe >& geogrid.log
 ```
 
-If you successfully created a geo_em\* file for each domain, then you are ready to prepare to run ungrib. Start by linking in the input GFS data:
+If you successfully created a `geo_em\*` file for each domain, then you are ready to prepare to run ungrib. Start by linking in the input GFS data:
 
 ```
 $ ./link_grib.csh <path_where_you_placed_GFS_files>
@@ -1099,11 +1099,11 @@ You are now ready to run metgrid:
 $ ./metgrid.exe >& metgrid.log
 ```
 
-You should now have files with the prefix met_em\* for each of the time periods for which you are running.
+You should now have files with the prefix `met_em\*` for each of the time periods for which you are running.
 
 > **Running WRFV3**
 
-You are now ready to run WRFV3. Move into the WRFV3 directory, and then into either the run/ directory, or the test/em_real/
+You are now ready to run WRFV3. Move into the WRFV3 directory, and then into either the `run/` directory, or the `test/em_real/`
 directory:
 
 ```
@@ -1116,7 +1116,7 @@ or
 $ cd ../WRFV3/test/em_real
 ```
 
-Before running the "real" program, you need to make all necessary changes to reflect your particular case to the namelist.input file. Once that is complete, you need to copy or link your met_em\* files into the
+Before running the "real" program, you need to make all necessary changes to reflect your particular case to the namelist.input file. Once that is complete, you need to copy or link your `met_em\*` files into the
 working directory:
 
 From the _test/em_real_ directory:
@@ -1142,9 +1142,9 @@ mpirun -np 1 ./real.exe
 ```
 
 Check the end of your "rsl" files to make sure the run was successful:
-tail rsl.error.0000
+`tail rsl.error.0000`
 
-If you see a "SUCCESS" in there, and you see a wrfbdy_d01 file, and wrfinput_d0\* files for each of your domains, then the run was successful.
+If you see a "SUCCESS" in there, and you see a `wrfbdy_d01` file, and `wrfinput_d0\*` files for each of your domains, then the run was successful.
 
 To run WRFV3, type something similar to:
 
@@ -1152,7 +1152,7 @@ To run WRFV3, type something similar to:
 $ mpirun -np 8 ./wrf.exe
 ```
 
-Again, check your "rsl" file for "SUCCESS", and make sure you have all the wrfout\* files you anticipated having. If so, the run was successful, and you are ready to do analysis for your project.
+Again, check your "rsl" file for "SUCCESS", and make sure you have all the `wrfout\*` files you anticipated having. If so, the run was successful, and you are ready to do analysis for your project.
 
 ## Where to get started
 
