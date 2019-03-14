@@ -52,6 +52,74 @@ Creates the intermediate files
 ./util/rd_intermediate.exe FILE:2005-08-28_00
 ./util/plotfmt.exe FILE:2005-08-28_00 ; idt gmeta
 ```
+
+#### Edit the namelist file
+
+```
+cd WPS/
+sudo nano namelist.wps
+
+max_dom = 1
+parent_id = 1,
+parent_grid_ratio = 1,
+i_parent_start = 1,
+j_parent_start = 1,
+e_we = 98,
+e_sn = 70,
+geog_data_res = '10m',
+dx = 30000,
+dy = 30000,
+map_proj = 'mercator',
+ref_lat = 25.00,
+ref_lon = -89.00,
+truelat1 = 0.0,
+truelat2 = 0.0,
+stand_lon = -89.0,
+geog_data_path = 'Your WPS_GEOG data location'
+```
+
+#### Running geogrid.exe
+
+```
+ncl util/plotgrids.ncl
+
+./geogrid.exe
+```
+Should see:
+Parsed 20 entries in GEOGRID.TBL
+Processing domain 1 of 1
+Processing XLAT and XLONG
+Processing MAPFAC
+Processing F and E
+Processing ROTANG
+Processing LANDUSEF
+Calculating landmask from LANDUSEF ( WATER = 16 )
+Processing HGT_M
+Processing SOILTEMP
+Processing SOILCTOP
+Processing SCT_DOM
+Processing SOILCBOT
+Processing SCB_DOM
+Processing ALBEDO12M
+Processing GREENFRAC
+Processing SNOALB
+Processing SLOPECAT
+Processing SLOPECAT
+Processing CON
+Processing VAR
+Processing OA1
+Processing OA2
+Processing OA3
+Processing OA4
+Processing OL1
+Processing OL2
+Processing OL3
+Processing OL4
+Processing VAR_SSO
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! Successful completion of geogrid.         !
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 ### References/Information
 
 Start here:
