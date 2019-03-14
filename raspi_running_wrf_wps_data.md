@@ -16,6 +16,7 @@ tar -xf Katrina.tar
 #### Looking into the our data
 
 They want us to run g1print on /DATA/Katrina/avn_050828_00_00
+g1print.exe list the content of a GRIB1 file
 
 #### Link the GFS VTable
 
@@ -28,6 +29,7 @@ ln -sf ungrib/Variable_Tables/Vtable.GFS Vtable
 ./link_grib.csh ../DATA/Katrina/avn
 ```
 #### Edit namelist.wps
+
 ```
 sudo nano namelist.wps
 
@@ -37,20 +39,19 @@ end_date = '2005-08-29_00:00:00'
 interval_seconds = 21600
 prefix = 'FILE'
 ```
-
 #### Run ungrib
+
+Creates the intermediate files
 
 ```
 ./ungrib.exe >& ungrib_data.log
 ```
-
 #### Intermediate files:
 
 ```
 ./util/rd_intermediate.exe FILE:2005-08-28_00
 ./util/plotfmt.exe FILE:2005-08-28_00 ; idt gmeta
 ```
-
 ### References/Information
 
 Start here:
