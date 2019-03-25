@@ -1,64 +1,64 @@
 # Raspberry Pi Cluster Setup Guide
 
-* * *
+---
 
 ## Acknowledgements
 
 Project lead: **Devin Smoot**, _SWOSU, Weatherford, OK_
 Contributor/Implementation tester: **Madison Matli**, _SWOSU, Weatherford, OK_
 
-* * *
+---
 
 ## To do list
 
--   Add new sections:
-    -   Table of contents
-    -   What this guide covers
-    -   What you need for this guide (Hardware/software)
-    -   Who this guide is directed at (audience)
-    -   Conventions
-    -   Errata (Include known issues)
-    -   Fleshed out troubleshooting guide
--   Add NFS section
--   Multi-user setup section
--   Script section for ease of cluster management
--   Look at IPv4 forwarding for better solution
-    -   Router type setup with computer nodes on LAN side
+- Add new sections:
+  - Table of contents
+  - What this guide covers
+  - What you need for this guide (Hardware/software)
+  - Who this guide is directed at (audience)
+  - Conventions
+  - Errata (Include known issues)
+  - Fleshed out troubleshooting guide
+- Add NFS section
+- Multi-user setup section
+- Script section for ease of cluster management
+- Look at IPv4 forwarding for better solution
+  - Router type setup with computer nodes on LAN side
 
-* * *
+---
 
 ## Considerations to Consider before starting
 
 If your SD card size will vary you will want to build the head node using the smallest size of SD card. This will ensure that the image for that SD card will ALWAYS be able to be written to a similar sized SD or larger. If you start with a 64GB SD card you will not be able to write the image to a 16GB SD card.
 
-* * *
+---
 
 #### Head Node
 
 Hardware:
 
--   Raspberry Pi board x 1
--   WiPi USB dongle	x 1
--   SD Card 16GB+ x 1
--   Ethernet cable x 1
--   HDMI cable x 1
--   Power cable mini-USB x 1
+- Raspberry Pi board x 1
+- WiPi USB dongle x 1
+- SD Card 16GB+ x 1
+- Ethernet cable x 1
+- HDMI cable x 1
+- Power cable mini-USB x 1
 
 #### Compute nodes
 
 Hardware:
 
--   Raspberry Pi board x 7
--   SD Card 16GB+ x 1
--   Ethernet cable x 1
--   Power cable mini-USB x 1
+- Raspberry Pi board x 7
+- SD Card 16GB+ x 1
+- Ethernet cable x 1
+- Power cable mini-USB x 1
 
 #### Additional Hardware
 
--   10 Port USB hub
--   16 Port gigabit switch
+- 10 Port USB hub
+- 16 Port gigabit switch
 
-* * *
+---
 
 ## Setup, Installation, and Testing
 
@@ -86,69 +86,69 @@ Start the Raspberry Pi configuration tool:
 
 Select **7 Advanced Options**
 
--   Select **A3 Memory Split**
-    -   Enter **16**
-    -   Press **Enter**
+- Select **A3 Memory Split**
+  - Enter **16**
+  - Press **Enter**
 
 > Setup Localisation Options:
 
 Select **4 Localisation Options**
 
--   Select Locale **I1 Change Locale**
-    -   Unselect **en_GB.UTF-8 UTF-8**
-    -   Select **en_US ISO-8859-1**
-    -   Press **Enter**
-    -   Select **en_US**
+- Select Locale **I1 Change Locale**
+  - Unselect **en_GB.UTF-8 UTF-8**
+  - Select **en_US ISO-8859-1**
+  - Press **Enter**
+  - Select **en_US**
 
 Select **4 Localisation Options**
 
--   Select **I2 Change Timezone**
-    -   Select **US** (or appropriate country)
-    -   Select **Central** (or appropriate local timezone)
+- Select **I2 Change Timezone**
+  - Select **US** (or appropriate country)
+  - Select **Central** (or appropriate local timezone)
 
 Select **4 Localisation Options**
 
--   Select **I3 Change Keyboard Layout**
-    -   Use the default selected Keyboard
-    -   Press **Enter**
-    -   Select **Other**
-    -   Select **English (US)**
-    -   Select **English (US)**
-    -   Select **The default for the keyboard layout**
-    -   Select **No compose key**
-    -   Press **Enter**
+- Select **I3 Change Keyboard Layout**
+  - Use the default selected Keyboard
+  - Press **Enter**
+  - Select **Other**
+  - Select **English (US)**
+  - Select **English (US)**
+  - Select **The default for the keyboard layout**
+  - Select **No compose key**
+  - Press **Enter**
 
 Select **4 Localisation Options**
 
--   Select **I4 Change Wi-fi Country**
-    -   Select **US United States**
-    -   Select **Ok**
+- Select **I4 Change Wi-fi Country**
+  - Select **US United States**
+  - Select **Ok**
 
 > Setup Network Options:
 
 Select **2 Network Options**
 
--   Select **N1 Hostname**
-    -   Select **Ok**
-    -   Enter **head** for the hostname
-    -   Press **Enter**
+- Select **N1 Hostname**
+  - Select **Ok**
+  - Enter **head** for the hostname
+  - Press **Enter**
 
 Select **2 Network Options**
 
--   Select **N2 Wi-fi**
-    -   Enter wi-fi SSID
-    -   Press **Enter**
-    -   Enter wi-fi passphrase
-    -   Press **Enter**
+- Select **N2 Wi-fi**
+  - Enter wi-fi SSID
+  - Press **Enter**
+  - Enter wi-fi passphrase
+  - Press **Enter**
 
 > Setup Interfacing Options:
 
 Select **5 Interfacing Options**
 
--   Select **P2 SSH**
-    -   Select **Yes**
-    -   Select **Ok**
-    -   Press **Enter**
+- Select **P2 SSH**
+  - Select **Yes**
+  - Select **Ok**
+  - Press **Enter**
 
 _Tab_ to **Finish**
 
@@ -269,7 +269,7 @@ Reboot:
 
     sudo reboot
 
-* * *
+---
 
 ## Install MPICH-3.2
 
@@ -396,7 +396,7 @@ Transfer the key to the authorized_keys file:
 
     cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
 
-* * *
+---
 
 ## Prepare for cloning
 
@@ -404,7 +404,7 @@ Shutdown the head node:
 
     sudo shutdown -h now
 
-* * *
+---
 
 ## Save SD Image
 
@@ -416,7 +416,7 @@ Sample name for SD image:
 
     compute_node_mpi_stage_2017_01_03
 
-* * *
+---
 
 ## Create Node image
 
@@ -431,7 +431,7 @@ At this point you have a copy of both the _head node_ and _generic compute node_
 
 [Raspbian Install Guides](https://www.raspberrypi.org/documentation/installation/installing-images/)
 
-* * *
+---
 
 ## Create Generic Node image
 
@@ -529,7 +529,7 @@ Sample name for SD image:
 
     compute_node_mpi_stage_2017_01_03
 
-* * *
+---
 
 ## Setup Generic Node image
 
@@ -615,7 +615,7 @@ Select **Yes**
 
 All settings should take effect on reboot
 
-* * *
+---
 
 ## Deploy Head Node SSH Key
 
@@ -635,7 +635,7 @@ Reboot the node:
 
     sudo reboot
 
-* * *
+---
 
 ## Install NTP
 
@@ -711,7 +711,7 @@ Exit to head node:
 
     exit
 
-* * *
+---
 
 ## Install Slurm on Head Node
 
@@ -839,7 +839,7 @@ Output:
     PARTITION AVAIL  TIMELIMIT  NODES  STATE NODELIST
     raspi2*      up   infinite      7   unk* node[0-6]
 
-* * *
+---
 
 ## Install Slurm on Compute Node
 
@@ -951,13 +951,13 @@ Check node status:
 
 This should show all nodes in an idle state.
 
-* * *
+---
 
 ## Deploying the Rest of the Cluster
 
 By now you have developed a head node image that contains both MPI and Slurm. You have also developed a compute node image that contains both MPI and Slurm as well. Now you should go back to the instructions for "Create Node Image" to save both images and then use the compute node image to finish deploying your cluster. Saving these images at each stage gives you different configurations that you can easily deploy in the future and also allows you to have a checkpoint in case something goes wrong. You can write the saved node image to your SD and start from that point rather then starting from the beginning.
 
-* * *
+---
 
 ## Add an ethernet adapter
 
@@ -1009,7 +1009,13 @@ Reboot:
 
 Now all traffic for the cluster is routed through eth0 and out eth1 to the internet. Any returning traffic or downloads come in via eth1 and through eth0 to the cluster unless its meant for the head node.
 
-* * *
+---
+
+#### NFS
+
+https://medium.com/@aallan/adding-an-external-disk-to-a-raspberry-pi-and-sharing-it-over-the-network-5b321efce86a
+
+https://raspberrypi.stackexchange.com/questions/87057/cannot-automatically-mount-nfs-share-to-raspberry-pi
 
 ## Scripts
 
@@ -1087,7 +1093,7 @@ This will create and configure users from the head node. It will also remove use
 
     # Help display
 
-* * *
+---
 
 ## Troubleshooting Section
 
@@ -1185,9 +1191,9 @@ Add this line to the end of the file:
 
 If mpiexec command fails to execute, stalls, or displays an error message about an unreadable path file:
 
--   Mpich3 could be in the wrong directory
--   Make sure the export path correlates to the actual install path for MPICH3
--   Reinstalling MPICH3 and setting up the proper environment variables can fix many problems, re-evaluate the MPICH3 install instructions and verify all settings before attempting a reinstall.
+- Mpich3 could be in the wrong directory
+- Make sure the export path correlates to the actual install path for MPICH3
+- Reinstalling MPICH3 and setting up the proper environment variables can fix many problems, re-evaluate the MPICH3 install instructions and verify all settings before attempting a reinstall.
 
 > #### SSH ISSUES
 
@@ -1246,7 +1252,7 @@ On many occasions, certain nodes fail to work because of a software/hardware mal
 
 \-For Pi 2 Clusters: A Wi-Pi adapter is a tested solution for establishing a wireless connection with a Raspberry Pi model 2. Using other wireless adapters could result in incompatible drivers or other various issues. The head node can also be connected to the Internet via an Ethernet cable.
 
-* * *
+---
 
 ## Network Diagrams
 
@@ -1270,7 +1276,7 @@ On many occasions, certain nodes fail to work because of a software/hardware mal
 
 </center>
 
-* * *
+---
 
 ## References
 
