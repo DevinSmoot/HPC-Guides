@@ -271,7 +271,7 @@ Reboot:
 
 ---
 
-## Install MPICH-3.2
+## Install MPICH
 
 Install prerequisite _Fortran_ which will be required for compiling MPICH. All other dependencies are already installed.
 
