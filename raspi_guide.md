@@ -277,23 +277,31 @@ Install prerequisite _Fortran_ which will be required for compiling MPICH. All o
 
 > #### Step 1 - Install Fortran
 
-    sudo apt install gfortran
+```
+sudo apt install gfortran
+```
 
 > #### Step 2 - Install and Setup MPICH3
 
 Create hpc group:
 
-    sudo groupadd hpc
+```
+sudo groupadd hpc
+```
 
 Add pi user to hpc group:
 
-    sudo usermod -aG hpc pi
+```
+sudo usermod -aG hpc pi
+```
 
 Create hpc directory in root:
 
-    sudo mkdir -p /software/lib
+```
+sudo mkdir -p /software/lib
 
-    cd /software/lib
+cd /software/lib
+```
 
 Take ownership of /software:
 
