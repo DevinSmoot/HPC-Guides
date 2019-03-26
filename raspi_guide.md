@@ -80,7 +80,9 @@ Log in with username: **pi** and password **raspberry**
 
 Start the Raspberry Pi configuration tool:
 
-    sudo raspi-config
+```
+# raspi-config
+```
 
 > Setup Advanced Options:
 
@@ -158,45 +160,59 @@ Select **Yes** to reboot
 
 Edit _/etc/network/interfaces_:
 
-    sudo nano /etc/network/interfaces
+```
+# nano /etc/network/interfaces
+```
 
 Add the following to the end of the file:
 
-    auto lo
-    iface lo inet loopback
+```
+auto lo
+iface lo inet loopback
 
-    iface eth0 inet manual
+iface eth0 inet manual
 
-    allow-hotplug wlan0
-    iface wlan0 inet manual
+allow-hotplug wlan0
+iface wlan0 inet manual
 
-    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+```
 
 Setup _eth0_ static ip address:
 
 Edit _/etc/dhcpcd.conf_:
 
-    sudo nano /etc/dhcpcd.conf
+```
+# nano /etc/dhcpcd.conf
+```
 
 Add to the end of the file:
 
-    interface eth0
-    static ip_address=192.168.10.5
-    static domain_name_servers=8.8.8.8
+```
+interface eth0
+static ip_address=192.168.10.5
+static domain_name_servers=8.8.8.8
+```
 
 Save and exit
 
 Reboot:
 
-    sudo reboot
+```
+# reboot
+```
 
 > #### Step 4 - Update the system
 
-    sudo apt update && sudo apt upgrade -y
+```
+# apt update && sudo apt upgrade -y
+```
 
 Reboot:
 
-    sudo reboot
+```
+# reboot
+```
 
 > #### Step 5 - IP forwarding for nodes to access internet
 
@@ -206,38 +222,50 @@ Log in with username: **pi** and password **raspberry**
 
 Enable IPv4 Forwarding and Disable IPv6:
 
-    sudo nano /etc/sysctl.conf
+```
+# nano /etc/sysctl.conf
+```
 
 Add the following lines to the end of the file (this includes the IP forwarding rule from above):
 
-    # Enable IPv4 forwarding
-    net.ipv4.ip_forward = 1
+```
+# Enable IPv4 forwarding
+net.ipv4.ip_forward = 1
 
-    # Disable IPv6
-    net.ipv6.conf.all.disable_ipv6 = 1
-    net.ipv6.conf.default.disable_ipv6 = 1
-    net.ipv6.conf.lo.disable_ipv6 = 1
+# Disable IPv6
+net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+net.ipv6.conf.lo.disable_ipv6 = 1
+```
 
 Save and exit
 
 Update the configuration files:
 
-    sudo sysctl -p
+```
+# sysctl -p
+```
 
 Edit and Save the iptables:
 
-    sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-    sudo iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
+```
+# iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+# iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
 
-    sudo bash -c "iptables-save > /etc/iptables.rules"
+# bash -c "iptables-save > /etc/iptables.rules"
+```
 
 Add settings to _/etc/network/interfaces_ file:
 
-    sudo nano /etc/network/interfaces
+```
+# nano /etc/network/interfaces
+```
 
 Add the following line at the end of the wlan0 section under wpa-conf line to make the changes persistent:
 
-    pre-up iptables-restore < /etc/iptables.rules
+```
+pre-up iptables-restore < /etc/iptables.rules
+```
 
 Save and exit
 
@@ -249,25 +277,31 @@ _**Note:**_ At this point you want to assign and name all of your nodes that **W
 
 Edit _/etc/hosts_ file:
 
-    sudo nano /etc/hosts
+```
+# nano /etc/hosts
+```
 
 Modify or add the following lines to the file:
 
-    127.0.1.1	head
+```
+127.0.1.1	head
 
-    192.168.10.3        nodeX
-    192.168.10.5        head
-    192.168.10.100      node0
-    192.168.10.101      node1
-    192.168.10.102      node2
-    192.168.10.103      node3
-    192.168.10.104      node4
-    192.168.10.105 	    node5
-    192.168.10.106 	    node6
+192.168.10.3        nodeX
+192.168.10.5        head
+192.168.10.100      node0
+192.168.10.101      node1
+192.168.10.102      node2
+192.168.10.103      node3
+192.168.10.104      node4
+192.168.10.105 	    node5
+192.168.10.106 	    node6
+```
 
 Reboot:
 
-    sudo reboot
+```
+# reboot
+```
 
 ---
 
@@ -278,7 +312,7 @@ Install prerequisite _Fortran_ which will be required for compiling MPICH. All o
 > #### Step 1 - Install Fortran
 
 ```
-sudo apt install gfortran
+# apt install gfortran
 ```
 
 > #### Step 2 - Install and Setup MPICH3
@@ -286,63 +320,77 @@ sudo apt install gfortran
 Create hpc group:
 
 ```
-sudo groupadd hpc
+# groupadd hpc
 ```
 
 Add pi user to hpc group:
 
 ```
-sudo usermod -aG hpc pi
+# usermod -aG hpc pi
 ```
 
 Create hpc directory in root:
 
 ```
-sudo mkdir -p /software/lib
+# mkdir -p /software/lib
 
-cd /software/lib
+$ cd /software/lib
 ```
 
 Take ownership of /software:
 
-    sudo chown -R pi:hpc /software
+```
+# chown -R pi:hpc /software
+```
 
 Create build and install directory inside mpich3 directory:
 
-    mkdir mpich_3
+```
+$ mkdir mpich_3
 
-    cd mpich_3.3
+$ cd mpich_3.3
 
-    mkdir build install
+$ mkdir build install
+```
 
 Download mpich3 and untar:
 
-    wget http://www.mpich.org/static/downloads/3.3/mpich-3.3.tar.gz
+```
+$ wget http://www.mpich.org/static/downloads/3.3/mpich-3.3.tar.gz
 
-    tar xvfz mpich-3.3.tar.gz
+$ tar xvfz mpich-3.3.tar.gz
+```
 
 Compile and install mpich3:
 
-    cd build
+```
+$ cd build
 
-    /software/lib/mpich_3/mpich-3.3/configure --prefix=/software/lib/mpich_3/install
+$ /software/lib/mpich_3/mpich-3.3/configure --prefix=/software/lib/mpich_3/install
 
-    make
+$ make
 
-    make install
+$ make install
+```
 
 Activate environment variable:
 
-    export PATH=/software/lib/mpich_3/install/bin:$PATH
+```
+$ export PATH=/software/lib/mpich_3/install/bin:$PATH
+```
 
 Add path to environment variables for persistance:
 
-    sudo nano ~/.bashrc
+```
+# nano ~/.bashrc
+```
 
 Add the following to the end of the file:
 
-    # MPICH-3.3
-    export PATH="/software/lib/mpich_3/install/bin:$PATH"
+```
+# MPICH
+export PATH="/software/lib/mpich_3/install/bin:$PATH"
+```
 
 > #### Step 3 - Create list of nodes for MPI:
 
@@ -350,12 +398,16 @@ This list of nodes will need to be updated as you add nodes later. Initially you
 
 Create node list:
 
-    cd ~
-    sudo nano nodelist
+```
+$ cd ~
+# nano nodelist
+```
 
 Add the head node ip address to the list:
 
-    192.168.10.5
+```
+192.168.10.5
+```
 
 _**Note:**_ Anytime you need to add a node to the cluster make sure to add it here as well as _/etc/hosts_ file.
 
@@ -365,26 +417,34 @@ _**Note:**_ Anytime you need to add a node to the cluster make sure to add it he
 
 Enter on command line:
 
-    cd ~
+```
+$ cd ~
 
-    mpiexec -f nodelist hostname
+$ mpiexec -f nodelist hostname
+```
 
 Output:
 
-    head
+```
+head
+```
 
 **Test 2 - Calculate Pi**
 
 Enter on command line:
 
-    mpiexec -f nodelist -n 2 /software/lib/mpich_3/build/examples/cpi
+```
+$ mpiexec -f nodelist -n 2 /software/lib/mpich_3/build/examples/cpi
+```
 
 Output:
 
-    Process 0 of 2 is on head
-    Process 1 of 2 is on head
-    pi is approximately 3.1415926544231318, Error is 0.0000000008333387
-    wall clock time = 0.003250
+```
+Process 0 of 2 is on head
+Process 1 of 2 is on head
+pi is approximately 3.1415926544231318, Error is 0.0000000008333387
+wall clock time = 0.003250
+```
 
 > #### Step 5 - Setup SSH keys
 
@@ -392,9 +452,11 @@ _**Note:**_ _Must be executed from head node as pi user_
 
 Generate SSH key:
 
-    cd ~
+```
+$ cd ~
 
-    ssh-keygen -t rsa -C "<username>@swosubta" -f ~/.ssh/id_rsa
+$ ssh-keygen -t rsa -C "<username>@swosubta" -f ~/.ssh/id_rsa
+```
 
 Press **Enter** for passphrase
 
@@ -402,7 +464,9 @@ Press **Enter** for same passphrase
 
 Transfer the key to the authorized_keys file:
 
-    cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
+```
+$ cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
+```
 
 ---
 
@@ -410,7 +474,9 @@ Transfer the key to the authorized_keys file:
 
 Shutdown the head node:
 
-    sudo shutdown -h now
+```
+# shutdown -h now
+```
 
 ---
 
@@ -422,7 +488,7 @@ Using the same guide as described in the beginning you will want to reverse the 
 
 Sample name for SD image:
 
-    compute_node_mpi_stage_2017_01_03
+`compute_node_mpi_stage_2017_01_03`
 
 ---
 
@@ -451,47 +517,67 @@ Log in with username: **pi** and password **raspberry**
 
 > #### Step 2 - Enter a generic ip address
 
-    sudo nano /etc/dhcpcd.conf
+```
+# nano /etc/dhcpcd.conf
+```
 
 Change the _eth0_ ip address from:
 
-    static ip_address=192.168.10.5
+```
+static ip_address=192.168.10.5
+```
 
 To:
 
-    static ip_address=192.168.10.3
+```
+static ip_address=192.168.10.3
+```
 
 Also add to the end of the file:
 
-    static routers=192.168.10.5
+```
+static routers=192.168.10.5
+```
 
 Save and exit
 
 > #### Step 3 - Enter a generic hostname
 
-    sudo nano /etc/hostname
+```
+# nano /etc/hostname
+```
 
 Change:
 
-    head
+```
+head
+```
 
 To:
 
-    nodeX
+```
+nodeX
+```
 
 Save and exit
 
 > #### Step 4 - Edit hosts file
 
-    sudo nano /etc/hosts
+```
+# nano /etc/hosts
+```
 
 Change:
 
-    127.0.1.1				head
+```
+127.0.1.1				head
+```
 
 To:
 
-    127.0.1.1				nodeX
+```
+127.0.1.1				nodeX
+```
 
 Save and exit
 
@@ -499,43 +585,55 @@ Save and exit
 
 Edit _interfaces_ file:
 
-    sudo nano /etc/network/interfaces
+```
+# nano /etc/network/interfaces
+```
 
 Remove:
 
-    allow-hotplug wlan0
-    iface wlan0 inet manual
-    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+```
+allow-hotplug wlan0
+iface wlan0 inet manual
+wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
 
-    pre-up iptables-restore < /etc/iptables.rules
+pre-up iptables-restore < /etc/iptables.rules
+```
 
 Edit _wpa_supplicant.conf_:
 
-    sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
+```
+# nano /etc/wpa_supplicant/wpa_supplicant.conf
+```
 
-Remove this section if you have a secure network:
+If you are using a secure network remove this section:
 
-    network={
-    ssid="<network name>"
-    psk="<network password>"
-    }
+```
+network={
+ssid="<network name>"
+psk="<network password>"
+}
+```
 
-Remove this section if you have an unsecure network:
+If you are using an unsecure network remove this section:
 
-    network={
-    ssid="<network name>"
-    key_mgmt=NONE
-    }
+```
+network={
+ssid="<network name>"
+key_mgmt=NONE
+}
+```
 
 > #### Step 6 - Shutdown and create a new image of the SD
 
-    sudo shutdown -h now
+```
+# shutdown -h now
+```
 
 Now you will go back to WinDiskImager32 and save the image as a node image. This is a generic node image that you can quickly deploy and use to set up your cluster with.
 
 Sample name for SD image:
 
-    compute_node_mpi_stage_2017_01_03
+`compute_node_mpi_stage_2017_01_03`
 
 ---
 
@@ -553,7 +651,9 @@ Log in with username: **pi** and password **raspberry**
 
 SSH into the new node:
 
-    ssh pi@nodeX
+```
+$ ssh pi@nodeX
+```
 
 Enter **yes** to accept the key
 
@@ -563,15 +663,21 @@ Command prompt should read `pi@nodeX:~ $`
 
 > #### Step 3 - Adjust _/etc/hostname_ file
 
-    sudo nano /etc/hostname
+```
+# nano /etc/hostname
+```
 
 Change:
 
-    nodeX
+```
+nodeX
+```
 
 To:
 
-    node0
+```
+node0
+```
 
 Save and exit
 
@@ -579,29 +685,41 @@ _**Note:**_ This number will increment by one each time you add a node and must 
 
 > #### Step 4 - Adjust _/etc/dhcpcd.conf_
 
-    sudo nano /etc/dhcpcd.conf
+```
+# nano /etc/dhcpcd.conf
+```
 
 Change the _eth0_ ip address from:
 
-    static ip_address=192.168.10.3
+```
+static ip_address=192.168.10.3
+```
 
 To:
 
-    static ip_address=192.168.10.100
+```
+static ip_address=192.168.10.100
+```
 
 Save and exit
 
 > #### Step 5 - Edit hosts file
 
-    sudo nano /etc/hosts
+```
+# nano /etc/hosts
+```
 
 Change:
 
-    127.0.1.1				nodeX
+```
+127.0.1.1				nodeX
+```
 
 To:
 
-    127.0.1.1				node0
+```
+127.0.1.1				node0
+```
 
 Save and exit
 
@@ -609,7 +727,9 @@ Save and exit
 
 Open configuration tool:
 
-    sudo raspi-config
+```
+# raspi-config
+```
 
 Select **7 Advanced Options**
 
@@ -631,17 +751,23 @@ Issue the following command from the head node for each node in the cluster:
 
 Only run this command once the node is restarted with a node number.
 
-    rsync -a --rsync-path="sudo rsync" ~/.ssh/authorized_keys pi@node0:~/.ssh/authorized_keys
+```
+# rsync -a --rsync-path="sudo rsync" ~/.ssh/authorized_keys pi@node0:~/.ssh/authorized_keys
+```
 
 _**Note:**_ At this point you will just do this once to develop a compute node image with Slurm installed. After that is complete you will create a new generic image of the compute node. Once that is complete you can use that image to finish deploying your compute nodes for the rest of your cluster.
 
 SSH in to the new node:
 
-    ssh pi@nodeX
+```
+$ ssh pi@nodeX
+```
 
 Reboot the node:
 
-    sudo reboot
+```
+# reboot
+```
 
 ---
 
@@ -657,67 +783,93 @@ Reference:
 >
 > Install NTP:
 
-    sudo apt install ntp
+```
+# apt install ntp
+```
 
 Edit the _/etc/ntp.conf_:
 
-    sudo nano /etc/ntp.conf
+```
+# nano /etc/ntp.conf
+```
 
 Change:
 
-    pool 0.debian.pool.ntp.org iburst
-    pool 1.debian.pool.ntp.org iburst
-    pool 2.debian.pool.ntp.org iburst
-    pool 3.debian.pool.ntp.org iburst
+```
+pool 0.debian.pool.ntp.org iburst
+pool 1.debian.pool.ntp.org iburst
+pool 2.debian.pool.ntp.org iburst
+pool 3.debian.pool.ntp.org iburst
+```
 
 To:
 
-    server 0.north-america.pool.ntp.org
-    server 1.north-america.pool.ntp.org
-    server 2.north-america.pool.ntp.org
-    server 3.north-america.pool.ntp.org
+```
+server 0.north-america.pool.ntp.org
+server 1.north-america.pool.ntp.org
+server 2.north-america.pool.ntp.org
+server 3.north-america.pool.ntp.org
+```
 
 Restart NTP:
 
-    sudo /etc/init.d/ntp restart
+```
+# /etc/init.d/ntp restart
+```
 
 > ##### Compute Node
 
 SSH in to compute node:
 
-    ssh pi@node0
+```
+$ ssh pi@node0
+```
 
 Install NTP on comput node:
 
-    sudo apt install ntp
+```
+# apt install ntp
+```
 
 Set Head Node as NTP server.
 
 Edit _/etc/ntp.conf_:
 
-    sudo nano /etc/ntp.conf
+```
+# nano /etc/ntp.conf
+```
 
 Under `restrict ::1` add:
 
-    restrict 192.168.10.0 mask 255.255.255.0
+```
+restrict 192.168.10.0 mask 255.255.255.0
+```
 
 Change:
 
-    #broadcast 192.168.123.255
+```
+#broadcast 192.168.123.255
+```
 
 To:
 
-    broadcast 192.168.10.255
+```
+broadcast 192.168.10.255
+```
 
 Save and exit
 
 Restart NTP service:
 
-    sudo /etc/init.d/ntp restart
+```
+# /etc/init.d/ntp restart
+```
 
 Exit to head node:
 
-    exit
+```
+$ exit
+```
 
 ---
 
@@ -730,122 +882,148 @@ Slurm is the scheduler that organizes jobs to be run on the cluster. This interf
 
 > #### Step 1 - Install Slurm
 
-    sudo apt install slurm-wlm slurmctld
+```
+# apt install slurm-wlm slurmctld
+```
 
 > #### Step 2 - Add configuration file
 
 Create the new Slurm configuration file _/etc/slurm-llnl/slurm.conf_:
 
-    sudo nano /etc/slurm-llnl/slurm.conf
+```
+# nano /etc/slurm-llnl/slurm.conf
+```
 
 Add the following to the file and save:
 
-    # slurm.conf file generated by configurator easy.html.
-    # Put this file on all nodes of your cluster.
-    # See the slurm.conf man page for more information.
-    #
-    ControlMachine=head
-    ControlAddr=192.168.10.5
-    #
-    #MailProg=/bin/mail
-    MpiDefault=none
-    #MpiParams=ports=#-#
-    ProctrackType=proctrack/pgid
-    ReturnToService=2
-    SlurmctldPidFile=/var/run/slurm-llnl/slurmctld.pid
-    #SlurmctldPort=6817
-    SlurmdPidFile=/var/run/slurm-llnl/slurmd.pid
-    #SlurmdPort=6818
-    SlurmdSpoolDir=/var/lib/slurm/slurmd
-    SlurmUser=slurm
-    #SlurmdUser=root
-    StateSaveLocation=/var/lib/slurm/slurmctld
-    SwitchType=switch/none
-    TaskPlugin=task/none
-    #
-    #
-    # TIMERS
-    #KillWait=30
-    #MinJobAge=300
-    #SlurmctldTimeout=120
-    #SlurmdTimeout=300
-    #
-    #
-    # SCHEDULING
-    FastSchedule=1
-    SchedulerType=sched/backfill
-    #SchedulerPort=7321
-    SelectType=select/linear
-    #
-    #
-    # LOGGING AND ACCOUNTING
-    AccountingStorageType=accounting_storage/none
-    ClusterName=raspi3
-    #JobAcctGatherFrequency=30
-    JobAcctGatherType=jobacct_gather/none
-    #SlurmctldDebug=3
-    SlurmctldLogFile=/var/log/slurm/slurmctld.log
-    #SlurmdDebug=3
-    SlurmdLogFile=/var/log/slurm/slurmd.log
-    #
-    #
-    # COMPUTE NODES
-    NodeName=node[0-6] Procs=1 RealMemory=768 State=UNKNOWN
+```
+# slurm.conf file generated by configurator easy.html.
+# Put this file on all nodes of your cluster.
+# See the slurm.conf man page for more information.
+#
+ControlMachine=head
+ControlAddr=192.168.10.5
+#
+#MailProg=/bin/mail
+MpiDefault=none
+#MpiParams=ports=#-#
+ProctrackType=proctrack/pgid
+ReturnToService=2
+SlurmctldPidFile=/var/run/slurm-llnl/slurmctld.pid
+#SlurmctldPort=6817
+SlurmdPidFile=/var/run/slurm-llnl/slurmd.pid
+#SlurmdPort=6818
+SlurmdSpoolDir=/var/lib/slurm/slurmd
+SlurmUser=slurm
+#SlurmdUser=root
+StateSaveLocation=/var/lib/slurm/slurmctld
+SwitchType=switch/none
+TaskPlugin=task/none
+#
+#
+# TIMERS
+#KillWait=30
+#MinJobAge=300
+#SlurmctldTimeout=120
+#SlurmdTimeout=300
+#
+#
+# SCHEDULING
+FastSchedule=1
+SchedulerType=sched/backfill
+#SchedulerPort=7321
+SelectType=select/linear
+#
+#
+# LOGGING AND ACCOUNTING
+AccountingStorageType=accounting_storage/none
+ClusterName=raspi3
+#JobAcctGatherFrequency=30
+JobAcctGatherType=jobacct_gather/none
+#SlurmctldDebug=3
+SlurmctldLogFile=/var/log/slurm/slurmctld.log
+#SlurmdDebug=3
+SlurmdLogFile=/var/log/slurm/slurmd.log
+#
+#
+# COMPUTE NODES
+NodeName=node[0-6] Procs=1 RealMemory=768 State=UNKNOWN
 
-    PartitionName=raspi3 Default=YES  Nodes=node[0-6] State=UP MaxTime=INFINITE
+PartitionName=raspi3 Default=YES  Nodes=node[0-6] State=UP MaxTime=INFINITE
+```
 
 Check if Slurm controller is running:
 
-    scontrol show daemons
+```
+# scontrol show daemons
+```
 
 Output:
 
-    slurmctld
+```
+slurmctld
+```
 
 > #### Step 3 - Create Munge key
 
-    sudo /usr/sbin/create-munge-key
+```
+# /usr/sbin/create-munge-key
+```
 
 Agree to overwrite.
 
 > #### Step 4 - Create log folder and take ownership
 
-    sudo mkdir /var/log/slurm
+```
+# mkdir /var/log/slurm
 
-    sudo chown -R slurm:slurm /var/log/slurm/
+# chown -R slurm:slurm /var/log/slurm/
+```
 
 > #### Step 5 - Finish installs and start services
 
-    sudo systemctl enable slurmctld.service
-    sudo ln -s /var/lib/slurm-llnl /var/lib/slurm
-    sudo systemctl start slurmctld.service
-    sudo systemctl enable munge.service
-    sudo systemctl restart munge.service
+```
+# systemctl enable slurmctld.service
+# ln -s /var/lib/slurm-llnl /var/lib/slurm
+# systemctl start slurmctld.service
+# systemctl enable munge.service
+# systemctl restart munge.service
+```
 
 Verify Slurm controller is running:
 
-    sudo systemctl status slurmctld.service
+```
+# systemctl status slurmctld.service
+```
 
 Will return feedback to the screen. Verify _Active_ line states: _**active (running)**_.
 
 Verify Munge is running:
 
-    sudo systemctl status munge.service
+```
+# systemctl status munge.service
+```
 
 Will return feedback to the screen. Verify _Active_ line states: _**active (running)**_.
 
 > #### Step 6 - Add user to Slurm group
 
-    sudo adduser pi slurm
+```
+# adduser pi slurm
+```
 
 Check Slurm status:
 
-    sinfo
+```
+$ sinfo
+```
 
 Output:
 
-    PARTITION AVAIL  TIMELIMIT  NODES  STATE NODELIST
-    raspi2*      up   infinite      7   unk* node[0-6]
+```
+PARTITION AVAIL  TIMELIMIT  NODES  STATE NODELIST
+raspi3*      up   infinite      7   idle node[0-6]
+```
 
 ---
 
@@ -857,29 +1035,41 @@ Output:
 
 Give rsync proper permission to run:
 
-    sudo visudo
+```
+# visudo
+```
 
 Add the following to the end of the file:
 
-    <username> ALL=NOPASSWD: /usr/bin/rsync *
+```
+<username> ALL=NOPASSWD: /usr/bin/rsync *
+```
 
 **On _compute node_:**
 
 SSH in to compute node:
 
-    ssh pi@node0
+```
+$ ssh pi@node0
+```
 
 Give rsync proper permission to run:
 
-    sudo visudo
+```
+# visudo
+```
 
 Add the following to the end of the file:
 
-    <username> ALL=NOPASSWD: /usr/bin/rsync *
+```
+<username> ALL=NOPASSWD: /usr/bin/rsync *
+```
 
 Exit back to head node:
 
-    exit
+```
+$ exit
+```
 
 > #### Step 2 - Install Slurm daemon
 
@@ -887,75 +1077,103 @@ Exit back to head node:
 
 SSH in to _node0_:
 
-    ssh pi@node0
+```
+$ ssh pi@node0
+```
 
 Install Slurm daemon and Slurm client:
 
-    sudo apt install slurmd slurm-client
-    sudo ln -s /var/lib/slurm-llnl /var/lib/slurm
+```
+# apt install slurmd slurm-client
+# ln -s /var/lib/slurm-llnl /var/lib/slurm
+```
 
 Create log folders and take ownership:
 
-    sudo mkdir -p /var/log/slurm
+```
+# mkdir -p /var/log/slurm
 
-    sudo chown -R slurm:slurm /var/log/slurm
+# chown -R slurm:slurm /var/log/slurm
+```
 
 Take ownership of Slurm run folder:
 
-    sudo chown -R slurm:slurm /var/run/slurm-llnl
+```
+# chown -R slurm:slurm /var/run/slurm-llnl
+```
 
 Exit to head node:
 
-    exit
+```
+$ exit
+```
 
 **On _head node_:**
 
 Copy Munge and Slurm configuration files from head node to compute node:
 
-    See "Generate and distribute Munge key script" in the Troubleshooting section
+See "Generate and distribute Munge key script" in the Troubleshooting section
 
-    rsync -a --rsync-path="sudo rsync" /etc/slurm-llnl/slurm.conf pi@node0:/etc/slurm-llnl/slurm.conf
+```
+# rsync -a --rsync-path="sudo rsync" /etc/slurm-llnl/slurm.conf pi@node0:/etc/slurm-llnl/slurm.conf
+```
 
 **On _compute node_:**
 
 SSH in to _node0_:
 
-    ssh pi@node0
+```
+$ ssh pi@node0
+```
 
 Take ownership of _munge.key_ file:
 
-    sudo chown munge:munge /etc/munge/munge.key
+```
+# chown munge:munge /etc/munge/munge.key
+```
 
 Finish install and start Slurm and Munge:
 
-    sudo systemctl enable slurmd.service
-    sudo systemctl restart slurmd.service
-    sudo systemctl enable munge.service
-    sudo systemctl restart munge.service
+```
+# systemctl enable slurmd.service
+# systemctl restart slurmd.service
+# systemctl enable munge.service
+# systemctl restart munge.service
+```
 
 Verify Slurm daemon is running:
 
-    sudo systemctl status slurmd.service
+```
+# systemctl status slurmd.service
+```
 
 Will return feedback to the screen. Verify _Active_ line states: _**active (running)**_.
 
 Verify Munge is running:
 
-    sudo systemctl status munge.service
+```
+# systemctl status munge.service
+```
 
 Will return feedback to the screen. Verify _Active_ line states: _**active (running)**_.
 
 > #### Step 3 - Add user to Slurm group
 
-    sudo adduser pi slurm
+```
+# adduser pi slurm
+```
 
 Execute on _head node_:
 
-    sudo scontrol reconfigure
+```
+# scontrol reconfigure
+```
 
 Check node status:
 
-    sinfo
+```
+$ sinfo
+```
 
 This should show all nodes in an idle state.
 
@@ -965,7 +1183,7 @@ This should show all nodes in an idle state.
 
 By now you have developed a head node image that contains both MPI and Slurm. You have also developed a compute node image that contains both MPI and Slurm as well. Now you should go back to the instructions for "Create Node Image" to save both images and then use the compute node image to finish deploying your cluster. Saving these images at each stage gives you different configurations that you can easily deploy in the future and also allows you to have a checkpoint in case something goes wrong. You can write the saved node image to your SD and start from that point rather then starting from the beginning.
 
----
+## You should now have a working Raspberry Pi cluster.
 
 ## Add an ethernet adapter
 
@@ -973,37 +1191,34 @@ By now you have developed a head node image that contains both MPI and Slurm. Yo
 >
 > Edit _/etc/network/interfaces_ file:
 
-    sudo nano /etc/network/interfaces
+```
+# nano /etc/network/interfaces
+```
 
 Add below eth0 section:
 
-    auto eth1
-    iface eth1 inet manual
+```
+auto eth1
+iface eth1 inet manual
+```
 
 Change or add iptables rule to end of file:
 
-    pre-up iptables-restore < /etc/iptables_wired.rules
+```
+pre-up iptables-restore < /etc/iptables_wired.rules
+```
 
 Create iptables rules file:
 
-    sudo nano /etc/iptables_wired.rules
-
-    # Generated by iptables-save v1.6.0 on Wed Sep 20 04:58:42 2017
-    *nat
-    :PREROUTING ACCEPT [3:228]
-    :INPUT ACCEPT [3:228]
-    :OUTPUT ACCEPT [3:228]
-    :POSTROUTING ACCEPT [0:0]
-    -A POSTROUTING -o eth0 -j MASQUERADE
-    -A POSTROUTING -o eth1 -j MASQUERADE
-    COMMIT
-    # Completed on Wed Sep 20 04:58:42 2017
+**TO-DO: Insert rules creation here**
 
 > #### Disable _wlan0_:
 
 Edit _/etc/wpa_supplicant/wpa_supplicant.conf_ file:
 
-    sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
+```
+# nano /etc/wpa_supplicant/wpa_supplicant.conf
+```
 
 Comment out the `network={ connection information }` section (all lines)
 
