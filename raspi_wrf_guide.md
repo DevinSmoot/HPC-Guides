@@ -517,8 +517,8 @@ Install m4 library:
 Create installation directory:
 
 ```
-$ mkdir -p $DIR/hdf5_1.10.1/install
-$ cd hdf5_1.10.1
+$ mkdir -p $DIR/hdf5_1.10.5/install
+$ cd hdf5_1.10.5
 ```
 
 Get library files:
