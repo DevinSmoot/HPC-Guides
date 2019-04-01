@@ -348,7 +348,7 @@ Create build and install directory inside mpich3 directory:
 ```
 $ mkdir mpich_3
 
-$ cd mpich_3.3
+$ cd mpich_3
 
 $ mkdir build install
 ```
