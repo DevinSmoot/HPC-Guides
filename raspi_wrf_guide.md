@@ -774,6 +774,40 @@ $ make
 $ make install
 ```
 
+**CAIRO**
+Cairo Requires that FreeType, pixman, and pkg-config be installed first
+Create installation directory:
+
+```
+$ mkdir -p $DIR/cairo_1.16.0
+$ cd cairo_1.16.0
+```
+
+Get library files:
+
+```
+$ wget http://cairographics.org/releases/cairo-1.16.0.tar.xz
+```
+
+Untar files:
+
+```
+$ tar xf cairo-1.16.0.tar.gz
+```
+
+Configure cairo:
+
+```
+$ cd cairo-1.16.0
+$  ./configure --prefix=/software/lib/cairo_1.16.0 --enable-quartz-font=no --enable-quartz=no --enable-shared=no --enable-static=yes
+```
+
+Finish the install:
+
+```
+$ make
+$ make install
+```
 ---
 
 ## Library Compatibility Tests
