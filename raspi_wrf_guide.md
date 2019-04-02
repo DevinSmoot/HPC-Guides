@@ -1510,10 +1510,6 @@ http://www2.mmm.ucar.edu/wrf/users/download/free_data.html#realtime
 >
 > This error is indicated by the node rebooting.Under intensive computation, the board needs a minimum amount of voltage to carry out these tasks. The node then gets stuck in a rebooting process, in which the node's image must be refreshed with a previously working image. This problem is a result of using a low voltage, micro USB cable to power on a pi board. Switch out USB cables, and try from a working SD card image.
 
-```
+## References
 
-```
-
-```
-
-```
+https://www.ncl.ucar.edu/Download/build_from_src.shtml
