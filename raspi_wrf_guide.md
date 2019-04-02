@@ -555,7 +555,145 @@ Complete test and install: (Testing will take quite some time to complete: 3+ ho
 $ make check
 $ make install
 ```
+**JPEG**
 
+Create installation directory:
+
+```
+$ mkdir -p $DIR/jpeg-9b
+$ cd jpeg-9b
+```
+
+Get library files:
+
+```
+wget http://www.ijg.org/files/jpegsrc.v9c.tar.gz
+```
+
+Untar files:
+
+```
+tar xvfz jpegsrc.v9c.tar.gz
+```
+
+Configure JPEG:
+
+```
+cd jpeg-9b
+./configure --disable-shared --prefix=/software/lib/jpeg-9b
+```
+
+Finish the install:
+
+```
+make
+make install
+```
+
+**PNG**
+
+Create installation directory:
+
+```
+$ mkdir -p $DIR/png_1.6.36
+$ cd png_1.6.36
+```
+
+Get library files:
+
+```
+wget http://prdownloads.sourceforge.net/libpng/libpng-1.6.36.tar.gz
+```
+
+Untar files:
+
+```
+tar xvfz libpng-1.6.36.tar.gz
+```
+
+Configure png:
+
+```
+cd libpng-1.6.36
+./configure  --with-pic --disable-shared --prefix=/software/lib/png_1.6.36
+```
+
+Finish the install:
+
+```
+make
+make install
+```
+
+**FreeType**
+
+Create installation directory:
+
+```
+$ mkdir -p $DIR/freetype_2.9.1
+$ cd freetype_2.9.1
+```
+
+Get library files:
+
+```
+wget https://sourceforge.net/projects/freetype/files/freetype2/2.9.1/freetype-2.9.1.tar.gz
+```
+
+Untar files:
+
+```
+tar xvfz freetype-2.9.1.tar.gz
+```
+
+Configure freetype:
+
+```
+cd freetype-2.9.1
+./configure --prefix=/software/lib/pkg-config_0.29 --disable-shared
+```
+
+Finish the install:
+
+```
+make
+make install
+```
+
+**PIXMAN**
+
+Create installation directory:
+
+```
+$ mkdir -p $DIR/pixman_0.38.0
+$ cd pixman_0.38.0
+```
+
+Get library files:
+
+```
+wget https://cairographics.org/releases/pixman-0.38.0.tar.gz
+```
+
+Untar files:
+
+```
+tar xvfz pixman-0.38.0.tar.gz
+```
+
+Configure pixman:
+
+```
+cd pixman-0.38.0
+./configure --prefix=/software/lib/pixman_0.38.0
+```
+
+Finish the install:
+
+```
+make
+make install
+```
 ---
 
 ## Library Compatibility Tests

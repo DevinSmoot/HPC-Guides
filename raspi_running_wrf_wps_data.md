@@ -8,7 +8,7 @@
 We want to get the Katrina data into our DATA folder
 
 ```
-cd /software/ncar-wrf_3.8.1/build/DATA
+cd /software/ncar-wrf_3.8.1/DATA
 wget http://www2.mmm.ucar.edu/wrf/TUTORIAL_DATA/Katrina.tar.gz
 tar -xf Katrina.tar
 ```
@@ -21,6 +21,8 @@ g1print.exe list the content of a GRIB1 file
 #### Link the GFS VTable
 
 ```
+cd ..
+cd WPS
 ln -sf ungrib/Variable_Tables/Vtable.GFS Vtable
 ```
 #### Link in the GRIB data
@@ -28,6 +30,17 @@ ln -sf ungrib/Variable_Tables/Vtable.GFS Vtable
 ```
 ./link_grib.csh ../DATA/Katrina/avn
 ```
+This will create the following links:
+
+GRIBFILE.AAA -> ../DATA/Katrina/avn_050828_00_00
+GRIBFILE.AAB -> ../DATA/Katrina/avn_050828_00_06
+GRIBFILE.AAC -> ../DATA/Katrina/avn_050828_00_12
+GRIBFILE.AAD -> ../DATA/Katrina/avn_050828_00_18
+GRIBFILE.AAE -> ../DATA/Katrina/avn_050828_00_24
+GRIBFILE.AAF -> ../DATA/Katrina/avn_050828_00_30
+GRIBFILE.AAG -> ../DATA/Katrina/avn_050828_00_36
+GRIBFILE.AAH -> ../DATA/Katrina/avn_050828_00_42
+GRIBFILE.AAI -> ../DATA/Katrina/avn_050828_00_48
 #### Edit namelist.wps
 
 ```
@@ -46,6 +59,13 @@ Creates the intermediate files
 ```
 ./ungrib.exe >& ungrib_data.log
 ```
+This will create the following files:
+
+FILE:2005-08-28_00
+FILE:2005-08-28_06
+FILE:2005-08-28_12
+FILE:2005-08-28_18
+FILE:2005-08-29_00
 #### Intermediate files:
 
 ```
