@@ -590,6 +590,7 @@ Remove:
 ```
 allow-hotplug wlan0
 iface wlan0 inet manual
+
 wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
 
 pre-up iptables-restore < /etc/iptables.rules
