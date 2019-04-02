@@ -650,7 +650,7 @@ Configure freetype:
 
 ```
 cd freetype-2.9.1
-./configure --prefix=/software/lib/pkg-config_0.29 --disable-shared
+./configure --prefix=/software/lib/freetype_2.9.1 --disable-shared
 ```
 
 Finish the install:
