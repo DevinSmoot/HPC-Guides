@@ -455,12 +455,8 @@ Generate SSH key:
 ```
 $ cd ~
 
-$ ssh-keygen -t rsa -C "<username>@swosubta" -f ~/.ssh/id_rsa
+$ ssh-keygen -t rsa -P "" -f ~/.ssh/id_rsa -q
 ```
-
-Press **Enter** for passphrase
-
-Press **Enter** for same passphrase
 
 Transfer the key to the authorized_keys file:
 
