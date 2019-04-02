@@ -254,6 +254,10 @@ export CPPFLAGS=-I$DIR/grib2/include
 
 # HDF5
 export PATH=$DIR/hdf5_1.10.5/bin:$PATH
+
+# pkg-config
+export PKG_CONFIG_PATH=/software/lib/pkg-config_0.29
+export PATH=/software/lib/pkg-config_0.29/bin:$PATH
 ```
 
 Depending on the type of run you wish to make, there are various libraries that should be installed. Below are 5 libraries.
@@ -555,6 +559,13 @@ Complete test and install: (Testing will take quite some time to complete: 3+ ho
 $ make check
 $ make install
 ```
+
+Reset filesystem location for next library install:
+
+```
+$ cd $DIR
+```
+
 **JPEG**
 
 Create installation directory:
@@ -567,27 +578,33 @@ $ cd jpeg-9b
 Get library files:
 
 ```
-wget http://www.ijg.org/files/jpegsrc.v9c.tar.gz
+$ wget http://www.ijg.org/files/jpegsrc.v9c.tar.gz
 ```
 
 Untar files:
 
 ```
-tar xvfz jpegsrc.v9c.tar.gz
+$ tar xvfz jpegsrc.v9c.tar.gz
 ```
 
 Configure JPEG:
 
 ```
-cd jpeg-9b
-./configure --disable-shared --prefix=/software/lib/jpeg-9b
+$ cd jpeg-9b
+$ ./configure --disable-shared --prefix=/software/lib/jpeg-9b
 ```
 
 Finish the install:
 
 ```
-make
-make install
+$ make
+$ make install
+```
+
+Reset filesystem location for next library install:
+
+```
+$ cd $DIR
 ```
 
 **PNG**
@@ -602,27 +619,88 @@ $ cd png_1.6.36
 Get library files:
 
 ```
-wget http://prdownloads.sourceforge.net/libpng/libpng-1.6.36.tar.gz
+$ wget http://prdownloads.sourceforge.net/libpng/libpng-1.6.36.tar.gz
 ```
 
 Untar files:
 
 ```
-tar xvfz libpng-1.6.36.tar.gz
+$ tar xvfz libpng-1.6.36.tar.gz
 ```
 
 Configure png:
 
 ```
-cd libpng-1.6.36
-./configure  --with-pic --disable-shared --prefix=/software/lib/png_1.6.36
+$ cd libpng-1.6.36
+$ ./configure  --with-pic --disable-shared --prefix=/software/lib/png_1.6.36
 ```
 
 Finish the install:
 
 ```
-make
-make install
+$ make
+$ make install
+```
+
+Reset filesystem location for next library install:
+
+```
+$ cd $DIR
+```
+
+**glib**
+
+Install glib library:
+
+```
+# apt install libglib2.0-dev
+```
+
+**pkg-config**
+
+Create installation directory:
+
+```
+$ mkdir -p $DIR/pkg-config_0.29
+$ cd pkg-config_0.29
+```
+
+Get library files:
+
+```
+$ wget http://pkgconfig.freedesktop.org/releases/pkg-config-0.29.tar.gz
+```
+
+Untar files:
+
+```
+$ tar xvfz pkg-config-0.29.tar.gz
+$ cd pkg-config-0.29
+```
+
+Configure pkg-config:
+
+```
+$ ./configure --prefix=/software/lib/pkg-config_0.29
+```
+
+Finish the install:
+
+```
+$ make all install
+```
+
+Set environment variables:
+
+```
+$ export PKG_CONFIG_PATH=/software/lib/pkg-config_0.29
+$ export PATH=/software/lib/pkg-config_0.29/bin:$PATH
+```
+
+Reset filesystem location for next library install:
+
+```
+$ cd $DIR
 ```
 
 **FreeType**
@@ -637,27 +715,28 @@ $ cd freetype_2.9.1
 Get library files:
 
 ```
-wget https://sourceforge.net/projects/freetype/files/freetype2/2.9.1/freetype-2.9.1.tar.gz
+$ wget https://sourceforge.net/projects/freetype/files/freetype2/2.9.1/freetype-2.9.1.tar.gz
 ```
 
 Untar files:
 
 ```
-tar xvfz freetype-2.9.1.tar.gz
+$ tar xvfz freetype-2.9.1.tar.gz
 ```
 
 Configure freetype:
 
 ```
-cd freetype-2.9.1
-./configure --prefix=/software/lib/pkg-config_0.29 --disable-shared
+$ cd freetype-2.9.1
+
+$./configure --prefix=/software/lib/freetype_2.9.1 --disable-shared
 ```
 
 Finish the install:
 
 ```
-make
-make install
+$ make
+$ make install
 ```
 
 **PIXMAN**
@@ -672,28 +751,29 @@ $ cd pixman_0.38.0
 Get library files:
 
 ```
-wget https://cairographics.org/releases/pixman-0.38.0.tar.gz
+$ wget https://cairographics.org/releases/pixman-0.38.0.tar.gz
 ```
 
 Untar files:
 
 ```
-tar xvfz pixman-0.38.0.tar.gz
+$ tar xvfz pixman-0.38.0.tar.gz
 ```
 
 Configure pixman:
 
 ```
-cd pixman-0.38.0
-./configure --prefix=/software/lib/pixman_0.38.0
+$ cd pixman-0.38.0
+$ ./configure --prefix=/software/lib/pixman_0.38.0
 ```
 
 Finish the install:
 
 ```
-make
-make install
+$ make
+$ make install
 ```
+
 ---
 
 ## Library Compatibility Tests
@@ -705,15 +785,19 @@ Download this tar file and place it in the TESTS directory:
 [Fortran_C_NETCDF_MPI_tests.tar](http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/Fortran_C_NETCDF_MPI_tests.tar)
 
 ```
+
 $ cd /software/ncar-wrf_3.8.1/TESTS
 
 $ wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/Fortran_C_NETCDF_MPI_tests.tar
+
 ```
 
 To unpack the tar file, type:
 
 ```
+
 $ tar xf Fortran_C_NETCDF_MPI_tests.tar
+
 ```
 
 There are 2 tests:
@@ -725,7 +809,9 @@ The NetCDF-only test requires the include file from the NETCDF package be in thi
 Copy the file here:
 
 ```
+
 $ cp ${NETCDF}/include/netcdf.inc .
+
 ```
 
 Compile the Fortran and C codes for the purpose of this test (the -c option says to not try to build an executable).
@@ -733,19 +819,23 @@ Compile the Fortran and C codes for the purpose of this test (the -c option says
 Type the following commands:
 
 ```
+
 $ gfortran -c 01_fortran+c+netcdf_f.f
 $ gcc -c 01_fortran+c+netcdf_c.c
 $ gfortran 01_fortran+c+netcdf_f.o  01_fortran+c+netcdf_c.o -L${NETCDF}/lib -lnetcdff -lnetcdf
 
 $ ./a.out
+
 ```
 
 Output:
 
 ```
+
 C function called by Fortran
 Values are xx = 2.00 and ii = 1
 SUCCESS test 1 fortran + c + netcdf
+
 ```
 
 **Test #2:** Fortran + C + NetCDF + MPI
@@ -755,7 +845,9 @@ The NetCDF+MPI test requires include files from both of these packages be in thi
 Copy the NetCDF include file here:
 
 ```
+
 $ cp ${NETCDF}/include/netcdf.inc .
+
 ```
 
 Note that the MPI executables mpif90 and mpicc are used below when compiling.
@@ -763,20 +855,24 @@ Note that the MPI executables mpif90 and mpicc are used below when compiling.
 Issue the following commands:
 
 ```
+
 $ mpif90 -c 02_fortran+c+netcdf+mpi_f.f
 $ mpicc -c 02_fortran+c+netcdf+mpi_c.c
 $ mpif90 02_fortran+c+netcdf+mpi_f.o 02_fortran+c+netcdf+mpi_c.o -L${NETCDF}/lib -lnetcdff -lnetcdf
 
 $ mpirun ./a.out
+
 ```
 
 Output:
 
 ```
+
 C function called by Fortran
 Values are xx = 2.00 and ii = 1
 status = 2
 SUCCESS test 2 fortran + c + netcdf + mpi
+
 ```
 
 ## Building WRFV3
@@ -786,7 +882,9 @@ Before compiling WRF on a Raspberry Pi you will need to expand the swap file spa
 Find the USB drive or external hard drive:
 
 ```
+
 $ lsblk
+
 ```
 
 It is most likely device _sda1_. Its physical location on the filesystem is _/dev/sda1_.
@@ -794,32 +892,43 @@ It is most likely device _sda1_. Its physical location on the filesystem is _/de
 Create a filesystem on the drive:
 
 ```
+
 # mkfs.vfat /dev/sda1
+
 ```
 
 Now edit the _/etc/dphys-swapfile_ file:
 
 ```
+
 # nano /etc/dphys-swapfile
+
 ```
 
 Change:
 
 ```
+
 CONF_SWAPSIZE=1024
+
 ```
 
 To:
 
 ```
+
 CONF_SWAPSIZE=2048
+
 ```
 
 Restart _dphys-swapfile_:
 
 ```
+
 # /etc/init.d/dphys-swapfile stop
+
 # /etc/init.d/dphys-swapfile start
+
 ```
 
 After ensuring that all libraries are compatible with the compilers, you can now prepare to build WRFV3. If you do not already have a WRFV3 tar file, you can find it below.
@@ -829,43 +938,55 @@ Download that file and unpack it in the _build_ directory.
 [WRFV3.8.1](http://www2.mmm.ucar.edu/wrf/src/WRFV3.8.1.TAR.gz)
 
 ```
+
 $ cd /software/ncar_wrf-3.8.1/build
 
 $ wget http://www2.mmm.ucar.edu/wrf/src/WRFV3.8.1.TAR.gz
 
 $ tar xfvz WRFV3.8.1.TAR.gz
+
 ```
 
 Go into the WRFV3 directory:
 
 ```
+
 $ cd WRFV3
+
 ```
 
 Install required WRF-Chem package:
 
 ```
+
 $ wget http://www2.mmm.ucar.edu/wrf/src/WRFV3-Chem-3.8.1.TAR.gz
 
 $ tar xvfz WRFV3-Chem-3.8.1.TAR.gz
+
 ```
 
 Setup WRF for Raspberry Pi. Edit the configuration files to conform to Raspberry Pi.
 
 ```
+
 # nano arch/configure_new.defaults
+
 ```
 
 Use `Ctrl+W` then `Ctrl+R` to find and replace the following:
 
 ```
+
 x86_64
+
 ```
 
 With:
 
 ```
+
 armv7l
+
 ```
 
 The end character is a lowercase L.
@@ -877,14 +998,18 @@ Save and exit
 Configure Jasper environment variables:
 
 ```
+
 $ export JASPERLIB=$DIR/grib2/lib
 $ export JASPERINC=$DIR/grib2/include
+
 ```
 
 Create a configuration file for your computer and compiler:
 
 ```
+
 $ ./configure
+
 ```
 
 You will see various options. Choose the option that lists the compiler you are using and the way you wish to build WRFV3 (i.e., serially or in parallel). Although there are 3 different types of parallel (smpar, dmpar, and dm+sm), we have the most experience with dmpar and typically recommend choosing this option.
@@ -913,7 +1038,9 @@ The options are listed below:
 Usage:
 
 ```
+
 $ ./compile <case_name> >& wrf_compile.log
+
 ```
 
 Where `<case_name>` is one of the options listed above.
@@ -923,23 +1050,29 @@ Compilation should take about 30-45 minutes.
 Once the compilation completes, to check whether it was successful, you need to look for executables in the WRFV3/main directory:
 
 ```
-$ ls -ls main/*.exe
+
+$ ls -ls main/\*.exe
+
 ```
 
 If you compiled a real case, you should see:
 
 ```
+
 wrf.exe (model executable)
 real.exe (real data initialization)
 ndown.exe (one-way nesting)
 tc.exe (for tc bogusing--serial only)
+
 ```
 
 If you compiled an idealized case, you should see:
 
 ```
+
 wrf.exe (model executable)
 ideal.exe (ideal case initialization)
+
 ```
 
 These executables are linked to 2 different directories:
@@ -960,37 +1093,47 @@ Download that file and unpack it in the Build_WRF directory:
 [WPSV3.8.1](http://www2.mmm.ucar.edu/wrf/src/WPSV3.8.1.TAR.gz)
 
 ```
+
 $ cd /software/ncar-wrf_3.8.1/build
 
 $ wget http://www2.mmm.ucar.edu/wrf/src/WPSV3.8.1.TAR.gz
 
 $ tar xfvz WPSV3.8.1.TAR.gz
+
 ```
 
 Go into the WPS directory:
 
 ```
+
 $ cd WPS
+
 ```
 
 Edit the configuration files to work with Raspberry Pi:
 
 ```
+
 $ cd arch
 
 # nano configure_new.defaults
+
 ```
 
 Use `Ctrl+W` then `Ctrl+R` to find and replace the following:
 
 ```
+
 i486 i586 i686
+
 ```
 
 With:
 
 ```
+
 armv7l
+
 ```
 
 The end character is a lowercase L.
@@ -1002,15 +1145,19 @@ Save and exit.
 Similar to the WRF model, make sure the WPS directory is clean, by issuing:
 
 ```
+
 $ cd ..
 
 $ ./clean
+
 ```
 
 and then configure:
 
 ```
+
 $ ./configure
+
 ```
 
 You should be given a list of various options for compiler types, whether to compile in serial or parallel, and whether to compile ungrib with GRIB2 capability. Unless you plan to create extremely large domains, it is recommended to compile WPS in serial mode, regardless of whether you compiled WRFV3 in parallel. It is also recommended that you choose a GRIB2 option (make sure you do not choose one that states "NO_GRIB2"). You may choose a non-grib2 option, but most data is now in grib2 format, so it is best to choose this option. You can still run grib1 data when you have built with grib2.
@@ -1024,7 +1171,9 @@ The option used for the Raspberry Pi cluster is option 13 for serial gfortran.
 the metgrid.exe and geogrid.exe programs rely on the WRF model's I/O libraries. There is a line in the configure.wps file that directs the WPS build system to the location of the I/O libraries from the WRF model:
 
 ```
+
 WRF_DIR = ../../WRFV3
+
 ```
 
 Above is the default setting. As long as the name of the WRF model's top-level directory is "WRFV3" and the WPS and WRFV3 directories are at the same level (which they should be if you have followed exactly as instructed on this page so far), then the existing default setting is correct and there is no need to change it. If it is not correct, you must modify the configure file and then save the changes before compiling.
@@ -1034,7 +1183,9 @@ Before compiling you need to make one more change to the configuration file.
 Edit _configuration.wps_:
 
 ```
+
 # nano configure.wps
+
 ```
 
 Under the _WRF_LIB_ section:
@@ -1042,13 +1193,17 @@ Under the _WRF_LIB_ section:
 Find:
 
 ```
+
 -L$(NETCDF)/lib -lnetcdff -lnetcdf
+
 ```
 
 Add _-lgomp_ to the end:
 
 ```
+
 -L$(NETCDF)/lib -lnetcdff -lnetcdf -lgomp
+
 ```
 
 Now it will invoke OpenMP as needed.
@@ -1058,13 +1213,17 @@ We will also want to use MPI compiler.
 Find:
 
 ```
-DM_CC               = mpicc -cc=gcc
+
+DM_CC = mpicc -cc=gcc
+
 ```
 
 Change to:
 
 ```
-DM_CC               = mpicc -cc=mpicc
+
+DM_CC = mpicc -cc=mpicc
+
 ```
 
 You will also need to change the two lines for compression libraries.
@@ -1072,15 +1231,19 @@ You will also need to change the two lines for compression libraries.
 Find the **second** set of the following:
 
 ```
+
 COMPRESSION_LIBS
 COMPRESSION_INC
+
 ```
 
 Change to if it is not already set:
 
 ```
-COMPRESSION_LIBS    = -L/software/lib/grib2/lib -ljasper -lpng -lz
-COMPRESSION_INC     = -I/software/lib/grib2/include
+
+COMPRESSION_LIBS = -L/software/lib/grib2/lib -ljasper -lpng -lz
+COMPRESSION_INC = -I/software/lib/grib2/include
+
 ```
 
 Save and exit
@@ -1088,7 +1251,9 @@ Save and exit
 You can now compile WPS:
 
 ```
+
 $ ./compile >& compile.log
+
 ```
 
 Compilation should only take a few minutes.
@@ -1102,7 +1267,9 @@ _metgrid.exe_
 Verify that they are not zero-sized. To see file size, you can type:
 
 ```
-$ ls -ls *.exe
+
+$ ls -ls \*.exe
+
 ```
 
 ---
@@ -1118,11 +1285,13 @@ Download the file, and place it in the Build_WRF directory.
 Uncompress and un-tar the file:
 
 ```
+
 $ cd /software/ncar-wrf_3.8.1/build
 
 $ wget http://www2.mmm.ucar.edu/wrf/src/wps_files/geog_complete.tar.gz
 
 $ tar xvfz geog_complete.tar.gz
+
 ```
 
 When you untar the file, it will be called "geog."
@@ -1130,13 +1299,17 @@ When you untar the file, it will be called "geog."
 Rename the file to "WPS_GEOG."
 
 ```
+
 $ mv geog WPS_GEOG
+
 ```
 
 The directory infomation is given to the geogrid program in the namelist.wps file in the geogrid section:
 
 ```
+
 $ geog_data_path = '/software/ncar-wrf_3.8.1/build/WPS_GEOG'
+
 ```
 
 The data expands to approximately 10 GB. This data allows a user to run the geogrid.exe program.
@@ -1166,15 +1339,18 @@ Note that the initialization data and time (gfs.2014013100) remains the same, an
 Before obtaining the data, creat a directory in Build_WRF, called "DATA", and then go into that directory:
 
 ```
+
 $ cd /software/ncar-wrf_3.8.1/build
 
 $ mkdir DATA
 $ cd DATA
+
 ```
 
 A simple set of interactive commands to grab these files from the NCEP servers in real-time would look like (**Note: This is just an example time/date. Typically on the NCEP data servers, only the most recent 2-3 days are available at any given time. To use up-to-date real-time data, you will need to adjust the commands to reflect current date and time information**):
 
 ```
+
 curl -s --disable-epsv --connect-timeout 30 -m 60 -u anonymous:USER_ID@INSTITUTION -o GFS_00 \
 ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfs.2014013100/gfs.t00z.pgrb2.0p50.f000
 
@@ -1183,6 +1359,7 @@ ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfs.2014013100/gfs.t00z.pg
 
 curl -s --disable-epsv --connect-timeout 30 -m 60 -u anonymous:USER_ID@INSTITUTION -o GFS_12h \
 ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfs.2014013100/gfs.t00z.pgrb2.0p50.f012
+
 ```
 
 Typically these commands return a complete file within a few seconds. The files returned from these commands (GFS_00h, GFS_06h, GFS_12h) are Grib Edition 2 files, able to be directly used by the ungrib program.
@@ -1200,7 +1377,9 @@ Below are basic instructions for running WPS and WRFV3. For more detailed inform
 You are now ready to begin running WPS and WRFV3. Start by going to the WPS directory:
 
 ```
+
 $ cd /software/ncar-wrf_3.8.1/build/WPS
+
 ```
 
 Make any changes to the `namelist.wps` file, to reflect information for your particular run
@@ -1208,25 +1387,33 @@ Make any changes to the `namelist.wps` file, to reflect information for your par
 Before running geogrid, make sure that you have your geog_data_path set to the location where you put your geography static data. Once that is set, you can run geogrid.
 
 ```
+
 $ ./geogrid.exe >& geogrid.log
+
 ```
 
 If you successfully created a `geo_em\*` file for each domain, then you are ready to prepare to run ungrib. Start by linking in the input GFS data:
 
 ```
+
 $ ./link_grib.csh <path_where_you_placed_GFS_files>
+
 ```
 
 Then link to the correct Vtable (GFS, for this case):
 
 ```
+
 $ ln -sf ungrib/Variable_Tables/Vtable.GFS Vtable
+
 ```
 
 Then run the ungrib executable:
 
 ```
+
 $ ./ungrib.exe
+
 ```
 
 You should now have files with the prefix "FILE" (or if you named them something else, they should have that prefix)
@@ -1234,7 +1421,9 @@ You should now have files with the prefix "FILE" (or if you named them something
 You are now ready to run metgrid:
 
 ```
+
 $ ./metgrid.exe >& metgrid.log
+
 ```
 
 You should now have files with the prefix `met_em\*` for each of the time periods for which you are running.
@@ -1245,13 +1434,17 @@ You are now ready to run WRFV3. Move into the WRFV3 directory, and then into eit
 directory:
 
 ```
+
 $ cd ../WRFV3/run
+
 ```
 
 or
 
 ```
+
 $ cd ../WRFV3/test/em_real
+
 ```
 
 Before running the "real" program, you need to make all necessary changes to reflect your particular case to the namelist.input file. Once that is complete, you need to copy or link your `met_em\*` files into the
@@ -1260,7 +1453,9 @@ working directory:
 From the _test/em_real_ directory:
 
 ```
-$ ln -sf ../../../WPS/met_em* .
+
+$ ln -sf ../../../WPS/met_em\* .
+
 ```
 
 or
@@ -1268,7 +1463,9 @@ or
 From the _run/_ directory:
 
 ```
-$ ln -sf ../../WPS/met_em* .
+
+$ ln -sf ../../WPS/met_em\* .
+
 ```
 
 or, if you would rather copy the files in, instead of linking them, you can use the cp command, instead of the ln -sf command.
@@ -1276,7 +1473,9 @@ or, if you would rather copy the files in, instead of linking them, you can use 
 You can now run the "real" program. The command for running this may vary depending on your system and the number of processors you have available, but it should be something similar to:
 
 ```
+
 mpirun -np 1 ./real.exe
+
 ```
 
 Check the end of your "rsl" files to make sure the run was successful:
@@ -1287,7 +1486,9 @@ If you see a "SUCCESS" in there, and you see a `wrfbdy_d01` file, and `wrfinput_
 To run WRFV3, type something similar to:
 
 ```
+
 $ mpirun -np 8 ./wrf.exe
+
 ```
 
 Again, check your "rsl" file for "SUCCESS", and make sure you have all the `wrfout\*` files you anticipated having. If so, the run was successful, and you are ready to do analysis for your project.
@@ -1308,3 +1509,11 @@ http://www2.mmm.ucar.edu/wrf/users/download/free_data.html#realtime
 > #### The Node Randomly Reboots:
 >
 > This error is indicated by the node rebooting.Under intensive computation, the board needs a minimum amount of voltage to carry out these tasks. The node then gets stuck in a rebooting process, in which the node's image must be refreshed with a previously working image. This problem is a result of using a low voltage, micro USB cable to power on a pi board. Switch out USB cables, and try from a working SD card image.
+
+```
+
+```
+
+```
+
+```
