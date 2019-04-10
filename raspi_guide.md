@@ -1205,11 +1205,47 @@ Change or add iptables rule to end of file:
 pre-up iptables-restore < /etc/iptables_wired.rules
 ```
 
+Edit _/etc/dhcpcd.conf_ file:
+
+Add the following to the end of the file:
+
+```
+interface eth1
+static ip_address=192.168.1.XXX
+static domain_name_servers:8.8.8.8
+static routers=192.168.1.1
+```
+
 Create iptables rules file:
 
-**TO-DO: Insert rules creation here**
+Flush the iptables in Memory
 
-> #### Disable _wlan0_:
+```
+sudo iptables -F
+```
+
+Rebuild the rules and file:
+
+```
+sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+sudo iptables -t nat -A POSTROUTING -o eth1 -j MASQUERADE
+```
+
+Save the iptables_wired.rules file:
+
+```
+sudo bash -c "iptables-save > /etc/iptables_wired.rules"
+```
+
+Check for the iptable rules in the _/etc/network/interfaces file_:
+
+Make sure that the line below is present and not commented out:
+
+```
+pre-up iptables-restore < /etc/iptables_wired.rules
+```
+
+Disable _wlan0_:
 
 Edit _/etc/wpa_supplicant/wpa_supplicant.conf_ file:
 
@@ -1218,14 +1254,6 @@ Edit _/etc/wpa_supplicant/wpa_supplicant.conf_ file:
 ```
 
 Comment out the `network={ connection information }` section (all lines)
-
-Disable eth1 adapter:
-
-    sudo ifconfig eth1 down
-
-Reboot:
-
-    sudo reboot
 
 Now all traffic for the cluster is routed through eth0 and out eth1 to the internet. Any returning traffic or downloads come in via eth1 and through eth0 to the cluster unless its meant for the head node.
 
