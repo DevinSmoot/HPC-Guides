@@ -266,6 +266,9 @@ export FFLAGS='-fPIC -fopenmp'
 export F90=gfortran
 export F90FLAGS='-fPIC -fopenmp'
 export CXXFLAGS='-O -ansi -std=c99 -fopenmp -fPIC'
+export NCARG_ROOT=/software/lib/ncl_ncarg_6.6.2
+export PATH=$NCARG_ROOT/bin:$PATH
+export MANPATH=$NCARG_ROOT/man:$MANPATH
 ```
 
 Depending on the type of run you wish to make, there are various libraries that should be installed. Below are 5 libraries.
