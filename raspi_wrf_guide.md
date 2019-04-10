@@ -258,6 +258,14 @@ export PATH=$DIR/hdf5_1.10.5/bin:$PATH
 # pkg-config
 export PKG_CONFIG_PATH=/software/lib/pkg-config_0.29
 export PATH=/software/lib/pkg-config_0.29/bin:$PATH
+
+#NCL
+export NCARG=/software/lib/NCL_6.6.2
+export CFLAGS='-O -ansi -std=c99 - fopenmp -fPIC'
+export FFLAGS='-fPIC -fopenmp'
+export F90=gfortran
+export F90FLAGS='-fPIC -fopenmp'
+export CXXFLAGS='-O -ansi -std=c99 -fopenmp -fPIC'
 ```
 
 Depending on the type of run you wish to make, there are various libraries that should be installed. Below are 5 libraries.
@@ -808,6 +816,105 @@ Finish the install:
 $ make
 $ make install
 ```
+
+**NCL**
+All above libraries need to be installed before NCL.
+Create installation directory:
+
+```
+$ mkdir -p $DIR/ncl_ncarg_6.6.2
+$ cd ncl_ncarg_6.6.2
+```
+
+Get library files:
+
+```
+$ wget https://www.earthsystemgrid.org/dataset/ncl.662.src/file/ncl_ncarg-6.6.2.tar.gz
+```
+
+Untar files:
+
+```
+$ tar -xvf ncl_ncarg-6.6.2.tar.gz
+```
+
+Add armv7l to the ymake file:
+
+```
+$ cd config/
+$ nano ymake
+```
+Go to the lines that read:
+    #   Figure out what kind of system we are on. We need to know the OS
+    #   and the machine architecture.
+
+Now under Case Linux: find switch ("$mach") and add:
+
+```
+case    armv71
+```
+Note the last character of armv7l is a lower case L and not a 1.
+
+Configure NCL:
+
+Make sure that all environment variables are set before this step.
+```
+$ make -f Makefile.ini
+$ ./ymake -config `pwd`
+```
+
+Run Configure scripts
+```
+cd ..
+./Configure -V
+```
+
+When prompted press:
+```
+y
+"Press Enter"
+"Press Enter"
+y
+/software/lib
+"Press Enter"
+n
+n
+y
+n
+y
+n
+n
+n
+n
+y
+y
+y
+y
+y
+y
+/software/lib/cairo_1.16.0 /software/lib/hdf5_1.10.5 /software/pixman_0.38.0 /software/lib/freetype_2.9.1 /software/lib/jasper_1.900.1 /software/lib/libpng_1.2.50 /software/lib/pkg-config_0.29 /software/lib/grib2 /software/lib/jpeg-9b /software/lib/mpich_3
+n
+y
+```
+
+Ensure that the settings are correct:
+```
+make Info
+```
+
+Start the build and install:
+```
+cd $NCARG
+make Everything >& make-output &
+```
+
+Export environment variables:
+```
+export NCARG_ROOT=/software/lib/ncl_ncarg_6.6.2
+export PATH=$NCARG_ROOT/bin:$PATH
+export MANPATH=$NCARG_ROOT/man:$MANPATH
+```
+
 ---
 
 ## Library Compatibility Tests
