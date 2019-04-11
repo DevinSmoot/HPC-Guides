@@ -1261,6 +1261,95 @@ Now all traffic for the cluster is routed through eth0 and out eth1 to the inter
 
 #### NFS
 
+Choose a disk:
+You can use either a standard external hard drive, or a USB flash drive. If using an external hard drive you will want one that has its own power plug. Drawing power from the Raspberry Pi may cause an undervoltage situation.
+
+Formatting the disk:
+For this use we will be formatting in FAT32 for ease of use.
+
+Plug in the drive to a USB port.
+
+Install the software needed and format the USB drive:
+
+```
+# apt-get install dosfstools
+# mkfs.vfat /dev/sda1 -n USB
+```
+
+Mount the disk:
+
+```
+# mkdir /mnt/usb
+# chown -R pi:pi /mnt/usb
+# mount /dev/sda1 /mnt/usb -o uid=pi,gid=pi
+```
+
+Add automatic mounting on boot:
+
+Add the following to _/etc/fstab_ file:
+
+```
+/dev/sda1 /mnt/usb auto defaults,user 0 1
+```
+
+Install the NFS server on the head node:
+
+```
+# apt install nfs-server
+```
+
+Add the following to the _/etc/exports_ file:
+
+```
+/mnt/usb 192.168.10.5/24(rw,sync)
+```
+
+Restart RPC services:
+
+```
+# update-rc.d rpcbind enable && sudo update-rc.d nfs-common enable
+# reboot
+```
+
+Mount the disk from another Raspberry Pi node:
+
+Install required software:
+
+```
+# apt install nfs-common autofs
+```
+
+Create the mount point:
+
+```
+# mkdir /users
+# chown -R pi:hpc /users
+```
+
+Add the following to the _/etc/auto.master_ file:
+
+```
+/mnt/nfs /etc/auto.nfs
+```
+
+Create the _/etc/auto.nfs_ file and add the following:
+
+```
+pi   192.168.10.5:/mnt/usb
+```
+
+Restart the `autofs` service:
+
+```
+# /etc/init.d/autofs restart
+```
+
+Add the following to the end of the _/etc/fstab_ file:
+
+```
+192.168.10.5:/mnt/usb   /users  nfs     auto    0       0
+```
+
 https://medium.com/@aallan/adding-an-external-disk-to-a-raspberry-pi-and-sharing-it-over-the-network-5b321efce86a
 
 https://raspberrypi.stackexchange.com/questions/87057/cannot-automatically-mount-nfs-share-to-raspberry-pi
