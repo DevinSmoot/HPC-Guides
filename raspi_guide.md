@@ -1276,12 +1276,12 @@ Install the software needed and format the USB drive:
 # mkfs.vfat /dev/sda1 -n USB
 ```
 
-Mount the disk:
+Mount the disk to _/users_ directory:
 
 ```
-# mkdir /mnt/usb
-# chown -R pi:pi /mnt/usb
-# mount /dev/sda1 /mnt/usb -o uid=pi,gid=pi
+# mkdir /users
+# chown -R pi:hpc /users
+# mount /dev/sda1 /users -o uid=pi,gid=pi
 ```
 
 Add automatic mounting on boot:
@@ -1289,7 +1289,7 @@ Add automatic mounting on boot:
 Add the following to _/etc/fstab_ file:
 
 ```
-/dev/sda1 /mnt/usb auto defaults,user 0 1
+/dev/sda1 /users auto defaults,user 0 1
 ```
 
 Install the NFS server on the head node:
@@ -1301,7 +1301,7 @@ Install the NFS server on the head node:
 Add the following to the _/etc/exports_ file:
 
 ```
-/mnt/usb 192.168.10.5/24(rw,sync)
+/users 192.168.10.5/24(rw,sync)
 ```
 
 Restart RPC services:
@@ -1335,7 +1335,7 @@ Add the following to the _/etc/auto.master_ file:
 Create the _/etc/auto.nfs_ file and add the following:
 
 ```
-pi   192.168.10.5:/mnt/usb
+pi   192.168.10.5:/users
 ```
 
 Restart the `autofs` service:
@@ -1347,7 +1347,7 @@ Restart the `autofs` service:
 Add the following to the end of the _/etc/fstab_ file:
 
 ```
-192.168.10.5:/mnt/usb   /users  nfs     auto    0       0
+192.168.10.5:/users   /users  nfs     auto    0       0
 ```
 
 https://medium.com/@aallan/adding-an-external-disk-to-a-raspberry-pi-and-sharing-it-over-the-network-5b321efce86a
