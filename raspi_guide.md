@@ -1261,6 +1261,8 @@ Now all traffic for the cluster is routed through eth0 and out eth1 to the inter
 
 #### NFS
 
+##### Setting up the head node:
+
 Choose a disk:
 You can use either a standard external hard drive, or a USB flash drive. If using an external hard drive you will want one that has its own power plug. Drawing power from the Raspberry Pi may cause an undervoltage situation.
 
@@ -1272,7 +1274,7 @@ Plug in the drive to a USB port.
 Install the software needed and format the USB drive:
 
 ```
-# apt-get install dosfstools
+# apt install dosfstools
 # mkfs.vfat /dev/sda1 -n USB
 ```
 
@@ -1280,7 +1282,7 @@ Mount the disk to _/users_ directory:
 
 ```
 # mkdir /users
-# chown -R pi:hpc /users
+# chown -R pi:pi /users
 # mount /dev/sda1 /users -o uid=pi,gid=pi
 ```
 
@@ -1289,13 +1291,13 @@ Add automatic mounting on boot:
 Add the following to _/etc/fstab_ file:
 
 ```
-/dev/sda1 /users auto defaults,user 0 1
+/dev/sda1 /users auto defaults,user,uid=pi,gid=pi 0 1
 ```
 
 Install the NFS server on the head node:
 
 ```
-# apt install nfs-server
+# apt install nfs-kernel-server
 ```
 
 Add the following to the _/etc/exports_ file:
@@ -1311,43 +1313,32 @@ Restart RPC services:
 # reboot
 ```
 
-Mount the disk from another Raspberry Pi node:
+##### Setting up the compute nodes:
 
 Install required software:
 
 ```
-# apt install nfs-common autofs
+# apt install nfs-common
 ```
 
 Create the mount point:
 
 ```
 # mkdir /users
-# chown -R pi:hpc /users
-```
-
-Add the following to the _/etc/auto.master_ file:
-
-```
-/mnt/nfs /etc/auto.nfs
-```
-
-Create the _/etc/auto.nfs_ file and add the following:
-
-```
-pi   192.168.10.5:/users
-```
-
-Restart the `autofs` service:
-
-```
-# /etc/init.d/autofs restart
+# chown -R pi:pi /users
+# mount 192.168.10.5:/users /users
 ```
 
 Add the following to the end of the _/etc/fstab_ file:
 
 ```
 192.168.10.5:/users   /users  nfs     auto    0       0
+```
+
+Reboot the node:
+
+```
+sudo reboot
 ```
 
 https://medium.com/@aallan/adding-an-external-disk-to-a-raspberry-pi-and-sharing-it-over-the-network-5b321efce86a
