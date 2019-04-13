@@ -1367,41 +1367,43 @@ Add scripts to the _/software/scripts_ folder to use as commands system wide.
 
 This script will deploy files to all nodes to a folder defined by the user. This is a workaround for a multi-user environment.
 
-    #!/bin/bash
+```
+#!/bin/bash
 
-    if [ "$1" == "-help" ] || [ "$1" == "" ]; then
-        echo -e "Command    \tExample"
-        echo "----------------------------------------------------------"
-        echo "deploy_file   deploy_file <filename> <destination folder>"
-        echo -e "\t\tNote:Default destination folder is '/software/files'"
-        echo "Help          deploy -help"
-        exit
-    fi
+if [ "$1" == "-help" ] || [ "$1" == "" ]; then
+     echo -e "Command    \tExample"
+     echo "----------------------------------------------------------"
+     echo "deploy_file   deploy_file <filename> <destination folder>"
+     echo -e "\t\tNote:Default destination folder is '/software/files'"
+     echo "Help          deploy -help"
+     exit
+fi
 
-    if [ "$1" != "" ]; then
-      if [ "$2" == "" ]; then
-            filelocation=/software/files
-      else
-            filelocation=$2
-      fi
-        echo "Transferring file: $1 to node0:$filelocation"
-        rsync $1 pi@node0:$filelocation
-        echo "Transferring file: $1 to node1:$filelocation"
-        rsync $1 pi@node1:$filelocation
-        echo "Transferring file: $1 to node2:$filelocation"
-        rsync $1 pi@node2:$filelocation
-        echo "Transferring file: $1 to node3:$filelocation"
-        rsync $1 pi@node3:$filelocation
-        echo "Transferring file: $1 to node4:$filelocation"
-        rsync $1 pi@node4:$filelocation
-        echo "Transferring file: $1 to node5:$filelocation"
-        rsync $1 pi@node5:$filelocation
-        echo "Transferring file: $1 to node6:$filelocation"
-        rsync $1 pi@node6:$filelocation
-    else
-        echo "All nodes are already defined in the script"
-        echo "Please enter a filename and destination folder: ie. deploy_file <filename> <destination folder>"
-    fi
+if [ "$1" != "" ]; then
+     if [ "$2" == "" ]; then
+          filelocation=/software/files
+     else
+          filelocation=$2
+     fi
+     echo "Transferring file: $1 to node0:$filelocation"
+     rsync $1 pi@node0:$filelocation
+     echo "Transferring file: $1 to node1:$filelocation"
+     rsync $1 pi@node1:$filelocation
+     echo "Transferring file: $1 to node2:$filelocation"
+     rsync $1 pi@node2:$filelocation
+     echo "Transferring file: $1 to node3:$filelocation"
+     rsync $1 pi@node3:$filelocation
+     echo "Transferring file: $1 to node4:$filelocation"
+     rsync $1 pi@node4:$filelocation
+     echo "Transferring file: $1 to node5:$filelocation"
+     rsync $1 pi@node5:$filelocation
+     echo "Transferring file: $1 to node6:$filelocation"
+     rsync $1 pi@node6:$filelocation
+else
+     echo "All nodes are already defined in the script"
+     echo "Please enter a filename and destination folder: ie. deploy_file <filename> <destination folder>"
+fi
+```
 
 #### Mutli-user setup script
 
