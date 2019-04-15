@@ -1365,44 +1365,57 @@ Add scripts to the _/software/scripts_ folder to use as commands system wide.
 
 #### Deploy file to all compute nodes
 
-This script will deploy files to all nodes to a folder defined by the user. This is a workaround for a multi-user environment.
+This script will deploy all files from the head node workspace folder to all of the compute nodes.
 
 ```
 #!/bin/bash
 
-if [ "$1" == "-help" ] || [ "$1" == "" ]; then
-     echo -e "Command    \tExample"
-     echo "----------------------------------------------------------"
-     echo "deploy_file   deploy_file <filename> <destination folder>"
-     echo -e "\t\tNote:Default destination folder is '/software/files'"
-     echo "Help          deploy -help"
-     exit
-fi
+localfolder=/workspace/
+remotefolder=/workspace/
 
-if [ "$1" != "" ]; then
-     if [ "$2" == "" ]; then
-          filelocation=/software/files
-     else
-          filelocation=$2
-     fi
-     echo "Transferring file: $1 to node0:$filelocation"
-     rsync $1 pi@node0:$filelocation
-     echo "Transferring file: $1 to node1:$filelocation"
-     rsync $1 pi@node1:$filelocation
-     echo "Transferring file: $1 to node2:$filelocation"
-     rsync $1 pi@node2:$filelocation
-     echo "Transferring file: $1 to node3:$filelocation"
-     rsync $1 pi@node3:$filelocation
-     echo "Transferring file: $1 to node4:$filelocation"
-     rsync $1 pi@node4:$filelocation
-     echo "Transferring file: $1 to node5:$filelocation"
-     rsync $1 pi@node5:$filelocation
-     echo "Transferring file: $1 to node6:$filelocation"
-     rsync $1 pi@node6:$filelocation
-else
-     echo "All nodes are already defined in the script"
-     echo "Please enter a filename and destination folder: ie. deploy_file <filename> <destination folder>"
-fi
+echo "Deploying workspace to to node0"
+rsync -az $localfolder pi@node0:$remotefolder
+echo "Deploying workspace to to node1"
+rsync -az $localfolder pi@node1:$remotefolder
+echo "Deploying workspace to to node2"
+rsync -az $localfolder pi@node2:$remotefolder
+echo "Deploying workspace to to node3"
+rsync -az $localfolder pi@node3:$remotefolder
+echo "Deploying workspace to to node4"
+rsync -az $localfolder pi@node4:$remotefolder
+echo "Deploying workspace to to node5"
+rsync -az $localfolder pi@node5:$remotefolder
+echo "Deploying workspace to to node6"
+rsync -az $localfolder pi@node6:$remotefolder
+```
+
+#### Flush workspace folders on compute nodes
+
+This script will flush all of the files in the workspace directory of all compute nodes.
+
+```
+#!/bin/bash
+
+read -p "This will destroy all files in the compute nodes workspace directory. Continue? " answer
+
+case ${answer:0:1} in
+Yes|Y|y )
+        echo "Flushing workspace on node0"
+        ssh pi@node0 sudo rm -rf /workspace/*
+        echo "Flushing workspace on node0"
+        ssh pi@node1 sudo rm -rf /workspace/*
+        echo "Flushing workspace on node0"
+        ssh pi@node2 sudo rm -rf /workspace/*
+        echo "Flushing workspace on node0"
+        ssh pi@node3 sudo rm -rf /workspace/*
+        echo "Flushing workspace on node0"
+        ssh pi@node4 sudo rm -rf /workspace/*
+        echo "Flushing workspace on node0"
+        ssh pi@node5 sudo rm -rf /workspace/*
+        echo "Flushing workspace on node0"
+        ssh pi@node6 sudo rm -rf /workspace/*
+        ;;
+esac
 ```
 
 #### Mutli-user setup script
