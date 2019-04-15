@@ -1660,3 +1660,5 @@ On many occasions, certain nodes fail to work because of a software/hardware mal
 <https://raseshmori.wordpress.com/2012/10/14/install-hadoop-nextgen-yarn-multi-node-cluster/>
 
 <https://www.packtpub.com/hardware-and-creative/raspberry-pi-super-cluster>
+
+<https://www.raspberrypi.org/forums/viewtopic.php?t=227981>
