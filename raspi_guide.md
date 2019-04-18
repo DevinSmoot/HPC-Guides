@@ -822,7 +822,7 @@ SSH in to compute node:
 $ ssh pi@node0
 ```
 
-Install NTP on comput node:
+Install NTP on compute node:
 
 ```
 # apt install ntp
