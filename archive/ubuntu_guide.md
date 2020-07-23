@@ -1,6 +1,9 @@
 # Ubuntu Supercomputing Virtual Cluster Setup Guide
+
 ---
+
 ### Definition of repository
+
 This repository and guide is designed to guide the setup of a Ubuntu
 supercomputing cluster. This cluster consists of a basic Ubuntu Server install
 that is combined with the MPICH3 system. This gives the cluster MPI capability.
@@ -8,80 +11,79 @@ By default OpenMP libraries are included with GCC which is also installed in
 the process of setting up MPICH3.
 
 ---
+
 ### References
 
 ---
+
 ### Notes
 
 ##### Legend for this document:
 
-Proper named objects will appear as *Proper Named Object* text
+Proper named objects will appear as _Proper Named Object_ text
 
 Action items and examples will appear as **Action item** text
 
-Code, plain text to be entered, or text from the command line will appear as ``code`` text
-
-
+Code, plain text to be entered, or text from the command line will appear as `code` text
 
 ##### Linux commands that help throughout this guide:
 
-``cd ``
-change directory followed by the name of the directory to change to **Example** ``cd home``
+`cd`
+change directory followed by the name of the directory to change to **Example** `cd home`
 
-``cd .. ``
+`cd ..`
 go back up one directory
 
-``dir ``
+`dir`
 list all folders and files in current directory
 
-``nano ``
+`nano`
 command to open Nano text editor
 
-* All commands listed at the bottom of the Nano editor are executed using ``Ctrl``+``<key listed>``
-* ``Ctrl``+``x`` - exit, ``y`` to confirm, and ``Enter`` to verify filename
-* ``Ctrl``+``w`` - search function; enter string to search for;``Ctrl``+``w`` again to search for previous string
-* ``Ctrl``+``c`` - cursor location; used to find exact line when bug tracing
+- All commands listed at the bottom of the Nano editor are executed using `Ctrl`+`<key listed>`
+- `Ctrl`+`x` - exit, `y` to confirm, and `Enter` to verify filename
+- `Ctrl`+`w` - search function; enter string to search for;`Ctrl`+`w` again to search for previous string
+- `Ctrl`+`c` - cursor location; used to find exact line when bug tracing
 
-``sudo`` used to execute commands using the Super User; if you receive a warning about permissions when editing or executing commands try running that same command prefixed by sudo **Example** ``sudo nano /etc/hostname``
+`sudo` used to execute commands using the Super User; if you receive a warning about permissions when editing or executing commands try running that same command prefixed by sudo **Example** `sudo nano /etc/hostname`
 
-``sudo service <name of service> start stop`` or ``restart`` used to start, stop, or restart system services **Example** ``sudo service networking restart``
+`sudo service <name of service> start stop` or `restart` used to start, stop, or restart system services **Example** `sudo service networking restart`
 
-``shutdown -h now`` immediate system halt and shutdown
+`shutdown -h now` immediate system halt and shutdown
 
-``reboot`` initiate a system reboot
+`reboot` initiate a system reboot
 
-``apt-get update`` pulls all update information from the internet; does not perform an update
+`apt-get update` pulls all update information from the internet; does not perform an update
 
-``apt-get upgrade`` performs an update based on information received from ``apt-get update`` command. Using the ``-y`` option performs the operation without querying the user to proceed with the install.
+`apt-get upgrade` performs an update based on information received from `apt-get update` command. Using the `-y` option performs the operation without querying the user to proceed with the install.
 
-``apt-get dist-upgrade`` performs an update of the system kernel based on information received from ``apt-get update`` command. Using the ``-y`` option performs the operation without querying the user to proceed with the install.
+`apt-get dist-upgrade` performs an update of the system kernel based on information received from `apt-get update` command. Using the `-y` option performs the operation without querying the user to proceed with the install.
 
-``ls`` lists all directories and files in the current directory
+`ls` lists all directories and files in the current directory
 
-``ls -l `` lists all files and directories in the current directory with owner information, group information, and permissions
+`ls -l` lists all files and directories in the current directory with owner information, group information, and permissions
 
-``ls -ld `` lists information about the current directory including owner information, group information, and permissions
+`ls -ld` lists information about the current directory including owner information, group information, and permissions
 
-`` ~`` indicates the home directory for the current user
+`~` indicates the home directory for the current user
 
-``sudo -s`` Super User mode; be careful using this mode as any commands executed under Super User will reflect the **root** user and not a user account
+`sudo -s` Super User mode; be careful using this mode as any commands executed under Super User will reflect the **root** user and not a user account
 
-`` /`` denotes the root directory of the system
+`/` denotes the root directory of the system
 
-`` ./`` denotes the running of an executable file **Example** ``./install.sh``
+`./` denotes the running of an executable file **Example** `./install.sh`
 
-``ssh`` allows ssh-ing into other systems
+`ssh` allows ssh-ing into other systems
 
 ##### Information provided by the command prompt:
 
-There is a lot of information that you can gather just by looking at the command prompt. Using ``user@somecomputer:~$`` as an example we will examine the command prompt. To begin with we can tell which user account is currently logged in. In this case its ``user``. Next we can tell which system we are logged in to. In this example it is ``somecomputer``. Next is `` ~`` which tells us which folder we are in on the system. As stated above `` ~`` denotes the ``user`` home directory. Next we can tell if we are executing commands as a user or Super User by looking at the last character. In this case it is ``$`` which tells us we are executing with whatever permissions ``user`` has.
+There is a lot of information that you can gather just by looking at the command prompt. Using `user@somecomputer:~$` as an example we will examine the command prompt. To begin with we can tell which user account is currently logged in. In this case its `user`. Next we can tell which system we are logged in to. In this example it is `somecomputer`. Next is `~` which tells us which folder we are in on the system. As stated above `~` denotes the `user` home directory. Next we can tell if we are executing commands as a user or Super User by looking at the last character. In this case it is `$` which tells us we are executing with whatever permissions `user` has.
 
-For another example we will use ``root@somecomputer:/usr/local/#``. This example shows we are signed in as ``root`` user on ``somecomputer`` and we are in the directory ``/usr/local/``. The first ``/`` always denotes the root directory. Next we can tell we are executing commands as a Super User (root always executes as Super User) by the ``#``.
+For another example we will use `root@somecomputer:/usr/local/#`. This example shows we are signed in as `root` user on `somecomputer` and we are in the directory `/usr/local/`. The first `/` always denotes the root directory. Next we can tell we are executing commands as a Super User (root always executes as Super User) by the `#`.
 
 ---
 
 ## Set up Cluster Head Node
-
 
 ##### Step 1 - Install Ubuntu Server
 
@@ -91,55 +93,55 @@ Select **English**
 
 Select **United States**
 
-Select **No** for *Detect keyboard layout*
+Select **No** for _Detect keyboard layout_
 
 Select **English (US)**
 
 Select **English (US)**
 
-Select **enp0s3** for *Primary network adapter*
+Select **enp0s3** for _Primary network adapter_
 
-Set *hostname* to **head**
+Set _hostname_ to **head**
 
-Set *New user full name* to last name and first initial
+Set _New user full name_ to last name and first initial
 
-Set *Username* to last name and first initial
+Set _Username_ to last name and first initial
 
 Choose a password for your account or use your student id number
 
 Agree to use weak password
 
-Select **No** for *Encrypt your home directory*
+Select **No** for _Encrypt your home directory_
 
-Select **Yes** for *Is this time zone correct?*
+Select **Yes** for _Is this time zone correct?_
 
 Select **Guided - use entire disk and set up LMV**
 
 Select the default drive
 
-Select **Yes** to *Write the changes to disks and configure LVM*
+Select **Yes** to _Write the changes to disks and configure LVM_
 
 Keep the default drive size
 
-Select **Yes** to *Write the changes to the disk*
+Select **Yes** to _Write the changes to the disk_
 
-Leave *HTTP Proxy* empty and Continue
+Leave _HTTP Proxy_ empty and Continue
 
 Select **No automatic updates**
 
-Hit *Tab* to move the cursor to **OpenSSH server** and press ``Space`` to select it
+Hit _Tab_ to move the cursor to **OpenSSH server** and press `Space` to select it
 
 **_Note:_** OpenSSH package is selected when a ** \* ** is shown in the box under the cursor
 
-Press ``Enter`` to continue the installation
+Press `Enter` to continue the installation
 
-Select **Yes** to *Install the Grub boot loader to the master boot record*
+Select **Yes** to _Install the Grub boot loader to the master boot record_
 
 ![Step 7](https://github.com/swosu/MAPSS/blob/dev/WinterCamp/Ubuntu%20Cluster%20Guide/images/part1step7.png)
 
 ##### Step 2 - Set Static IP Address for Secondary Connection
 
-Start the *Head Node* and login using the username and password created during the install process
+Start the _Head Node_ and login using the username and password created during the install process
 
 Edit the network interfaces file:
 
@@ -157,10 +159,11 @@ address 192.168.10.5
 netmask 255.255.255.0
 network 192.168.10.0
 ```
+
 Save and exit
 
-
 ##### Step 3 - Set up IPv4 Traffic Forwarding
+
 Enable traffic forwarding and make it permanent:
 
 ```
@@ -196,7 +199,7 @@ sudo iptables -t nat -A POSTROUTING -o enp0s8 -j MASQUERADE
 sudo bash -c "iptables-save > /etc/iptables.rules"
 ```
 
-Edit */etc/network/interfaces* file:
+Edit _/etc/network/interfaces_ file:
 
 ```
 sudo nano /etc/network/interfaces
@@ -216,7 +219,6 @@ Now reboot the system:
 sudo reboot
 ```
 
-
 ##### Step 4 - Update the system packages and kernel
 
 ```
@@ -225,22 +227,24 @@ sudo apt udpate && sudo apt upgrade -y && sudo apt dist-upgrade -y
 
 ##### Step 5 - Set up SSH key
 
-** \*\* VERIFY AT THE COMMAND PROMPT THAT YOU ARE UNDER YOUR USER ACCOUNT AND NOT EXECUTING CODE AS SUPER USER OR ROOT \*\* **
+\*\* VERIFY AT THE COMMAND PROMPT THAT YOU ARE UNDER YOUR USER ACCOUNT AND NOT EXECUTING CODE AS SUPER USER OR ROOT \*\*
 
 Generate an SSH key:
+
 ```
 cd ~
 ssh-keygen -t rsa -C "cluster@swosu"
 ```
-Press ``Enter`` to select default install location
 
-Press ``Enter`` to leave passphrase blank
+Press `Enter` to select default install location
 
-Press ``Enter`` to confirm blank passphrase
+Press `Enter` to leave passphrase blank
+
+Press `Enter` to confirm blank passphrase
 
 Copy SSH keys to authorized keys:
 
-``cat /home/<username>/.ssh/id_rsa.pub > /home/<username>/.ssh/authorized_keys``
+`cat /home/<username>/.ssh/id_rsa.pub > /home/<username>/.ssh/authorized_keys`
 
 ---
 
@@ -250,36 +254,36 @@ Copy SSH keys to authorized keys:
 
 Install some required compilers and packages:
 
-``sudo apt-get install make build-essential``
+`sudo apt-get install make build-essential`
 
 Create software directory for multiple users:
 
-``sudo mkdir -p /software/lib``
+`sudo mkdir -p /software/lib`
 
 Create hpc user group:
 
-``sudo groupadd hpc``
+`sudo groupadd hpc`
 
 Add user to hpc user group:
 
-``sudo usermod -aG hpc <username>``
+`sudo usermod -aG hpc <username>`
 
-Take ownership of */software*:
+Take ownership of _/software_:
 
-``sudo chown -R <username>:hpc /software``
+`sudo chown -R <username>:hpc /software`
 
-Change to *software* directory and create *mpich-3.2* directory:
+Change to _software_ directory and create _mpich-3.2_ directory:
 
 ```
 cd /software/lib
 
-mkdir mpich-3.2
+mkdir mpich-3.3.2
 ```
 
-Change to the *mpich-3.2* directory and create *build* and *install* directories:
+Change to the _mpich-3.2_ directory and create _build_ and _install_ directories:
 
 ```
-cd mpich-3.2
+cd mpich-3.3.2
 
 mkdir build install
 ```
@@ -288,25 +292,25 @@ mkdir build install
 
 Install Fortran which is requred by MPICH3:
 
-``sudo apt-get install gfortran``
+`sudo apt-get install gfortran`
 
 Download MPICH3 package and install:
 http://www.mpich.org/downloads/
 
 ```
-sudo wget http://www.mpich.org/static/downloads/3.2/mpich-3.2.tar.gz
+sudo wget http://www.mpich.org/static/downloads/3.3.2/mpich-3.3.2.tar.gz
 ```
 
 Untar the package:
 
-``sudo tar xvfz mpich-3.2.tar.gz``
+`sudo tar xvfz mpich-3.3.2.tar.gz`
 
-Change to *build* directory to begin building the install:
+Change to _build_ directory to begin building the install:
 
-``cd build``
+`cd build`
 
 ```
-/software/lib/mpich-3.2/mpich-3.2/configure  --prefix=/software/lib/mpich-3.2/install
+/software/lib/mpich-3.3.2/mpich-3.3.2/mpich-3.3.2/configure  --prefix=/software/lib/mpich-3.3.2/install
 
 make
 make install
@@ -314,16 +318,16 @@ make install
 
 Add MPI location to system environment variable PATH:
 
-``export PATH=$PATH:/software/lib/mpich-3.2/install/bin``
+`export PATH=$PATH:/software/lib/mpich-3.3.2/install/bin`
 
 Make the PATH change permanent by adding it to the profile file:
 
-``sudo nano ~/.bashrc``
+`sudo nano ~/.bashrc`
 
 Add the following to the end of the file:
 
 ```
-export PATH="$PATH:/software/lib/mpich-3.2/install/bin"
+export PATH="$PATH:/software/lib/mpich-3.3.2/install/bin"
 ```
 
 Save and exit
@@ -335,24 +339,24 @@ Create a list of nodes for MPI to use:
 ```
 cd ~
 
-sudo nano nodelist
+nano nodelist
 ```
 
-Add the *head node* ip address to the file:
+Add the _head node_ ip address to the file:
 
-``192.168.10.5``
+`192.168.10.5`
 
 ##### Step 4 - Test MPI
 
 **Test 1**
 
-``mpiexec -f nodelist hostname``
+`mpiexec -f nodelist hostname`
 
 Should return **head** on the next line
 
 **Test 2**
 
-``mpiexec -f nodelist -n 2 /software/lib/mpich-3.2/build/examples/cpi``
+`mpiexec -f nodelist -n 2 /software/lib/mpich-3.3.2/build/examples/cpi`
 
 Should give an output similar to the following:
 [image]
@@ -361,7 +365,7 @@ Should give an output similar to the following:
 
 Shutdown head node:
 
-``sudo shutdown -h now``
+`sudo shutdown -h now`
 
 ---
 
@@ -369,9 +373,9 @@ Shutdown head node:
 
 ##### Step 1 - Clone the Virtual Machine
 
-In VirtualBox right click the *Head Node* in the left column and select **Clone**
+In VirtualBox right click the _Head Node_ in the left column and select **Clone**
 
-Set *Name* to **Compute Node 1**
+Set _Name_ to **Compute Node 1**
 
 Click **Next**
 
@@ -381,15 +385,15 @@ Click **Clone**
 
 ##### Step 2 - Set Static IP Address
 
-In VirtualBox select *Compute Node 1* in the left column
+In VirtualBox select _Compute Node 1_ in the left column
 
-With *Compute Node 1* selected click **Start** in the toolbar
+With _Compute Node 1_ selected click **Start** in the toolbar
 
-Login to *Compute Node 1*
+Login to _Compute Node 1_
 
 At the terminal enter:
 
-``sudo nano /etc/network/interfaces``
+`sudo nano /etc/network/interfaces`
 
 Remove all of the following lines:
 
@@ -402,7 +406,7 @@ netmask 255.255.255.0
 network 192.168.10.0
 ```
 
-Under the line ``auto enp0s3`` change or add the following:
+Under the line `auto enp0s3` change or add the following:
 
 ```
 iface enp0s3 inet static
@@ -414,14 +418,13 @@ dns-nameservers 8.8.8.8
 
 Save and exit
 
-Shutdown the *Compute Node 1*:
+Shutdown the _Compute Node 1_:
 
-``sudo shutdown -h now``
-
+`sudo shutdown -h now`
 
 ##### Step 3 - Change Compute Node 1 Network Adapters
 
-In VirtualBox right click *Compute Node 1* in the left column
+In VirtualBox right click _Compute Node 1_ in the left column
 
 Select **Settings**
 
@@ -431,64 +434,61 @@ Uncheck the **Enable Network Adapter** box
 
 Next, select **Adapter 1** tab
 
-Set *Attached to:* to **Internal Network**
+Set _Attached to:_ to **Internal Network**
 
-Set *Name:* to **cluster**
-
+Set _Name:_ to **cluster**
 
 ##### Step 4 - Set hostname
 
-In VirtualBox select *Compute Node 1* in the left column
+In VirtualBox select _Compute Node 1_ in the left column
 
-With *Compute Node 1* selected click **Start** in the toolbar
+With _Compute Node 1_ selected click **Start** in the toolbar
 
-Login to *Compute Node 1*
+Login to _Compute Node 1_
 
 Edit the hostname file:
 
-``sudo nano /etc/hostname``
+`sudo nano /etc/hostname`
 
-Change ``head`` to ``node1``
+Change `head` to `node1`
 
 Save and exit
 
 Edit the hosts file:
 
-``sudo nano /etc/hosts``
+`sudo nano /etc/hosts`
 
-Change ``head`` to ``node1``
+Change `head` to `node1`
 
 Save and exit
 
-Now reboot *Compute Node 1*
+Now reboot _Compute Node 1_
 
-``sudo reboot``
+`sudo reboot`
 
-Wait for *Compute Node 1* to reboot before continuing
-
+Wait for _Compute Node 1_ to reboot before continuing
 
 ##### Step 5 - SSH into Compute Node 1 to Acquire Authentication key
 
-In VirtualBox select *Head Node* in the left column
+In VirtualBox select _Head Node_ in the left column
 
-With *Head Node* selected click **Start** in the toolbar
+With _Head Node_ selected click **Start** in the toolbar
 
-Login to *Head Node*
+Login to _Head Node_
 
-On *Head Node* enter:
+On _Head Node_ enter:
 
-``ssh <username>@node0``
+`ssh <username>@node0`
 
-Type ``yes`` and press ``Enter`` when asked *Are you sure you want to continue connection (yes/no)?*
+Type `yes` and press `Enter` when asked _Are you sure you want to continue connection (yes/no)?_
 
-Type ``exit`` and press ``Enter`` to return to *Head Node*
+Type `exit` and press `Enter` to return to _Head Node_
 
-Verify *Head Node* by checking the command prompt for ``<username>@head:~$``
-
+Verify _Head Node_ by checking the command prompt for `<username>@head:~$`
 
 ##### Step 6 - Add Compute Node 1 to the nodelist File on Head Node
 
-On the *Head Node* edit the nodelist:
+On the _Head Node_ edit the nodelist:
 
 ```
 cd ~
@@ -496,14 +496,13 @@ cd ~
 sudo nano nodelist
 ```
 
-Add ``192.168.10.100`` to the second line
+Add `192.168.10.100` to the second line
 
 Save and exit
 
-
 ##### Step 7 - Test MPI
 
-On the *Head Node* enter:
+On the _Head Node_ enter:
 
 ```
 mpiexec -f nodelist -n 6 /software/lib/mpich-3.2/build/examples/cpi
@@ -524,11 +523,11 @@ Congratulations! This cluster is ready to execute MPI code.
 
 Execute:
 
-``sudo apt-get install slurm-wlm slurmctld slurmd``
+`sudo apt-get install slurm-wlm slurmctld slurmd`
 
 ##### Step 2 - Develop configuration file
 
-Edit */etc/slurm-llnl/slurm.conf* and add or edit to match the following:
+Edit _/etc/slurm-llnl/slurm.conf_ and add or edit to match the following:
 
 ```
 #Virtual cluster slurm.conf
@@ -585,6 +584,7 @@ PartitionName=TEST Default=YES Nodes=head,node1 State=UP
 ```
 
 ==POSSIBLE CHANGES==
+
 ```
 sudo mkdir /var/lib/slurm
 
@@ -594,23 +594,24 @@ sudo mkdir /var/log/slurm
 
 sudo chown -R slurm:slurm /var/log/slurm
 ```
+
 ==END CHANGES==
 
 ##### Step 4 - Create Munge authentication keyboard
 
-``sudo /usr/sbin/create-munge-key``
+`sudo /usr/sbin/create-munge-key`
 
 ##### Step 5 - Fix Munge issue so it will boot
 
-``sudo systemctl edit --system --full munge``
+`sudo systemctl edit --system --full munge`
 
 Change this line:
 
-``ExecStart=/usr/sbin/munged``
+`ExecStart=/usr/sbin/munged`
 
 To:
 
-``ExecStart=/usr/sbin/munged --syslog``
+`ExecStart=/usr/sbin/munged --syslog`
 
 Save and exit.
 
@@ -622,11 +623,11 @@ _**Note:**_ The _systemctl enable munge_ may show a failed notification but its 
 
 ##### Step 6 - Enable Slurm Controller
 
-``sudo systemctl enable slurmctld``
+`sudo systemctl enable slurmctld`
 
 Reboot:
 
-``sudo reboot``
+`sudo reboot`
 
 ## Slurm on Compute Node
 
@@ -634,15 +635,15 @@ Reboot:
 
 ##### Step 1 - Copy Slurm configuration file and Munge key to _node1_ <username's> home directory:
 
-``sudo cat /etc/munge/munge.key | ssh <username>@node1 "cat > ~/munge.key"``
+`sudo cat /etc/munge/munge.key | ssh <username>@node1 "cat > ~/munge.key"`
 
-``sudo cat /etc/slurm-llnl/slurm.conf | ssh <username>@node1 "cat > ~/slurm.conf"``
+`sudo cat /etc/slurm-llnl/slurm.conf | ssh <username>@node1 "cat > ~/slurm.conf"`
 
 **On _compute node_**
 
 ##### Step 2 - Install Slurm
 
-``sudo apt-get install slurmd slurm-client``
+`sudo apt-get install slurmd slurm-client`
 
 ##### Step 3 - Copy the configuration files to proper locations
 
@@ -659,11 +660,11 @@ sudo systemctl edit --system --full munge
 
 Change this line:
 
-``ExecStart=/usr/sbin/munged``
+`ExecStart=/usr/sbin/munged`
 
 To:
 
-``ExecStart=/usr/sbin/munged --syslog``
+`ExecStart=/usr/sbin/munged --syslog`
 
 Save and exit.
 
@@ -677,7 +678,7 @@ _**Note:**_ The _systemctl enable munge_ may show a failed notification but its 
 
 ##### Step 5 - Enable Slurm daemon
 
-``sudo systemctl enable slurmd``
+`sudo systemctl enable slurmd`
 
 ##### Step 6 - Set Slurm folder permissions
 
@@ -695,8 +696,7 @@ sudo chown -R slurm:slurm /var/log/slurm
 
 Execute on both nodes:
 
-``sudo reboot``
-
+`sudo reboot`
 
 ---
 
@@ -708,7 +708,7 @@ Once your cluster is working properly you will want to take a snapshot of all no
 
 Execute the shutdown on all nodes:
 
-``sudo shutdown -h now``
+`sudo shutdown -h now`
 
 ##### Step 2 - Snapshot Your Nodes
 
@@ -718,7 +718,7 @@ In the upper right hand corner of VirtualBox click **Snapshots**
 
 Click the left purple camera icon to take a snapshot of the current machine state
 
-Give the node a name that includes its node name and stage **Example** ``Head Node (MPI Stage)`` or ``Head Node (HADOOP/MPI Stage)``
+Give the node a name that includes its node name and stage **Example** `Head Node (MPI Stage)` or `Head Node (HADOOP/MPI Stage)`
 
 Click **OK** and you are done
 
@@ -732,9 +732,9 @@ Do this for all nodes and you are safe to begin making changes and producing
 
 #### Host Verification Key Error
 
-In case of *host verification key* error when executing MPI follow the steps for deleting and regenerating SSH keys.
+In case of _host verification key_ error when executing MPI follow the steps for deleting and regenerating SSH keys.
 
-On *Head Node* as user delete previous SSH keys:
+On _Head Node_ as user delete previous SSH keys:
 
 ```
 rm -rf ~/.ssh
@@ -748,11 +748,11 @@ cd ~
 ssh-keygen -t rsa -C "cluster@swosu"
 ```
 
-``Enter`` to select default install location
+`Enter` to select default install location
 
-``Enter`` to leave passphrase blank
+`Enter` to leave passphrase blank
 
-``Enter`` to confirm blank passphrase
+`Enter` to confirm blank passphrase
 
 Copy new SSH keys to local system and nodes:
 
