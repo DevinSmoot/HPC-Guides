@@ -1,18 +1,18 @@
 # Raspberry Pi Cluster Setup Guide
 
----
+--------------------------------------------------------------------------------
 
 ## Considerations to Consider before starting
 
-##### SD Size
+### SD Size
 
 If your SD card size will vary you will want to build the head node using the smallest size of SD card. This will ensure that the image for that SD card will ALWAYS be able to be written to a similar sized SD or larger. If you start with a 64GB SD card you will not be able to write the image to a 16GB SD card. Always start with a small SD card to save a base image. Build out specific nodes from the base image.
 
-##### USB cable power throughput
+### USB cable power throughput
 
 Lower quality USB cables can restrict power throughput causing undervolt situations when the cluster is underload.
 
----
+--------------------------------------------------------------------------------
 
 ## Overview of process
 
@@ -22,9 +22,9 @@ Lower quality USB cables can restrict power throughput causing undervolt situati
 4. Software is installed and configured for head node.
 5. Software is installed and configured for computer nodes.
 
----
+--------------------------------------------------------------------------------
 
-#### Head Node
+### Head Node
 
 Hardware:
 
@@ -34,7 +34,7 @@ Hardware:
 - HDMI cable x 1
 - Power cable mini-USB x 1
 
-#### Compute nodes
+### Compute nodes
 
 Hardware:
 
@@ -43,12 +43,12 @@ Hardware:
 - Ethernet cable x 7
 - Power cable mini-USB x 7
 
-#### Additional Hardware
+### Additional Hardware
 
 - 10 Port USB hub for power
 - 16 Port gigabit switch
 
----
+--------------------------------------------------------------------------------
 
 ## Setup, Installation, and Testing
 
@@ -74,76 +74,86 @@ Start the Raspberry Pi configuration tool:
 sudo raspi-config
 ```
 
-> Setup Advanced Options:
+### Setup Advanced Options:
 
-Select **7 Advanced Options**
+- Select **7 Advanced Options**
 
-- Select **A1 Expand Filesystem**
-- Select **Ok**
+  - Select **A1 Expand Filesystem**
+  - Select **Ok**
 
-Select **7 Advanced Options**
+- Select **7 Advanced Options**
 
-- Select **A3 Memory Split**
-  _ Enter **16**
-  _ Press **Enter**
+  - Select **A3 Memory Split**
 
-> Setup Localisation Options:
+    - Enter **16**
+    - Press **Enter**
 
-Select **4 Localisation Options**
+### Setup Localisation Options:
 
-- Select Locale **I1 Change Locale**
-  _ Unselect **en_GB.UTF-8 UTF-8**
-  _ Select **en_US.UTF-8 UTF-8**
-  _ Press **Enter**
-  _ Select **en_US.UTF-8**
+- Select **4 Localisation Options**
 
-Select **4 Localisation Options**
+  - Select Locale **I1 Change Locale**
 
-- Select **I2 Change Timezone**
-  _ Select **US** (or appropriate country)
-  _ Select **Central** (or appropriate local timezone)
+    - Unselect **en_GB.UTF-8 UTF-8**
+    - Select **en_US ISO-8859-1**
+    - Press **Enter**
+    - Select **en_US**
 
-Select **4 Localisation Options**
+- Select **4 Localisation Options**
 
-- Select **I3 Change Keyboard Layout**
-  _ Use the default selected Keyboard
-  _ Press **Enter**
-  _ Select **Other**
-  _ Select **English (US)**
-  _ Select **English (US)**
-  _ Select **The default for the keyboard layout**
-  _ Select **No compose key**
-  _ Press **Enter**
+  - Select **I2 Change Timezone**
 
-Select **4 Localisation Options**
+    - Select **US** (or appropriate country)
+    - Select **Central** (or appropriate local timezone)
 
-- Select **I4 Change Wi-fi Country**
-  _ Select **US United States**
-  _ Select **Ok**
+- Select **4 Localisation Options**
 
-> Setup Network Options:
+  - Select **I3 Change Keyboard Layout**
+
+    - Use the default selected Keyboard
+    - Press **Enter**
+    - Select **Other**
+    - Select **English (US)**
+    - Select **English (US)**
+    - Select **The default for the keyboard layout**
+    - Select **No compose key**
+    - Press **Enter**
+
+- Select **4 Localisation Options**
+
+  - Select **I4 Change Wi-fi Country**
+
+    - Select **US United States**
+    - Select **Ok**
+
+### Setup Network Options:
 
 Select **2 Network Options**
 
 - Select **N1 Hostname**
-  _ Select **Ok**
-  _ Enter **head** for the hostname \* Press **Enter**
+
+  - Select **Ok**
+  - Enter **head** for the hostname
+  - Press **Enter**
 
 Select **2 Network Options**
 
-- Select **N2 Wi-fi**
-  _ Enter wi-fi SSID
-  _ Press **Enter**
-  _ Enter wi-fi passphrase
-  _ Press **Enter**
+- Select **N2 Wireless LAN**
 
-> Setup Interfacing Options:
+  - Enter wi-fi SSID
+  - Press **Enter**
+  - Enter wi-fi passphrase
+  - Press **Enter**
+
+### Setup Interfacing Options:
 
 Select **5 Interfacing Options**
 
 - Select **P2 SSH**
-  _ Select **Yes**
-  _ Select **Ok** \* Press **Enter**
+
+  - Select **Yes**
+  - Select **Ok**
+  - Press **Enter**
 
 _Tab_ to **Finish**
 
@@ -171,7 +181,7 @@ iface wlan0 inet manual
 wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
 ```
 
-Setup _eth0_ static ip address:
+### Setup _eth0_ static ip address:
 
 Edit _/etc/dhcpcd.conf_:
 
@@ -277,17 +287,17 @@ sudo nano /etc/hosts
 Modify or add the following lines to the file:
 
 ```
-127.0.1.1	head
+127.0.1.1    head
 
-192.168.10.3	nodeX
-192.168.10.5	head
-192.168.10.100	node0
-192.168.10.101	node1
-192.168.10.102	node2
-192.168.10.103	node3
-192.168.10.104	node4
-192.168.10.105 	node5
-192.168.10.106 	node6
+192.168.10.3    nodeX
+192.168.10.5    head
+192.168.10.100    node0
+192.168.10.101    node1
+192.168.10.102    node2
+192.168.10.103    node3
+192.168.10.104    node4
+192.168.10.105     node5
+192.168.10.106     node6
 ```
 
 Reboot:
@@ -296,7 +306,7 @@ Reboot:
 sudo reboot
 ```
 
----
+--------------------------------------------------------------------------------
 
 ## Install MPICH-3.2
 
@@ -465,7 +475,7 @@ Transfer the key to the authorized_keys file:
 cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
 ```
 
----
+--------------------------------------------------------------------------------
 
 ## Prepare for cloning
 
@@ -475,7 +485,7 @@ Shutdown the head node:
 sudo shutdown -h now
 ```
 
----
+--------------------------------------------------------------------------------
 
 ## Save SD Image
 
@@ -489,7 +499,7 @@ Sample name for SD image:
 compute_node_mpi_stage_2017_01_03
 ```
 
----
+--------------------------------------------------------------------------------
 
 ## Create Node image
 
@@ -506,7 +516,7 @@ This will be a repeatable process when completed. You will setup an initial _com
 
 [Raspbian Install Guides](https://www.raspberrypi.org/documentation/installation/installing-images/)
 
----
+--------------------------------------------------------------------------------
 
 ## Create Generic Node image
 
@@ -571,13 +581,13 @@ sudo nano /etc/hosts
 Change:
 
 ```
-127.0.1.1				head
+127.0.1.1                head
 ```
 
 To:
 
 ```
-127.0.1.1				nodeX
+127.0.1.1                nodeX
 ```
 
 Save and exit
@@ -638,7 +648,7 @@ Sample name for SD image:
 compute_node_mpi_stage_2017_01_03
 ```
 
----
+--------------------------------------------------------------------------------
 
 ## Setup Generic Node image
 
@@ -713,13 +723,13 @@ sudo nano /etc/hosts
 Change:
 
 ```
-127.0.1.1				nodeX
+127.0.1.1                nodeX
 ```
 
 To:
 
 ```
-127.0.1.1				node0
+127.0.1.1                node0
 ```
 
 Save and exit
@@ -744,7 +754,7 @@ Select **Yes**
 
 All settings should take effect on reboot
 
----
+--------------------------------------------------------------------------------
 
 ## Deploy Head Node SSH Key
 
@@ -770,18 +780,16 @@ Reboot the node:
 sudo reboot
 ```
 
----
+--------------------------------------------------------------------------------
 
 ## Install NTP
 
 NTP is used to keep the cluster time close together using outside NTP servers to sync with the head node. All computer nodes will sync with the head node.
 
-Reference:
-http://raspberrypi.tomasgreno.cz/ntp-client-and-server.html
-http://www.pool.ntp.org/zone/north-america
+Reference: <http://raspberrypi.tomasgreno.cz/ntp-client-and-server.html> <http://www.pool.ntp.org/zone/north-america>
 
 > ##### Head Node
->
+
 > Install NTP:
 
 ```
@@ -872,7 +880,7 @@ Exit to head node:
 exit
 ```
 
----
+--------------------------------------------------------------------------------
 
 ## Install Slurm on Head Node
 
@@ -1020,7 +1028,7 @@ PARTITION AVAIL  TIMELIMIT  NODES  STATE NODELIST
 raspi2*      up   infinite      7   unk* node[0-6]
 ```
 
----
+--------------------------------------------------------------------------------
 
 ## Install Slurm on Compute Node
 
@@ -1109,9 +1117,7 @@ Copy Munge and Slurm configuration files from head node to compute node:
 
 ```
 rsync -a --rsync-path="sudo rsync" /etc/munge/munge.key pi@node0:/etc/munge/munge.key
-```
 
-```
 rsync -a --rsync-path="sudo rsync" /etc/slurm-llnl/slurm.conf pi@node0:/etc/slurm-llnl/slurm.conf
 ```
 
@@ -1174,18 +1180,18 @@ sinfo
 
 This should show all nodes in an idle state.
 
----
+--------------------------------------------------------------------------------
 
 ## Deploying the Rest of the Cluster
 
 By now you have developed a head node image that contains both MPI and Slurm. You have also developed a compute node image that contains both MPI and Slurm as well. Now you should go back to the instructions for "Create Node Image" to save both images and then use the compute node image to finish deploying your cluster. Saving these images at each stage gives you different configurations that you can easily deploy in the future and also allows you to have a checkpoint in case something goes wrong. You can write the saved node image to your SD and start from that point rather then starting from the beginning.
 
----
+--------------------------------------------------------------------------------
 
 ## Add an ethernet adapter
 
 > #### Add _eth0_:
->
+
 > Edit _/etc/network/interfaces_ file:
 
 ```
@@ -1251,7 +1257,7 @@ sudo reboot
 
 Now all traffic for the cluster is routed through eth0 and out eth1 to the internet. Any returning traffic or downloads come in via eth1 and through eth0 to the cluster unless its meant for the head node.
 
----
+--------------------------------------------------------------------------------
 
 ## Scripts
 
@@ -1278,7 +1284,7 @@ export PATH="/software/scripts:$PATH"
 
 Add scripts to the _/software/scripts_ folder to use as commands system wide.
 
-#### Deploy a single file to all compute nodes
+### Deploy a single file to all compute nodes
 
 This script will deploy files to all nodes to a folder defined by the user.
 
@@ -1329,14 +1335,14 @@ else
 fi
 ```
 
-#### Push the entire /software folder to all compute nodes
+### Push the entire /software folder to all compute nodes
 
----
+--------------------------------------------------------------------------------
 
 ## Troubleshooting Section
 
 > #### Received SIGHUP or SIGTERM from Nano
->
+
 > Enter the command:
 
 ```
@@ -1344,7 +1350,7 @@ bash
 ```
 
 > #### NETWORK UNREACHABLE:
->
+
 > When experiencing network connectivity problems with compute nodes:
 
 1. Flush the iptables in Memory
@@ -1353,27 +1359,26 @@ bash
 sudo iptables --flush
 ```
 
-2. Delete the rules file
+1. Delete the rules file
 
 ```
 sudo rm -rf /etc/iptables.rules
 ```
 
-3. Rebuild the rules and file
-   Repeat the IP tables section of the guide, starting with the commands:
+1. Rebuild the rules and file Repeat the IP tables section of the guide, starting with the commands:
 
 ```
 sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 sudo iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
 ```
 
-4. Save the iptables.rules file:
+1. Save the iptables.rules file:
 
 ```
 sudo bash -c "iptables-save > /etc/iptables.rules"
 ```
 
-5. Check for the iptable rules in the _/etc/network/interfaces file_:
+1. Check for the iptable rules in the _/etc/network/interfaces file_:
 
 Make sure that the line below is present and not commented out:
 
@@ -1413,8 +1418,7 @@ If mpiexec command fails to execute, stalls, or displays an error message about 
 
 > #### SSH ISSUES
 
-If the Pi is displaying SSH errors when running the mpiexec command:
-Check the problematic node's authorized_keys file, and compare it with the head node's authorized_keys file.
+If the Pi is displaying SSH errors when running the mpiexec command: Check the problematic node's authorized_keys file, and compare it with the head node's authorized_keys file.
 
 Check the file by going to the SSH directory:
 
@@ -1442,13 +1446,9 @@ These commands do the same thing, just with a different syntax:
 
 ```
 sudo systemctl [start,stop,restart,status] <service name>
-```
 
-```
 sudo service <service name> [start,stop,restart,status]
-```
 
-```
 sudo /etc/init.d/<service name> [start,stop,restart,status]
 ```
 
@@ -1482,70 +1482,66 @@ On many occasions, certain nodes fail to work because of a software/hardware mal
 
 -For Pi 3 Clusters: The head node is connected via Wi-Fi, and each compute node uses the head node's wireless connection to download files.
 
--For Pi 2 Clusters: A Wi-Pi adapter is a tested solution for establishing a wireless connection with a Raspberry Pi model 2. Using other wireless adapters could result in incompatible drivers or other various issues. The head node can also be connected to the Internet via an Ethernet cable.
+-For Pi 2 Clusters: A Wi-Pi adapter is a tested solution for establishing a wireless connection with a Raspberry Pi model 2\. Using other wireless adapters could result in incompatible drivers or other various issues. The head node can also be connected to the Internet via an Ethernet cable.
 
----
+--------------------------------------------------------------------------------
 
 ## Network Diagrams
 
-<center>
-
-**Base Equipment Layer (Pictured Below)**
+<center><strong>Base Equipment Layer (Pictured Below)</strong>
 
 <img src="images\Raspberry_Pi_Cluster_Network_Configuration_-_Base_Equipment_Layer.png">
 
-**Physical Layer (Pictured Below)**
+<strong>Physical Layer (Pictured Below)</strong>
 
 <img src="images\Raspberry_Pi_Cluster_Network_Configuration_-_Physical_Layer.png">
 
-**Logical Layer (Pictured Below)**
+<strong>Logical Layer (Pictured Below)</strong>
 
 <img src="images\Raspberry_Pi_Cluster_Network_Configuration_-_Logical_Layer.png">
 
-**Physical and Logical Layers (Pictured Below)**
+<strong>Physical and Logical Layers (Pictured Below)</strong>
 
-<img src="images\Raspberry_Pi_Cluster_Network_Configuration_-_Physical_and_Logical_Layers.png">
+<img src="images\Raspberry_Pi_Cluster_Network_Configuration_-_Physical_and_Logical_Layers.png"></center>
 
-</center>
-
----
+--------------------------------------------------------------------------------
 
 ## References
 
-https://www.modmypi.com/blog/how-to-give-your-raspberry-pi-a-static-ip-address-update
+<https://www.modmypi.com/blog/how-to-give-your-raspberry-pi-a-static-ip-address-update>
 
-https://www.raspberrypi.org/forums/viewtopic.php?f=28&t=44609
+<https://www.raspberrypi.org/forums/viewtopic.php?f=28&t=44609>
 
-http://weworkweplay.com/play/automatically-connect-a-raspberry-pi-to-a-wifi-network/
+<http://weworkweplay.com/play/automatically-connect-a-raspberry-pi-to-a-wifi-network/>
 
-https://www.raspberrypi.org/forums/viewtopic.php?f=36&t=162096
+<https://www.raspberrypi.org/forums/viewtopic.php?f=36&t=162096>
 
-https://www.raspberrypi.org/forums/viewtopic.php?t=118804&p=808453
+<https://www.raspberrypi.org/forums/viewtopic.php?t=118804&p=808453>
 
-https://www.raspberrypi.org/forums/viewtopic.php?f=28&t=37575
+<https://www.raspberrypi.org/forums/viewtopic.php?f=28&t=37575>
 
-http://unix.stackexchange.com/questions/88100/importing-data-from-a-text-file-to-a-bash-script
+<http://unix.stackexchange.com/questions/88100/importing-data-from-a-text-file-to-a-bash-script>
 
-http://www.tldp.org/LDP/abs/html/arrays.html
+<http://www.tldp.org/LDP/abs/html/arrays.html>
 
-http://how-to.wikia.com/wiki/How_to_read_command_line_arguments_in_a_bash_script
+<http://how-to.wikia.com/wiki/How_to_read_command_line_arguments_in_a_bash_script>
 
-http://ryanstutorials.net/bash-scripting-tutorial/bash-variables.php
+<http://ryanstutorials.net/bash-scripting-tutorial/bash-variables.php>
 
-http://stackoverflow.com/questions/19996089/use-ssh-to-start-a-background-process-on-a-remote-server-and-exit-session
+<http://stackoverflow.com/questions/19996089/use-ssh-to-start-a-background-process-on-a-remote-server-and-exit-session>
 
-http://stackoverflow.com/questions/29142/getting-ssh-to-execute-a-command-in-the-background-on-target-machine
+<http://stackoverflow.com/questions/29142/getting-ssh-to-execute-a-command-in-the-background-on-target-machine>
 
-http://www.igeekstudio.com/blog/setting-up-ganglia-and-hadoop-on-raspberry-pi
+<http://www.igeekstudio.com/blog/setting-up-ganglia-and-hadoop-on-raspberry-pi>
 
-http://ccm.net/faq/2540-linux-create-your-own-command
+<http://ccm.net/faq/2540-linux-create-your-own-command>
 
-https://github.com/XavierBerger/RPi-Monitor
+<https://github.com/XavierBerger/RPi-Monitor>
 
-https://www.raspberrypi.org/blog/visualising-core-load-on-the-pi-2/
+<https://www.raspberrypi.org/blog/visualising-core-load-on-the-pi-2/>
 
-https://github.com/davidsblog/rCPU
+<https://github.com/davidsblog/rCPU>
 
-https://raseshmori.wordpress.com/2012/10/14/install-hadoop-nextgen-yarn-multi-node-cluster/
+<https://raseshmori.wordpress.com/2012/10/14/install-hadoop-nextgen-yarn-multi-node-cluster/>
 
-https://www.packtpub.com/hardware-and-creative/raspberry-pi-super-cluster
+<https://www.packtpub.com/hardware-and-creative/raspberry-pi-super-cluster>
