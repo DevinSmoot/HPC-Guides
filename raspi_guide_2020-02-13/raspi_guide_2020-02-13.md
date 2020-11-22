@@ -30,6 +30,7 @@ Hardware:
 - Ethernet cable x 1
 - HDMI cable x 1
 - Power cable mini-USB x 1
+- 128GB or larger flash drive/external hard drive/external SSD drive
 
 ### Compute nodes
 
