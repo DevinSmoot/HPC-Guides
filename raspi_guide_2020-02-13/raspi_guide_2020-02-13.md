@@ -4,10 +4,6 @@
 
 ## Considerations to Consider before starting
 
-### SD Size
-
-If your SD card size will vary you will want to build the head node using the smallest size of SD card. This will ensure that the image for that SD card will ALWAYS be able to be written to a similar sized SD or larger. If you start with a 64GB SD card you will not be able to write the image to a 16GB SD card. Always start with a small SD card to save a base image. Build out specific nodes from the base image.
-
 ### USB cable power throughput
 
 Lower quality USB cables can restrict power throughput causing undervolt situations when the cluster is underload.
