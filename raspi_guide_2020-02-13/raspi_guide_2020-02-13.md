@@ -303,14 +303,14 @@ sudo reboot
 
 --------------------------------------------------------------------------------
 
-## Install MPICH-3.2
+## Install MPICH-3.3.2
 
 Install prerequisite _Fortran_ which wil be required for compiling MPICH. All other dependencies are already installed.
 
 > #### Step 1 - Install Fortran
 
 ```
-sudo apt install gfortran
+sudo apt install gfortran -y
 ```
 
 > #### Step 2 - Install and Setup MPICH3
@@ -337,20 +337,18 @@ cd /software/lib
 
 Take ownership of /software:
 
-`sudo chown -R pi:hpc /software`
-
-Download Mpich-3.2 and untar:
-
 ```
 sudo chown -R pi:hpc /software
 ```
 
+Download Mpich-3.3.2 and untar:
+
 Create build and install directory inside mpich3 directory:
 
 ```
-mkdir mpich_3.2
+mkdir mpich_3.3.2
 
-cd mpich_3.2
+cd mpich_3.3.2
 
 mkdir build install
 ```
@@ -358,9 +356,9 @@ mkdir build install
 Download mpich3 and untar:
 
 ```
-wget http://www.mpich.org/static/downloads/3.2.1/mpich-3.2.1.tar.gz
+wget http://www.mpich.org/static/downloads/3.3.2/mpich-3.3.2.tar.gz
 
-tar xvfz mpich-3.2.1.tar.gz
+tar xvfz mpich-3.3.2.tar.gz
 ```
 
 Compile and install mpich3:
@@ -368,7 +366,7 @@ Compile and install mpich3:
 ```
 cd build
 
-/software/lib/mpich_3.2/mpich-3.2.1/configure --prefix=/software/lib/mpich_3.2/install
+/software/lib/mpich_3.3.2/mpich-3.3.2/configure --prefix=/software/lib/mpich_3.3.2/install
 
 make
 
