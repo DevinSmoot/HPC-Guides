@@ -174,11 +174,6 @@ auto lo
 iface lo inet loopback
 
 iface eth0 inet manual
-
-allow-hotplug wlan0
-iface wlan0 inet manual
-
-wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
 ```
 
 ### Setup _eth0_ static ip address:
