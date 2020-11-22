@@ -17,10 +17,11 @@ Lower quality USB cables can restrict power throughput causing undervolt situati
 ## Overview of process
 
 1. A base image will be created with minimal software and MPI. Settings will be configured for the head node.
-2. The base image will be modified with generic settings for ease of deployment.
-3. Generic image is quickly deployed with settings being configured for individual nodes.
-4. Software is installed and configured for head node.
-5. Software is installed and configured for computer nodes.
+2. The base image will be modified with generic settings for ease of deployment to compute nodes.
+3. Generic image is created and stored on NFS drive.
+4. Compute nodes are quickly deployed using the generic image with settings being configured for individual nodes. Only requires the changing of three settings for node deployment.
+5. Software is installed and configured for head node.
+6. Software is installed and configured for computer nodes.
 
 --------------------------------------------------------------------------------
 
