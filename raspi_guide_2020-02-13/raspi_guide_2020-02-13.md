@@ -123,6 +123,16 @@ Select **2 Network Options**
   - Enter **head** for the hostname
   - Press **Enter**
 
+Select **2 Network Options**
+
+- Select **N2 Wireless LAN**
+
+  - Select **US United States**
+  - Select **Ok**
+  - Enter the SSID
+  - Enter the passphrase
+  - Select **Ok**
+
 ### Setup Interfacing Options:
 
 Select **5 Interfacing Options**
@@ -138,21 +148,6 @@ _Tab_ to **Finish**
 Select **Yes** to reboot
 
 > #### Step 3 - Configure Network Settings
-
-Edit _/etc/network/interfaces_:
-
-```
-sudo nano /etc/network/interfaces
-```
-
-Add the following to the end of the file:
-
-```
-auto lo
-iface lo inet loopback
-
-iface eth0 inet manual
-```
 
 ### Setup _eth0_ static ip address:
 
@@ -250,7 +245,13 @@ sudo lsblk -o UUID,NAME,FSTYPE,SIZE,MOUNTPOINT,LABEL,MODEL
 sudo apt install nfs-kernel-server -y
 ```
 
-> Step 2 - Modify exports file
+> Step 2 - Copy home directory
+
+```
+sudo cp /home /tmp
+```
+
+> Step 3 - Modify exports file
 
 ```
 sudo nano /etc/exports
