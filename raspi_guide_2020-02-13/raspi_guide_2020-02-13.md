@@ -248,7 +248,7 @@ sudo apt install nfs-kernel-server -y
 > Step 2 - Copy home directory
 
 ```
-sudo cp /home /tmp
+sudo cp -R /home /tmp
 ```
 
 > Step 3 - Modify exports file
@@ -270,6 +270,18 @@ sudo systemctl enable rpcbind
 sudo systemctl enable nfs-kernel-server
 sudo systemctl start rpcbind
 sudo systemctl start nfs-kernel-server
+```
+
+> Step 5 - Move home directory back
+
+```
+sudo mv -R /tmp/home/* /home
+```
+
+> Step 6 - Set permissions
+
+```
+sudo chown -R pi:pi /home/pi
 ```
 
 --------------------------------------------------------------------------------
