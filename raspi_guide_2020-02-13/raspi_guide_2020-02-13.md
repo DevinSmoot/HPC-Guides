@@ -52,11 +52,7 @@ Hardware:
 
 > #### Step 1 - Install operating systems
 
-Install Raspbian Lite on SD card for head unit(s) and each compute node
-
-[Raspbian Lite](https://www.raspberrypi.org/downloads/raspbian/)
-
-[Raspbian Install Guides](https://www.raspberrypi.org/documentation/installation/installing-images/)
+Install Raspberry Pi OS Lite on SD card for head unit(s) and each compute node
 
 > #### Step 2 - Initial Head Node Setup
 
@@ -117,13 +113,6 @@ sudo raspi-config
     - Select **No compose key**
     - Press **Enter**
 
-- Select **4 Localisation Options**
-
-  - Select **I4 Change Wi-fi Country**
-
-    - Select **US United States**
-    - Select **Ok**
-
 ### Setup Network Options:
 
 Select **2 Network Options**
@@ -132,15 +121,6 @@ Select **2 Network Options**
 
   - Select **Ok**
   - Enter **head** for the hostname
-  - Press **Enter**
-
-Select **2 Network Options**
-
-- Select **N2 Wireless LAN**
-
-  - Enter wi-fi SSID
-  - Press **Enter**
-  - Enter wi-fi passphrase
   - Press **Enter**
 
 ### Setup Interfacing Options:
@@ -186,8 +166,8 @@ Add to the end of the file:
 
 ```
 interface eth0
-static ip_address=192.168.10.5
-static domain_name_servers=8.8.8.8
+static ip_address=192.168.10.5/24
+static domain_name_servers=1.1.1.1
 ```
 
 Save and exit
@@ -210,60 +190,7 @@ Reboot:
 sudo reboot
 ```
 
-> #### Step 5 - IP forwarding for nodes to access internet
-
-Setup IP forwarding so that all compute nodes will have access to the internet for package installation and to download any needed materials on later use.
-
-Log in with username: **pi** and password **raspberry**
-
-Enable IPv4 Forwarding and Disable IPv6:
-
-```
-sudo nano /etc/sysctl.conf
-```
-
-Add the following lines to the end of the file (this includes the IP forwarding rule from above):
-
-```
-# Enable IPv4 forwarding
-net.ipv4.ip_forward = 1
-
-# Disable IPv6
-net.ipv6.conf.all.disable_ipv6 = 1
-net.ipv6.conf.default.disable_ipv6 = 1
-net.ipv6.conf.lo.disable_ipv6 = 1
-```
-
-Save and exit
-
-Update the configuration files:
-
-```
-sudo sysctl -p
-```
-
-Edit and Save the iptables:
-
-```
-sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-sudo iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
-
-sudo bash -c "iptables-save > /etc/iptables.rules"
-```
-
-Add settings to _/etc/network/interfaces_ file:
-
-```
-sudo nano /etc/network/interfaces
-```
-
-Add the following line at the end of the wlan0 section under wpa-conf line to make the changes persistent:
-
-```
-pre-up iptables-restore < /etc/iptables.rules
-```
-
-Save and exit
+> #### Step 5 - Create hosts file
 
 Update _/etc/hosts_ file:
 
@@ -297,6 +224,51 @@ Reboot:
 
 ```
 sudo reboot
+```
+
+--------------------------------------------------------------------------------
+
+## Mount USB flash drive/External drive for home directories
+
+> Step 1 - Plug the storage device into a USB port on the Raspberry Pi
+
+> Step 2 - List all of the disk partitions on the Pi
+
+```
+sudo lsblk -o UUID,NAME,FSTYPE,SIZE,MOUNTPOINT,LABEL,MODEL
+```
+
+> Step 3 - Identify the disk
+
+--------------------------------------------------------------------------------
+
+## Install NFS server
+
+> Step 1 - Install NFS server package
+
+```
+sudo apt install nfs-kernel-server -y
+```
+
+> Step 2 - Modify exports file
+
+```
+sudo nano /etc/exports
+```
+
+Add the following line:
+
+```
+/home *(rw,all_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
+```
+
+> Step 4 - Enable services on boot and start NFS
+
+```
+sudo systemctl enable rpcbind
+sudo systemctl enable nfs-kernel-server
+sudo systemctl start rpcbind
+sudo systemctl start nfs-kernel-server
 ```
 
 --------------------------------------------------------------------------------
@@ -465,8 +437,6 @@ Transfer the key to the authorized_keys file:
 ```
 cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
 ```
-
---------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
 
