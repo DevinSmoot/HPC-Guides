@@ -374,7 +374,7 @@ make install
 Activate environment variable:
 
 ```
-export PATH=/software/lib/mpich_3.2/install/bin:$PATH
+export PATH=/software/lib/mpich_3.3.2/install/bin:$PATH
 ```
 
 Add path to environment variables for persistance:
@@ -386,8 +386,8 @@ sudo nano ~/.bashrc
 Add the following to the end of the file:
 
 ```
-# MPICH-3.2
-export PATH="/software/lib/mpich_3.2/install/bin:$PATH"
+# MPICH-3.3.2
+export PATH="/software/lib/mpich_3.3.2/install/bin:$PATH"
 ```
 
 > #### Step 3 - Create list of nodes for MPI:
