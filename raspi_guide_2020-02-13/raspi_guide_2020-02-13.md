@@ -398,7 +398,7 @@ Create node list:
 
 ```
 cd ~
-sudo nano nodelist
+nano nodelist
 ```
 
 Add the head node ip address to the list:
@@ -432,7 +432,7 @@ head
 Enter on command line:
 
 ```
-mpiexec -f nodelist -n 2 /software/lib/mpich_3.2/build/examples/cpi
+mpiexec -f nodelist -n 2 /software/lib/mpich_3.3.2/build/examples/cpi
 ```
 
 Output:
@@ -468,31 +468,21 @@ cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
 
 --------------------------------------------------------------------------------
 
-## Prepare for cloning
-
-Shutdown the head node:
-
-```
-sudo shutdown -h now
-```
-
 --------------------------------------------------------------------------------
 
-## Save SD Image
+## Create image duplicate (backup)
 
 At this point you will want to save an image of the head node. This will give you a fall back point if you make mistakes moving forward. You will also use this image to begin your node image.
 
-Using the same guide as described in the beginning you will want to reverse the process of writing an image to the SD and _read_ an image from the SD and save that image to your PC. Now you have saved your SD like a checkpoint.
-
-Sample name for SD image:
+Sample name for dd image:
 
 ```
-compute_node_mpi_stage_2017_01_03
+head_node_mpi_stage_2020_11_22
 ```
 
 --------------------------------------------------------------------------------
 
-## Create Node image
+## Create Node image using dd
 
 The overview of this process:
 
