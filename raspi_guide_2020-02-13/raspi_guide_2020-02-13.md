@@ -228,7 +228,7 @@ sudo reboot
 > Step 1 - Copy home directory
 
 ```
-sudo cp -a /home /tmp
+sudo cp -pR /home /tmp
 ```
 
 > Step 2 - Plug the storage device into a USB port on the Raspberry Pi
@@ -268,7 +268,7 @@ UUID=28b98a23-1d12-4fbc-b205-e5ff225bd06a /home ext4 defaults,auto,rw,nofail 0 0
 > Step 7 - Move home directory back
 
 ```
-sudo cp -a /tmp/home/* /home
+sudo cp -pR /tmp/home/* /home
 ```
 
 --------------------------------------------------------------------------------
