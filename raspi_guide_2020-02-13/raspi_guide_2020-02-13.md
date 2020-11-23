@@ -225,15 +225,51 @@ sudo reboot
 
 ## Mount USB flash drive/External drive for home directories
 
-> Step 1 - Plug the storage device into a USB port on the Raspberry Pi
+> Step 1 - Copy home directory
 
-> Step 2 - List all of the disk partitions on the Pi
+```
+sudo cp -a /home /tmp
+```
+
+> Step 2 - Plug the storage device into a USB port on the Raspberry Pi
+
+> Step 3 - List all of the disk partitions on the Pi
 
 ```
 sudo lsblk -o UUID,NAME,FSTYPE,SIZE,MOUNTPOINT,LABEL,MODEL
 ```
 
-> Step 3 - Identify the disk
+> Step 4 - Identify the disk properties
+
+Identify and save the following disk properties:
+
+- UUID (unique identifier for the device: 28b98a23-1d12-4fbc-b205-e5ff225bd06a)
+- Name (possibly _sda1_)
+- FSTYPE (ext4)
+
+> Step 5 - Mount the drive
+
+```
+sudo mount /dev/sda1 /home
+```
+
+> Step 6 - Setup automatic mounting on Raspberry Pi boot
+
+```
+sudo nano /etc/fstab
+```
+
+Add the following line:
+
+```
+UUID=28b98a23-1d12-4fbc-b205-e5ff225bd06a /home ext4 defaults,auto,rw,nofail 0 0
+```
+
+> Step 7 - Move home directory back
+
+```
+sudo cp -a /tmp/home/* /home
+```
 
 --------------------------------------------------------------------------------
 
@@ -243,12 +279,6 @@ sudo lsblk -o UUID,NAME,FSTYPE,SIZE,MOUNTPOINT,LABEL,MODEL
 
 ```
 sudo apt install nfs-kernel-server -y
-```
-
-> Step 2 - Copy home directory
-
-```
-sudo cp -R /home /tmp
 ```
 
 > Step 3 - Modify exports file
@@ -270,18 +300,6 @@ sudo systemctl enable rpcbind
 sudo systemctl enable nfs-kernel-server
 sudo systemctl start rpcbind
 sudo systemctl start nfs-kernel-server
-```
-
-> Step 5 - Move home directory back
-
-```
-sudo mv -R /tmp/home/* /home
-```
-
-> Step 6 - Set permissions
-
-```
-sudo chown -R pi:pi /home/pi
 ```
 
 --------------------------------------------------------------------------------
