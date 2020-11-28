@@ -50,11 +50,11 @@ Hardware:
 
 ## Setup, Installation, and Testing
 
-> #### Step 1 - Install operating systems
+1. ##### Install operating systems
 
 Install Raspberry Pi OS Lite on SD card for head unit(s) and each compute node
 
-> #### Step 2 - Initial Head Node Setup
+1. ##### Initial Head Node Setup
 
 Setup the locale settings to make sure the correct keyboard, language, timezone, etc are set. This will ensure we are able to enter the correct symbols while working on the command line.
 
@@ -145,9 +145,9 @@ Select **5 Interfacing Options**
 
 _Tab_ to **Finish**
 
-Select **Yes** to reboot
+Select **No** when asked to reboot
 
-> #### Step 3 - Configure Network Settings
+1. ##### Configure Network Settings
 
 ### Setup _eth0_ static ip address:
 
@@ -173,7 +173,7 @@ Reboot:
 sudo reboot
 ```
 
-> #### Step 4 - Update the system
+1. ##### Update the system
 
 ```
 sudo apt update && sudo apt upgrade -y
@@ -185,9 +185,9 @@ Reboot:
 sudo reboot
 ```
 
-> #### Step 5 - Create hosts file
+1. ##### Create hosts file
 
-Update _/etc/hosts_ file:
+### Update _/etc/hosts_ file:
 
 Add the following to the end of the file:
 
@@ -225,21 +225,21 @@ sudo reboot
 
 ## Mount USB flash drive/External drive for home directories
 
-> Step 1 - Copy home directory
+1. ##### Copy home directory
 
 ```
 sudo cp -pR /home /tmp
 ```
 
-> Step 2 - Plug the storage device into a USB port on the Raspberry Pi
+1. ##### Plug the storage device into a USB port on the Raspberry Pi
 
-> Step 3 - List all of the disk partitions on the Pi
+2. ##### List all of the disk partitions on the Pi
 
 ```
 sudo lsblk -o UUID,NAME,FSTYPE,SIZE,MOUNTPOINT,LABEL,MODEL
 ```
 
-> Step 4 - Identify the disk properties
+1. ##### Identify the disk properties
 
 Identify and save the following disk properties:
 
@@ -247,25 +247,25 @@ Identify and save the following disk properties:
 - Name (possibly _sda1_)
 - FSTYPE (ext4)
 
-> Step 5 - Mount the drive
+- ##### Mount the drive
 
 ```
 sudo mount /dev/sda1 /home
 ```
 
-> Step 6 - Setup automatic mounting on Raspberry Pi boot
+1. ##### Setup automatic mounting on Raspberry Pi boot
 
 ```
 sudo nano /etc/fstab
 ```
 
-Add the following line:
+Add the following line, being sure to add your UUID from step 4:
 
 ```
 UUID=28b98a23-1d12-4fbc-b205-e5ff225bd06a /home ext4 defaults,auto,rw,nofail 0 0
 ```
 
-> Step 7 - Move home directory back
+1. ##### Move home directory back
 
 ```
 sudo cp -pR /tmp/home/* /home
@@ -308,13 +308,13 @@ sudo systemctl start nfs-kernel-server
 
 Install prerequisite _Fortran_ which wil be required for compiling MPICH. All other dependencies are already installed.
 
-> #### Step 1 - Install Fortran
+1. ##### Install Fortran
 
 ```
 sudo apt install gfortran -y
 ```
 
-> #### Step 2 - Install and Setup MPICH3
+1. ##### Install and Setup MPICH3
 
 Create hpc group:
 
@@ -393,7 +393,7 @@ Add the following to the end of the file:
 export PATH="/software/lib/mpich_3.3.2/install/bin:$PATH"
 ```
 
-> #### Step 3 - Create list of nodes for MPI:
+1. ##### Create list of nodes for MPI:
 
 This list of nodes will need to be updated as you add nodes later. Initially you will only have the head node.
 
@@ -412,7 +412,7 @@ Add the head node ip address to the list:
 
 _**Note:**_ Anytime you need to add a node to the cluster make sure to add it here as well as _/etc/hosts_ file.
 
-> #### Step 4 - Test MPI
+1. ##### Test MPI
 
 **Test 1 - Hostname Test**
 
@@ -447,7 +447,7 @@ pi is approximately 3.1415926544231318, Error is 0.0000000008333387
 wall clock time = 0.003250
 ```
 
-> #### Step 5 - Setup SSH keys
+1. ##### Setup SSH keys
 
 _**Note:**_ _Must be executed from head node as pi user_
 
