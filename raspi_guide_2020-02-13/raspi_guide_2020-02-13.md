@@ -1490,6 +1490,18 @@ On many occasions, certain nodes fail to work because of a software/hardware mal
 
 ## References
 
+<https://www.thegeekdiary.com/how-to-backup-linux-os-using-dd-command/>
+
+<https://sysadmins.co.za/setup-a-nfs-server-and-client-on-the-raspberry-pi/>
+
+<https://pimylifeup.com/raspberry-pi-nfs/>
+
+<https://www.raspberrypi.org/documentation/configuration/external-storage.md>
+
+<https://www.howtoforge.com/tutorial/hpl-high-performance-linpack-benchmark-raspberry-pi/>
+
+<https://www.netlib.org/benchmark/hpl/>
+
 <https://www.modmypi.com/blog/how-to-give-your-raspberry-pi-a-static-ip-address-update>
 
 <https://www.raspberrypi.org/forums/viewtopic.php?f=28&t=44609>
