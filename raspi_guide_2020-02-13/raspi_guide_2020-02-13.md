@@ -70,39 +70,39 @@ sudo raspi-config
 
 ### Setup Advanced Options:
 
-- Select **7 Advanced Options**
+- Select **6 Advanced Options**
 
   - Select **A1 Expand Filesystem**
   - Select **Ok**
 
-- Select **7 Advanced Options**
+- Select **4 Performance Options**
 
-  - Select **A3 Memory Split**
+  - Select **P2 GPU Memory**
 
     - Enter **16**
     - Press **Enter**
 
 ### Setup Localisation Options:
 
-- Select **4 Localisation Options**
+- Select **5 Localisation Options**
 
-  - Select Locale **I1 Change Locale**
+  - Select Locale **L1 Change Locale**
 
     - Unselect **en_GB.UTF-8 UTF-8**
     - Select **en_US ISO-8859-1**
     - Press **Enter**
     - Select **en_US**
 
-- Select **4 Localisation Options**
+- Select **5 Localisation Options**
 
-  - Select **I2 Change Timezone**
+  - Select **L2 Change Timezone**
 
     - Select **US** (or appropriate country)
     - Select **Central** (or appropriate local timezone)
 
-- Select **4 Localisation Options**
+- Select **5 Localisation Options**
 
-  - Select **I3 Change Keyboard Layout**
+  - Select **L3 Change Keyboard Layout**
 
     - Use the default selected Keyboard
     - Press **Enter**
@@ -115,17 +115,17 @@ sudo raspi-config
 
 ### Setup Network Options:
 
-Select **2 Network Options**
+Select **1 System Options**
 
-- Select **N1 Hostname**
+- Select **S4 Hostname**
 
   - Select **Ok**
   - Enter **head** for the hostname
   - Press **Enter**
 
-Select **2 Network Options**
+Select **1 System Options**
 
-- Select **N2 Wireless LAN**
+- Select **S1 Wireless LAN**
 
   - Select **US United States**
   - Select **Ok**
@@ -135,7 +135,7 @@ Select **2 Network Options**
 
 ### Setup Interfacing Options:
 
-Select **5 Interfacing Options**
+Select **3 Interfacing Options**
 
 - Select **P2 SSH**
 
@@ -177,12 +177,6 @@ sudo reboot
 
 ```
 sudo apt update && sudo apt upgrade -y
-```
-
-Reboot:
-
-```
-sudo reboot
 ```
 
 1. ##### Create hosts file
