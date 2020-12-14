@@ -350,6 +350,43 @@ ln -s /nfs_share/data/ /hpc/
 
 --------------------------------------------------------------------------------
 
+## Create a second user account
+
+This account is used to move the home directory of the pi user since that users home directory can't be moved while signed in. This is account creation is temporary and will be removed at the end. Additional accounts can be added once configuration is completed to include moving of home directories to the new _/hpc/users/_ folder.
+
+Create a new user account:
+
+```
+sudo adduser tempuser
+```
+
+Set the password for the user and save it. No other settings required.
+
+Give need group permissions:
+
+```
+sudo usermod -aG hpc tempuser
+sudo usermod -aG sudo tempuser
+```
+
+Close this terminal and login as the new _tempuser_ account.
+
+Move the _pi_ user home directory:
+
+```
+sudo usermod -d /hpc/users/pi pi
+```
+
+Close this terminal and login as _pi_ account again.
+
+Remove the _tempuser_ account:
+
+```
+sudo deluser --remove-all-files tempuser
+```
+
+--------------------------------------------------------------------------------
+
 ## Install MPICH-3.3.2
 
 Install prerequisite _Fortran_ which wil be required for compiling MPICH. All other dependencies are already installed.
@@ -457,7 +494,7 @@ head
 Enter on command line:
 
 ```
-mpiexec -f nodelist -n 2 /software/lib/mpich_3.3.2/build/examples/cpi
+mpiexec -f nodelist -n 2 /hpc/software/lib/mpich_3.3.2/build/examples/cpi
 ```
 
 Output:
