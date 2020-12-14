@@ -147,7 +147,7 @@ _Tab_ to **Finish**
 
 Select **No** when asked to reboot
 
-1. ##### Configure Network Settings
+### 1\. Configure Network Settings
 
 ### Setup _eth0_ static ip address:
 
@@ -173,17 +173,15 @@ Reboot:
 sudo reboot
 ```
 
-1. ##### Update the system
+### 2\. Update the system
 
 ```
 sudo apt update && sudo apt upgrade -y
 ```
 
-1. ##### Create hosts file
+### 3\. Create hosts file
 
-### Update _/etc/hosts_ file:
-
-Add the following to the end of the file:
+Update _/etc/hosts_ file by adding the following to the end of the file:
 
 _**Note:**_ At this point you want to assign and name all of your nodes that **WILL** be in your cluster and enter them in the hosts file. Below is an example of a 6 node cluster including the head node as one of the six. This file will be copied with the image to the compute nodes and will save you a step of developing and deploying the hosts file later.
 
@@ -219,96 +217,25 @@ sudo reboot
 
 ## Mount USB flash drive/External drive for home directories
 
-1. ##### Copy home directory
+Create _/nfs_share_ folder:
 
 ```
-sudo cp -pR /home /tmp
+sudo mkdir /nfs_share
 ```
 
-1. ##### Plug the storage device into a USB port on the Raspberry Pi
-
-2. ##### List all of the disk partitions on the Pi
+Set ownership of _/nfs_share_ folder:
 
 ```
-sudo lsblk -o UUID,NAME,FSTYPE,SIZE,MOUNTPOINT,LABEL,MODEL
+sudo chown -R pi:hpc /nfs_share
 ```
 
-1. ##### Identify the disk properties
-
-Identify and save the following disk properties:
-
-- UUID (unique identifier for the device: 28b98a23-1d12-4fbc-b205-e5ff225bd06a)
-- Name (possibly _sda1_)
-- FSTYPE (ext4)
-
-- ##### Mount the drive
+Set permissions of _/nfs_share_ folder:
 
 ```
-sudo mount /dev/sda1 /home
+sudo chmod 777 -R /nfs_share
 ```
 
-1. ##### Setup automatic mounting on Raspberry Pi boot
-
-```
-sudo nano /etc/fstab
-```
-
-Add the following line, being sure to add your UUID from step 4:
-
-```
-UUID=28b98a23-1d12-4fbc-b205-e5ff225bd06a /home ext4 defaults,auto,rw,nofail 0 0
-```
-
-1. ##### Move home directory back
-
-```
-sudo cp -pR /tmp/home/* /home
-```
-
---------------------------------------------------------------------------------
-
-## Install NFS server
-
-> Step 1 - Install NFS server package
-
-```
-sudo apt install nfs-kernel-server -y
-```
-
-> Step 3 - Modify exports file
-
-```
-sudo nano /etc/exports
-```
-
-Add the following line:
-
-```
-/home *(rw,all_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
-```
-
-> Step 4 - Enable services on boot and start NFS
-
-```
-sudo systemctl enable rpcbind
-sudo systemctl enable nfs-kernel-server
-sudo systemctl start rpcbind
-sudo systemctl start nfs-kernel-server
-```
-
---------------------------------------------------------------------------------
-
-## Install MPICH-3.3.2
-
-Install prerequisite _Fortran_ which wil be required for compiling MPICH. All other dependencies are already installed.
-
-1. ##### Install Fortran
-
-```
-sudo apt install gfortran -y
-```
-
-1. ##### Install and Setup MPICH3
+Create _/hpc_ folder and subfolders:
 
 Create hpc group:
 
@@ -325,22 +252,123 @@ sudo usermod -aG hpc pi
 Create hpc directory in root:
 
 ```
-sudo mkdir -p /software/lib
+sudo mkdir -p /hpc/software/lib
 
-cd /software/lib
+cd /hpc
 ```
 
-Take ownership of /software:
+Take ownership of _/hpc_:
 
 ```
-sudo chown -R pi:hpc /software
+sudo chown -R pi:hpc /hpc
 ```
+
+Set permissions of _/hpc_:
+
+```
+sudo chmod 777 -R /hpc
+```
+
+1. Plug the storage device into a USB port on the Raspberry Pi
+
+2. List all of the disk partitions on the Pi
+
+```
+sudo lsblk -o UUID,NAME,FSTYPE,SIZE,MOUNTPOINT,LABEL,MODEL
+```
+
+1. Identify the disk properties
+
+Identify and save the following disk properties:
+
+- UUID (unique identifier for the device: 28b98a23-1d12-4fbc-b205-e5ff225bd06a)
+- Name (possibly _sda1_)
+- FSTYPE (ext4)
+- Mount the drive
+
+```
+sudo mount /dev/sda1 /nfs_share
+```
+
+1. Setup automatic mounting on Raspberry Pi boot
+
+```
+sudo nano /etc/fstab
+```
+
+Add the following line, being sure to add your UUID from step 4:
+
+```
+UUID=28b98a23-1d12-4fbc-b205-e5ff225bd06a /nfs_share ext4 defaults,auto,rw,nofail 0 0
+```
+
+--------------------------------------------------------------------------------
+
+## Install NFS server
+
+> Step 1 - Install NFS server package
+
+```
+sudo apt install nfs-kernel-server -y
+```
+
+> Step 2 - Create export filesystem:
+
+```
+cd /nfs_share_
+
+sudo mkdir users data
+```
+
+> Step 3 - Mount and bind users directory
+
+```
+sudo mount --bind /home /nfs_share/users/
+```
+
+> Step 4 - Add reboot persistance
+
+Add the following to the end of the /etc/fstab file:
+
+```
+/home     /nfs_share/users/   none      bind 0    0
+```
+
+> Step 5 - Symbolic link folders
+
+Create a symbolic link between _/hpc/users_ folder and _/nfs_share/users_ folder:
+
+```
+ln -s /nfs_share/users/ /hpc/
+```
+
+Create a symbolic link between _/hpc/data_ folder and _/nfs_share/data_ folder:
+
+```
+ln -s /nfs_share/data/ /hpc/
+```
+
+--------------------------------------------------------------------------------
+
+## Install MPICH-3.3.2
+
+Install prerequisite _Fortran_ which wil be required for compiling MPICH. All other dependencies are already installed.
+
+1. ##### Install Fortran
+
+```
+sudo apt install gfortran -y
+```
+
+1. ##### Install and Setup MPICH3
 
 Download Mpich-3.3.2 and untar:
 
 Create build and install directory inside mpich3 directory:
 
 ```
+cd /hpc/software/lib
+
 mkdir mpich_3.3.2
 
 cd mpich_3.3.2
@@ -361,7 +389,7 @@ Compile and install mpich3:
 ```
 cd build
 
-/software/lib/mpich_3.3.2/mpich-3.3.2/configure --prefix=/software/lib/mpich_3.3.2/install
+/hpc/software/lib/mpich_3.3.2/mpich-3.3.2/configure --prefix=/hpc/software/lib/mpich_3.3.2/install
 
 make
 
@@ -371,20 +399,20 @@ make install
 Activate environment variable:
 
 ```
-export PATH=/software/lib/mpich_3.3.2/install/bin:$PATH
+export PATH=/hpc/software/lib/mpich_3.3.2/install/bin:$PATH
 ```
 
 Add path to environment variables for persistance:
 
 ```
-sudo nano ~/.bashrc
+sudo nano /hpc/users/pi/.bashrc
 ```
 
 Add the following to the end of the file:
 
 ```
 # MPICH-3.3.2
-export PATH="/software/lib/mpich_3.3.2/install/bin:$PATH"
+export PATH="/hpc/software/lib/mpich_3.3.2/install/bin:$PATH"
 ```
 
 1. ##### Create list of nodes for MPI:
@@ -468,12 +496,6 @@ cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
 ## Create image duplicate (backup)
 
 At this point you will want to save an image of the head node. This will give you a fall back point if you make mistakes moving forward. You will also use this image to begin your node image.
-
-Sample name for dd image:
-
-```
-head_node_mpi_stage_2020_11_22
-```
 
 --------------------------------------------------------------------------------
 
@@ -568,46 +590,32 @@ To:
 
 Save and exit
 
-> #### Step 5 - Remove wireless connection information
+> #### Step 5 - Configure NFS client
 
-Edit _interfaces_ file:
-
-```
-sudo nano /etc/network/interfaces
-```
-
-Remove:
+Remove nfs-kernel-server:
 
 ```
-allow-hotplug wlan0
-iface wlan0 inet manual
-wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
-
-pre-up iptables-restore < /etc/iptables.rules
+sudo apt remove nfs-kernel-server
 ```
 
-Edit _wpa_supplicant.conf_:
+Install nfs-client:
 
 ```
-sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
+sudo apt install nfs-common -y
 ```
 
-Remove this section if you have a secure network:
+Setup the /etc/idmapd.conf to match the user:
 
 ```
-network={
-ssid="<network name>"
-psk="<network password>"
-}
+[Mapping]
+Nobody-User = pi
+Nobody-Group = pi
 ```
 
-Remove this section if you have an unsecure network:
+Enable mount on boot via /etc/fstab:
 
 ```
-network={
-ssid="<network name>"
-key_mgmt=NONE
-}
+192.168.10.5:/home /home nfs rw 0 0
 ```
 
 > #### Step 6 - Shutdown and create a new image of the SD
