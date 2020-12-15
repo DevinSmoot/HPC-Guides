@@ -50,11 +50,13 @@ Hardware:
 
 ## Setup, Installation, and Testing
 
-1. ##### Install operating systems
+### Install operating systems
 
 Install Raspberry Pi OS Lite on SD card for head unit(s) and each compute node
 
-1. ##### Initial Head Node Setup
+--------------------------------------------------------------------------------
+
+### Initial Head Node Setup
 
 Setup the locale settings to make sure the correct keyboard, language, timezone, etc are set. This will ensure we are able to enter the correct symbols while working on the command line.
 
@@ -74,6 +76,8 @@ sudo raspi-config
 
   - Select **A1 Expand Filesystem**
   - Select **Ok**
+
+### Setup Performance Options
 
 - Select **4 Performance Options**
 
@@ -147,9 +151,11 @@ _Tab_ to **Finish**
 
 Select **No** when asked to reboot
 
-### 1\. Configure Network Settings
+--------------------------------------------------------------------------------
 
-### Setup _eth0_ static ip address:
+## Configure Network Settings
+
+### 1\. Setup _eth0_ static ip address:
 
 Edit _/etc/dhcpcd.conf_:
 
@@ -233,24 +239,20 @@ Add pi user to hpc group:
 sudo usermod -aG hpc pi
 ```
 
-Create hpc directory in root:
+Create hpc directory in root and add subdirectories:
 
 ```
-sudo mkdir -p /hpc/software/lib
+sudo mkdir -p /hpc/lib
 
 cd /hpc
+
+mkdir users data lib
 ```
 
 Take ownership of _/hpc_:
 
 ```
 sudo chown -R pi:hpc /hpc
-```
-
-Set permissions of _/hpc_:
-
-```
-sudo chmod 777 -R /hpc
 ```
 
 ### 2\. Install Fortran
@@ -266,7 +268,7 @@ Download Mpich-3.3.2 and untar:
 Create build and install directory inside mpich3 directory:
 
 ```
-cd /hpc/software/lib
+cd /hpc/lib
 
 mkdir mpich_3.3.2
 
@@ -288,7 +290,7 @@ Compile and install mpich3:
 ```
 cd build
 
-/hpc/software/lib/mpich_3.3.2/mpich-3.3.2/configure --prefix=/hpc/software/lib/mpich_3.3.2/install
+/hpc/lib/mpich_3.3.2/mpich-3.3.2/configure --prefix=/hpc/lib/mpich_3.3.2/install
 
 make
 
@@ -298,7 +300,7 @@ make install
 Activate environment variable:
 
 ```
-export PATH=/hpc/software/lib/mpich_3.3.2/install/bin:$PATH
+export PATH=/hpc/lib/mpich_3.3.2/install/bin:$PATH
 ```
 
 Add path to environment variables for persistance:
@@ -311,7 +313,7 @@ Add the following to the end of the file:
 
 ```
 # MPICH-3.3.2
-export PATH="/hpc/software/lib/mpich_3.3.2/install/bin:$PATH"
+export PATH="/hpc/lib/mpich_3.3.2/install/bin:$PATH"
 ```
 
 Save and exit.
@@ -358,7 +360,7 @@ head
 Enter on command line:
 
 ```
-mpiexec -f nodelist -n 2 /hpc/software/lib/mpich_3.3.2/build/examples/cpi
+mpiexec -f nodelist -n 2 /hpc/lib/mpich_3.3.2/build/examples/cpi
 ```
 
 Output:
@@ -390,6 +392,43 @@ Transfer the key to the authorized_keys file:
 
 ```
 cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
+```
+
+--------------------------------------------------------------------------------
+
+## Create a second user account
+
+This account is used to move the home directory of the pi user since that users home directory can't be moved while signed in. This is account creation is temporary and will be removed at the end. Additional accounts can be added once configuration is completed to include moving of home directories to the new _/hpc/users/_ folder.
+
+Create a new user account:
+
+```
+sudo adduser -m -d /hpc/users/tempuser tempuser
+```
+
+Set the password for the user and save it. No other settings required.
+
+Give need group permissions:
+
+```
+sudo usermod -aG hpc tempuser
+sudo usermod -aG sudo tempuser
+```
+
+Close this terminal and login as the new _tempuser_ account.
+
+Move the _pi_ user home directory:
+
+```
+sudo usermod -m -d /hpc/users/pi pi
+```
+
+Close this terminal and login as _pi_ account again.
+
+Remove the _tempuser_ account:
+
+```
+sudo deluser --remove-home tempuser
 ```
 
 --------------------------------------------------------------------------------
@@ -571,7 +610,7 @@ sudo apt install nfs-kernel-server -y
 > Step 2 - Create export filesystem:
 
 ```
-cd /nfs_share_
+cd /nfs_share
 
 sudo mkdir users data
 ```
@@ -579,7 +618,7 @@ sudo mkdir users data
 > Step 3 - Mount and bind users directory
 
 ```
-sudo mount --bind /home /nfs_share/users/
+sudo mount --bind /hpc/users /nfs_share/users
 ```
 
 > Step 4 - Add reboot persistance
@@ -587,7 +626,8 @@ sudo mount --bind /home /nfs_share/users/
 Add the following to the end of the /etc/fstab file:
 
 ```
-/home     /nfs_share/users/   none      bind 0    0
+/hpc/users     /nfs_share/users   none      bind 0    0
+/hpc/data     /nfs_share/data     none      bind 0    0
 ```
 
 > Step 5 - Symbolic link folders
@@ -595,50 +635,13 @@ Add the following to the end of the /etc/fstab file:
 Create a symbolic link between _/hpc/users_ folder and _/nfs_share/users_ folder:
 
 ```
-ln -s /nfs_share/users/ /hpc/
+ln -s /nfs_share/users/ /hpc/users/
 ```
 
 Create a symbolic link between _/hpc/data_ folder and _/nfs_share/data_ folder:
 
 ```
-ln -s /nfs_share/data/ /hpc/
-```
-
---------------------------------------------------------------------------------
-
-## Create a second user account
-
-This account is used to move the home directory of the pi user since that users home directory can't be moved while signed in. This is account creation is temporary and will be removed at the end. Additional accounts can be added once configuration is completed to include moving of home directories to the new _/hpc/users/_ folder.
-
-Create a new user account:
-
-```
-sudo adduser tempuser
-```
-
-Set the password for the user and save it. No other settings required.
-
-Give need group permissions:
-
-```
-sudo usermod -aG hpc tempuser
-sudo usermod -aG sudo tempuser
-```
-
-Close this terminal and login as the new _tempuser_ account.
-
-Move the _pi_ user home directory:
-
-```
-sudo usermod -d /hpc/users/pi pi
-```
-
-Close this terminal and login as _pi_ account again.
-
-Remove the _tempuser_ account:
-
-```
-sudo deluser --remove-home tempuser
+ln -s /nfs_share/data/ /hpc/data/
 ```
 
 --------------------------------------------------------------------------------
