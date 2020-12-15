@@ -382,7 +382,7 @@ Close this terminal and login as _pi_ account again.
 Remove the _tempuser_ account:
 
 ```
-sudo deluser --remove-all-files tempuser
+sudo deluser --remove-home tempuser
 ```
 
 --------------------------------------------------------------------------------
