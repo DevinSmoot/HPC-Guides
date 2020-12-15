@@ -442,7 +442,7 @@ export PATH=/hpc/software/lib/mpich_3.3.2/install/bin:$PATH
 Add path to environment variables for persistance:
 
 ```
-sudo nano /hpc/users/pi/.bashrc
+sudo nano ~/.bashrc
 ```
 
 Add the following to the end of the file:
@@ -451,6 +451,8 @@ Add the following to the end of the file:
 # MPICH-3.3.2
 export PATH="/hpc/software/lib/mpich_3.3.2/install/bin:$PATH"
 ```
+
+Save and exit.
 
 1. ##### Create list of nodes for MPI:
 
