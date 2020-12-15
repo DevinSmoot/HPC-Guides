@@ -409,7 +409,7 @@ This account is used to move the home directory of the pi user since that users 
 Create a new user account:
 
 ```
-sudo adduser --group hpc --home /hpc/users/tempuser tempuser
+sudo adduser --home /hpc/users/tempuser tempuser
 ```
 
 Set the password for the user and save it. No other settings required.
