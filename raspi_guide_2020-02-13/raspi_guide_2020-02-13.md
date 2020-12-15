@@ -215,27 +215,11 @@ sudo reboot
 
 --------------------------------------------------------------------------------
 
-## Mount USB flash drive/External drive for home directories
+## Install MPICH-3.3.2
 
-Create _/nfs_share_ folder:
+Install prerequisite _Fortran_ which wil be required for compiling MPICH. All other dependencies are already installed.
 
-```
-sudo mkdir /nfs_share
-```
-
-Set ownership of _/nfs_share_ folder:
-
-```
-sudo chown -R pi:hpc /nfs_share
-```
-
-Set permissions of _/nfs_share_ folder:
-
-```
-sudo chmod 777 -R /nfs_share
-```
-
-Create _/hpc_ folder and subfolders:
+### 1\. Create _/hpc_ folder and subfolders:
 
 Create hpc group:
 
@@ -267,6 +251,278 @@ Set permissions of _/hpc_:
 
 ```
 sudo chmod 777 -R /hpc
+```
+
+### 2\. Install Fortran
+
+```
+sudo apt install gfortran -y
+```
+
+### 3\. Install and Setup MPICH3
+
+Download Mpich-3.3.2 and untar:
+
+Create build and install directory inside mpich3 directory:
+
+```
+cd /hpc/software/lib
+
+mkdir mpich_3.3.2
+
+cd mpich_3.3.2
+
+mkdir build install
+```
+
+Download mpich3 and untar:
+
+```
+wget http://www.mpich.org/static/downloads/3.3.2/mpich-3.3.2.tar.gz
+
+tar xvfz mpich-3.3.2.tar.gz
+```
+
+Compile and install mpich3:
+
+```
+cd build
+
+/hpc/software/lib/mpich_3.3.2/mpich-3.3.2/configure --prefix=/hpc/software/lib/mpich_3.3.2/install
+
+make
+
+make install
+```
+
+Activate environment variable:
+
+```
+export PATH=/hpc/software/lib/mpich_3.3.2/install/bin:$PATH
+```
+
+Add path to environment variables for persistance:
+
+```
+sudo nano ~/.bashrc
+```
+
+Add the following to the end of the file:
+
+```
+# MPICH-3.3.2
+export PATH="/hpc/software/lib/mpich_3.3.2/install/bin:$PATH"
+```
+
+Save and exit.
+
+### 4\. Create list of nodes for MPI:
+
+This list of nodes will need to be updated as you add nodes later. Initially you will only have the head node.
+
+Create node list:
+
+```
+cd ~
+nano nodelist
+```
+
+Add the head node ip address to the list:
+
+```
+192.168.10.5
+```
+
+_**Note:**_ Anytime you need to add a node to the cluster make sure to add it here as well as _/etc/hosts_ file.
+
+### 5\. Test MPI
+
+**Test 1 - Hostname Test**
+
+Enter on command line:
+
+```
+cd ~
+
+mpiexec -f nodelist hostname
+```
+
+Output:
+
+```
+head
+```
+
+**Test 2 - Calculate Pi**
+
+Enter on command line:
+
+```
+mpiexec -f nodelist -n 2 /hpc/software/lib/mpich_3.3.2/build/examples/cpi
+```
+
+Output:
+
+```
+Process 0 of 2 is on head
+Process 1 of 2 is on head
+pi is approximately 3.1415926544231318, Error is 0.0000000008333387
+wall clock time = 0.003250
+```
+
+### 6\. Setup SSH keys
+
+_**Note:**_ _Must be executed from head node as pi user_
+
+Generate SSH key:
+
+```
+cd ~
+
+ssh-keygen -t rsa -C "<username>@swosubta" -f ~/.ssh/id_rsa
+```
+
+Press 'Enter' for passphrase
+
+Press 'Enter' for same passphrase
+
+Transfer the key to the authorized_keys file:
+
+```
+cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
+```
+
+--------------------------------------------------------------------------------
+
+## Create image duplicate (backup)
+
+At this point you will want to save an image of the head node. This will give you a fall back point if you make mistakes moving forward. You will also use this image to begin your node image.
+
+--------------------------------------------------------------------------------
+
+## Create Node image using dd
+
+The overview of this process:
+
+1. Save image of _head node_.
+2. On a new SD card write the _head node_ image you just saved.
+3. Boot the second SD you just created from the head node and make the following changes for "Creating a Generic Node Image".
+4. Save image of newly created _generic compute node_.
+
+At this point you have a copy of both the _head node_ and _generic comput node_ at the MPI stage. This is a checkpoint that you can fall back to if there are errors after this point.
+
+This will be a repeatable process when completed. You will setup an initial _compute node_ image using your saved _head node_ image. You will go in and change specific settings to _generic settings_. Doing this will allow you to always access your _generic compute node_ image at the same IP address and hostname. You will then be able to set up the compute node image to a specific IP address and hostname. Following this process will allow for prompt and efficient deployment of a cluster.
+
+[Raspbian Install Guides](https://www.raspberrypi.org/documentation/installation/installing-images/)
+
+--------------------------------------------------------------------------------
+
+## Create Generic Node image
+
+This will be a repeatable process when completed. You will setup an initial _compute node_ image using your saved _head node_ image. You will go in and change specific settings to _generic settings_. Doing this will allow you to always access your _generic compute node_ image at the same IP address and hostname. You will then be able to set up the compute node image to a specific IP address and hostname. Following this process will allow for prompt and efficient deployment of a cluster.
+
+_**NOTE:**_ This image will have to be booted from the head node to remove previously configured systems. These systems will be replaced with client systems for the compute nodes.
+
+> #### Step 1 - Boot image and login
+
+Log in with username: **pi** and password **raspberry**
+
+> #### Step 2 - Enter a generic ip address
+
+```
+sudo nano /etc/dhcpcd.conf
+```
+
+Change the _eth0_ ip address from:
+
+```
+static ip_address=192.168.10.5
+```
+
+To:
+
+```
+static ip_address=192.168.10.3
+```
+
+Save and exit
+
+> #### Step 3 - Enter a generic hostname
+
+```
+sudo nano /etc/hostname
+```
+
+Change:
+
+```
+head
+```
+
+To:
+
+```
+nodeX
+```
+
+Save and exit
+
+> #### Step 4 - Edit hosts file
+
+```
+sudo nano /etc/hosts
+```
+
+Change:
+
+```
+127.0.1.1                head
+```
+
+To:
+
+```
+127.0.1.1                nodeX
+```
+
+Save and exit
+
+> #### Step 5 - Shutdown and create a new image of the SD
+
+```
+sudo shutdown -h now
+```
+
+Now you will go back to WinDiskImager32 and save the image as a node image. This is a generic node image that you can quickly deploy and use to set up your cluster with.
+
+Sample name for SD image:
+
+```
+compute_node_mpi_stage_2017_01_03
+```
+
+--------------------------------------------------------------------------------
+
+## Setup Head Node
+
+## Mount USB flash drive/External drive for home directories
+
+Create _/nfs_share_ folder:
+
+```
+sudo mkdir /nfs_share
+```
+
+Set ownership of _/nfs_share_ folder:
+
+```
+sudo chown -R pi:hpc /nfs_share
+```
+
+Set permissions of _/nfs_share_ folder:
+
+```
+sudo chmod 777 -R /nfs_share
 ```
 
 1. Plug the storage device into a USB port on the Raspberry Pi
@@ -383,292 +639,6 @@ Remove the _tempuser_ account:
 
 ```
 sudo deluser --remove-home tempuser
-```
-
---------------------------------------------------------------------------------
-
-## Install MPICH-3.3.2
-
-Install prerequisite _Fortran_ which wil be required for compiling MPICH. All other dependencies are already installed.
-
-1. ##### Install Fortran
-
-```
-sudo apt install gfortran -y
-```
-
-1. ##### Install and Setup MPICH3
-
-Download Mpich-3.3.2 and untar:
-
-Create build and install directory inside mpich3 directory:
-
-```
-cd /hpc/software/lib
-
-mkdir mpich_3.3.2
-
-cd mpich_3.3.2
-
-mkdir build install
-```
-
-Download mpich3 and untar:
-
-```
-wget http://www.mpich.org/static/downloads/3.3.2/mpich-3.3.2.tar.gz
-
-tar xvfz mpich-3.3.2.tar.gz
-```
-
-Compile and install mpich3:
-
-```
-cd build
-
-/hpc/software/lib/mpich_3.3.2/mpich-3.3.2/configure --prefix=/hpc/software/lib/mpich_3.3.2/install
-
-make
-
-make install
-```
-
-Activate environment variable:
-
-```
-export PATH=/hpc/software/lib/mpich_3.3.2/install/bin:$PATH
-```
-
-Add path to environment variables for persistance:
-
-```
-sudo nano ~/.bashrc
-```
-
-Add the following to the end of the file:
-
-```
-# MPICH-3.3.2
-export PATH="/hpc/software/lib/mpich_3.3.2/install/bin:$PATH"
-```
-
-Save and exit.
-
-1. ##### Create list of nodes for MPI:
-
-This list of nodes will need to be updated as you add nodes later. Initially you will only have the head node.
-
-Create node list:
-
-```
-cd ~
-nano nodelist
-```
-
-Add the head node ip address to the list:
-
-```
-192.168.10.5
-```
-
-_**Note:**_ Anytime you need to add a node to the cluster make sure to add it here as well as _/etc/hosts_ file.
-
-1. ##### Test MPI
-
-**Test 1 - Hostname Test**
-
-Enter on command line:
-
-```
-cd ~
-
-mpiexec -f nodelist hostname
-```
-
-Output:
-
-```
-head
-```
-
-**Test 2 - Calculate Pi**
-
-Enter on command line:
-
-```
-mpiexec -f nodelist -n 2 /hpc/software/lib/mpich_3.3.2/build/examples/cpi
-```
-
-Output:
-
-```
-Process 0 of 2 is on head
-Process 1 of 2 is on head
-pi is approximately 3.1415926544231318, Error is 0.0000000008333387
-wall clock time = 0.003250
-```
-
-1. ##### Setup SSH keys
-
-_**Note:**_ _Must be executed from head node as pi user_
-
-Generate SSH key:
-
-```
-cd ~
-
-ssh-keygen -t rsa -C "<username>@swosubta" -f ~/.ssh/id_rsa
-```
-
-Press 'Enter' for passphrase
-
-Press 'Enter' for same passphrase
-
-Transfer the key to the authorized_keys file:
-
-```
-cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
-```
-
---------------------------------------------------------------------------------
-
-## Create image duplicate (backup)
-
-At this point you will want to save an image of the head node. This will give you a fall back point if you make mistakes moving forward. You will also use this image to begin your node image.
-
---------------------------------------------------------------------------------
-
-## Create Node image using dd
-
-The overview of this process:
-
-1. Save image of _head node_.
-2. On a new SD card write the _head node_ image you just saved.
-3. Boot the second SD you just created from the head node and make the following changes for "Creating a Generic Node Image".
-4. Save image of newly created _generic compute node_.
-
-At this point you have a copy of both the _head node_ and _generic comput node_ at the MPI stage. This is a checkpoint that you can fall back to if there are errors after this point.
-
-This will be a repeatable process when completed. You will setup an initial _compute node_ image using your saved _head node_ image. You will go in and change specific settings to _generic settings_. Doing this will allow you to always access your _generic compute node_ image at the same IP address and hostname. You will then be able to set up the compute node image to a specific IP address and hostname. Following this process will allow for prompt and efficient deployment of a cluster.
-
-[Raspbian Install Guides](https://www.raspberrypi.org/documentation/installation/installing-images/)
-
---------------------------------------------------------------------------------
-
-## Create Generic Node image
-
-This will be a repeatable process when completed. You will setup an initial _compute node_ image using your saved _head node_ image. You will go in and change specific settings to _generic settings_. Doing this will allow you to always access your _generic compute node_ image at the same IP address and hostname. You will then be able to set up the compute node image to a specific IP address and hostname. Following this process will allow for prompt and efficient deployment of a cluster.
-
-> #### Step 1 - Boot image and login
-
-Log in with username: **pi** and password **raspberry**
-
-> #### Step 2 - Enter a generic ip address
-
-```
-sudo nano /etc/dhcpcd.conf
-```
-
-Change the _eth0_ ip address from:
-
-```
-static ip_address=192.168.10.5
-```
-
-To:
-
-```
-static ip_address=192.168.10.3
-```
-
-Also add to the end of the file:
-
-```
-static routers=192.168.10.5
-```
-
-Save and exit
-
-> #### Step 3 - Enter a generic hostname
-
-```
-sudo nano /etc/hostname
-```
-
-Change:
-
-```
-head
-```
-
-To:
-
-```
-nodeX
-```
-
-Save and exit
-
-> #### Step 4 - Edit hosts file
-
-```
-sudo nano /etc/hosts
-```
-
-Change:
-
-```
-127.0.1.1                head
-```
-
-To:
-
-```
-127.0.1.1                nodeX
-```
-
-Save and exit
-
-> #### Step 5 - Configure NFS client
-
-Remove nfs-kernel-server:
-
-```
-sudo apt remove nfs-kernel-server
-```
-
-Install nfs-client:
-
-```
-sudo apt install nfs-common -y
-```
-
-Setup the /etc/idmapd.conf to match the user:
-
-```
-[Mapping]
-Nobody-User = pi
-Nobody-Group = pi
-```
-
-Enable mount on boot via /etc/fstab:
-
-```
-192.168.10.5:/home /home nfs rw 0 0
-```
-
-> #### Step 6 - Shutdown and create a new image of the SD
-
-```
-sudo shutdown -h now
-```
-
-Now you will go back to WinDiskImager32 and save the image as a node image. This is a generic node image that you can quickly deploy and use to set up your cluster with.
-
-Sample name for SD image:
-
-```
-compute_node_mpi_stage_2017_01_03
 ```
 
 --------------------------------------------------------------------------------
