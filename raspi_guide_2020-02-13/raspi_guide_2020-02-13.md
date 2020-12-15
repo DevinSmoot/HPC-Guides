@@ -70,14 +70,37 @@ Start the Raspberry Pi configuration tool:
 sudo raspi-config
 ```
 
-### Setup Advanced Options:
+### Setup System Options:
 
-- Select **6 Advanced Options**
+Select **1 System Options**
 
-  - Select **A1 Expand Filesystem**
+- Select **S1 Wireless LAN**
+
+  - Select **US United States**
+  - Select **Ok**
+  - Enter the SSID
+  - Enter the passphrase
   - Select **Ok**
 
-### Setup Performance Options
+Select **1 System Options**
+
+- Select **S4 Hostname**
+
+  - Select **Ok**
+  - Enter **head** for the hostname
+  - Press **Enter**
+
+### Setup Interfacing Options:
+
+Select **3 Interfacing Options**
+
+- Select **P2 SSH**
+
+  - Select **Yes**
+  - Select **Ok**
+  - Press **Enter**
+
+### Setup Performance Options:
 
 - Select **4 Performance Options**
 
@@ -117,35 +140,12 @@ sudo raspi-config
     - Select **No compose key**
     - Press **Enter**
 
-### Setup Network Options:
+### Setup Advanced Options:
 
-Select **1 System Options**
+- Select **6 Advanced Options**
 
-- Select **S4 Hostname**
-
+  - Select **A1 Expand Filesystem**
   - Select **Ok**
-  - Enter **head** for the hostname
-  - Press **Enter**
-
-Select **1 System Options**
-
-- Select **S1 Wireless LAN**
-
-  - Select **US United States**
-  - Select **Ok**
-  - Enter the SSID
-  - Enter the passphrase
-  - Select **Ok**
-
-### Setup Interfacing Options:
-
-Select **3 Interfacing Options**
-
-- Select **P2 SSH**
-
-  - Select **Yes**
-  - Select **Ok**
-  - Press **Enter**
 
 _Tab_ to **Finish**
 
@@ -239,20 +239,24 @@ Add pi user to hpc group:
 sudo usermod -aG hpc pi
 ```
 
-Create hpc directory in root and add subdirectories:
+Create hpc directory in root:
 
 ```
-sudo mkdir -p /hpc/lib
-
-cd /hpc
-
-mkdir users data lib
+sudo mkdir /hpc
 ```
 
 Take ownership of _/hpc_:
 
 ```
 sudo chown -R pi:hpc /hpc
+```
+
+Create hpc subdirectories:
+
+```
+cd /hpc
+
+mkdir users data lib
 ```
 
 ### 2\. Install Fortran
@@ -403,7 +407,7 @@ This account is used to move the home directory of the pi user since that users 
 Create a new user account:
 
 ```
-sudo adduser -m -d /hpc/users/tempuser tempuser
+sudo adduser --group hpc --home /hpc/users/tempuser tempuser
 ```
 
 Set the password for the user and save it. No other settings required.
@@ -425,10 +429,10 @@ sudo usermod -m -d /hpc/users/pi pi
 
 Close this terminal and login as _pi_ account again.
 
-Remove the _tempuser_ account:
+Remove the _tempuser_ account and directories:
 
 ```
-sudo deluser --remove-home tempuser
+sudo userdel -r tempuser
 ```
 
 --------------------------------------------------------------------------------
@@ -599,7 +603,7 @@ UUID=28b98a23-1d12-4fbc-b205-e5ff225bd06a /nfs_share ext4 defaults,auto,rw,nofai
 
 --------------------------------------------------------------------------------
 
-## Install NFS server
+## Install NFS server (Head node)
 
 > Step 1 - Install NFS server package
 
@@ -630,27 +634,13 @@ Add the following to the end of the /etc/fstab file:
 /hpc/data     /nfs_share/data     none      bind 0    0
 ```
 
-> Step 5 - Symbolic link folders
-
-Create a symbolic link between _/hpc/users_ folder and _/nfs_share/users_ folder:
-
-```
-ln -s /nfs_share/users/ /hpc/users/
-```
-
-Create a symbolic link between _/hpc/data_ folder and _/nfs_share/data_ folder:
-
-```
-ln -s /nfs_share/data/ /hpc/data/
-```
-
 --------------------------------------------------------------------------------
 
-## Setup Generic Node image
+## Setup Generic Node image (Compute Node)
 
 [Raspbian Install Guides](https://www.raspberrypi.org/documentation/installation/installing-images/)
 
-> #### Step 1 - Copy generic node image created earlier to an SD card using WinDiskImager32.
+> #### Step 1 - Copy generic node image created earlier to an SD card
 
 > #### Step 2 - Boot and login to your system
 
@@ -730,7 +720,21 @@ To:
 
 Save and exit
 
-> #### Step 6 - Expand Filesystem
+> #### Step 6 - Configure NFS
+
+Install nfs-common:
+
+```
+sudo apt install nfs-common
+```
+
+Mount the NFS share to local folder
+
+```
+sudo mount -t nfs -o proto=tcp,port=2049 192.168.10.5:/nfs_share /hpc/users
+```
+
+> #### Step 7 - Expand Filesystem
 
 Open configuration tool:
 
