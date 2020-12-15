@@ -179,6 +179,8 @@ Reboot:
 sudo reboot
 ```
 
+At this point you can connect via the network using puTTY or similar SSH utility.
+
 ### 2\. Update the system
 
 ```
