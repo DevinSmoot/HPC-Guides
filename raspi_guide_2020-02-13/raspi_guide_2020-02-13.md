@@ -1182,6 +1182,10 @@ sinfo
 
 This should show all nodes in an idle state.
 
+SLURM references:
+
+<http://www.feacluster.com/pi_slurm_cluster.php>
+
 --------------------------------------------------------------------------------
 
 ## Deploying the Rest of the Cluster
