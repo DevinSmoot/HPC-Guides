@@ -16,12 +16,74 @@ Starting off with smaller SD cards will ensure that images are limited to a smal
 
 ### Overview of process
 
-1. A base image will be created with minimal software and MPI. Settings will be configured for the head node.
-2. The base image will be modified with generic settings for ease of deployment to compute nodes.
-3. Generic image is created and stored on NFS drive.
-4. Compute nodes are quickly deployed using the generic image with settings being configured for individual nodes. Only requires the changing of three settings for node deployment.
-5. Software is installed and configured for head node.
-6. Software is installed and configured for computer nodes.
+1. Install Raspberry Pi Lite OS to 4GB SD card and configure the install:
+
+- EXTERNAL PC
+  - Write image of Raspberry Pi Lite OS to 4GB SD card
+
+* HEAD NODE
+  - Boot Raspberry Pi with SD card inserted
+  - Configure Raspberry Pi
+  - Configure Wired Network
+  - Update System
+  - Create hosts file
+  - Create NFS and HPC folder structure
+  - Move pi user to new home directory
+  - Install MPICH
+  - Create Node List
+  - Generate SSH key
+
+2. Save an image of the configured base Raspberry Pi OS Lite install:
+
+- EXTERNAL PC
+  - Save image of head node
+
+3. Write a copy of the configured image to a new 4GB SD card:
+
+- EXTERNAL PC
+  - Write image of generic node (not configured)
+
+4. Configure generic node:
+
+- GENERIC NODE
+  - Configure generic node
+  - Configure generic ip address
+  - Congigure generic hostname
+  - Edit hosts file
+
+5. Save an image of the configured generic node:
+
+- EXTERNAL PC
+  - Save image of generic node (configured)
+
+6. Install additional head node software:
+
+- HEAD NODE
+  - Configure head node for NFS
+  - Configure head node for NTP
+  - Configure head node for SLURM
+
+7. Save image of completely configured head node:
+
+- EXTERNAL PC
+  - Save image of head node (Base configuration, NFS, NTP, SLURM)
+
+8. Install additional compute node software:
+
+- GENERIC NODE
+  - Configure compute node for NFS
+  - Configure compute node for NTP
+  - Configure compute node for SLURM
+
+9. Save image of completely configured generic compute node:
+
+- EXTERNAL PC
+  - Save image of generic node (Base configuration, NFS, NTP, SLURM)
+
+10. Deploy remaining nodes using generic compute node image:
+
+- COMPUTE NODE(S)
+  - Deploy remaining nodes by configuring generic image to compute node
 
 ---
 
@@ -80,7 +142,6 @@ Setup System Options:
 Select **1 System Options**
 
 - Select **S1 Wireless LAN**
-
   - Select **US United States**
   - Select **Ok**
   - Enter the SSID
@@ -90,9 +151,8 @@ Select **1 System Options**
 Select **1 System Options**
 
 - Select **S4 Hostname**
-
   - Select **Ok**
-  - Enter **head** for the hostname
+  - Enter **node0** for the hostname
   - Press **Enter**
 
 Setup Interfacing Options:
@@ -100,7 +160,6 @@ Setup Interfacing Options:
 Select **3 Interfacing Options**
 
 - Select **P2 SSH**
-
   - Select **Yes**
   - Select **Ok**
   - Press **Enter**
@@ -108,9 +167,7 @@ Select **3 Interfacing Options**
 Setup Performance Options:
 
 - Select **4 Performance Options**
-
   - Select **P2 GPU Memory**
-
     - Enter **16**
     - Press **Enter**
 
@@ -119,7 +176,6 @@ Setup Localisation Options:
 - Select **5 Localisation Options**
 
   - Select Locale **L1 Change Locale**
-
     - Unselect **en_GB.UTF-8 UTF-8**
     - Select **en_US ISO-8859-1**
     - Press **Enter**
@@ -128,14 +184,12 @@ Setup Localisation Options:
 - Select **5 Localisation Options**
 
   - Select **L2 Change Timezone**
-
     - Select **US** (or appropriate country)
     - Select **Central** (or appropriate local timezone)
 
 - Select **5 Localisation Options**
 
   - Select **L3 Change Keyboard Layout**
-
     - Use the default selected Keyboard
     - Press **Enter**
     - Select **Other**
@@ -148,7 +202,6 @@ Setup Localisation Options:
 Setup Advanced Options:
 
 - Select **6 Advanced Options**
-
   - Select **A1 Expand Filesystem**
   - Select **Ok**
 
@@ -172,7 +225,7 @@ Add to the end of the file:
 
 ```
 interface eth0
-static ip_address=192.168.10.5/24
+static ip_address=192.168.10.100/24
 static domain_name_servers=1.1.1.1
 ```
 
@@ -214,7 +267,6 @@ Modify or add the following lines to the file:
 127.0.1.1    head
 
 192.168.10.3    nodeX
-192.168.10.5    head
 192.168.10.100    node0
 192.168.10.101    node1
 192.168.10.102    node2
@@ -222,12 +274,7 @@ Modify or add the following lines to the file:
 192.168.10.104    node4
 192.168.10.105     node5
 192.168.10.106     node6
-```
-
-Reboot:
-
-```
-sudo reboot
+192.168.10.107     node7
 ```
 
 ---
@@ -276,6 +323,14 @@ Set ownership of _/nfs_share_ folder:
 
 ```
 sudo chown -R pi:hpc /nfs_share
+```
+
+Create folders under _/nfs_share_ folder:
+
+```
+cd /nfs_share
+
+mkdir data users
 ```
 
 Set permissions of _/nfs_share_ folder:
@@ -400,14 +455,14 @@ nano nodelist
 Add the head node ip address to the list:
 
 ```
-192.168.10.5
+192.168.10.100
 ```
 
 _**Note:**_ Anytime you need to add a node to the cluster make sure to add it here as well as _/etc/hosts_ file.
 
 8. Test MPI
 
-**Test 1 - Hostname Test**
+Test 1 - Hostname Test
 
 Enter on command line:
 
@@ -420,10 +475,10 @@ mpiexec -f nodelist hostname
 Output:
 
 ```
-head
+node0
 ```
 
-**Test 2 - Calculate Pi**
+Test 2 - Calculate Pi
 
 Enter on command line:
 
@@ -434,8 +489,8 @@ mpiexec -f nodelist -n 2 /hpc/lib/mpich_3.3.2/build/examples/cpi
 Output:
 
 ```
-Process 0 of 2 is on head
-Process 1 of 2 is on head
+Process 0 of 2 is on node0
+Process 1 of 2 is on node0
 pi is approximately 3.1415926544231318, Error is 0.0000000008333387
 wall clock time = 0.003250
 ```
@@ -466,7 +521,7 @@ cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
 
 ---
 
-## Save image of head node
+### Save image of head node
 
 At this point you will want to save an image of the head node. This will give you a fall back point if you make mistakes moving forward. You will also use this image to begin your node image.
 
@@ -476,7 +531,7 @@ At this point you will want to save an image of the head node. This will give yo
 
 **REVIEW**
 
-### Create Node image using dd
+### Write compute node image (not configured)
 
 The overview of this process:
 
@@ -493,17 +548,21 @@ This will be a repeatable process when completed. You will setup an initial _com
 
 **REVIEW**
 
+---
+
 ### Configure generic node
 
 This will be a repeatable process when completed. You will setup an initial _compute node_ image using your saved _head node_ image. You will go in and change specific settings to _generic settings_. Doing this will allow you to always access your _generic compute node_ image at the same IP address and hostname. You will then be able to set up the compute node image to a specific IP address and hostname. Following this process will allow for prompt and efficient deployment of a cluster.
 
 _**NOTE:**_ This image will have to be booted from the head node to remove previously configured systems. These systems will be replaced with client systems for the compute nodes.
 
-1. Boot image and login:
+Boot image and login:
 
 Log in with username: **pi** and password **raspberry**
 
-2. Enter a generic ip address:
+### Configure generic ip address
+
+Enter a generic ip address:
 
 ```
 sudo nano /etc/dhcpcd.conf
@@ -512,7 +571,7 @@ sudo nano /etc/dhcpcd.conf
 Change the _eth0_ ip address from:
 
 ```
-static ip_address=192.168.10.5
+static ip_address=192.168.10.100
 ```
 
 To:
@@ -523,7 +582,9 @@ static ip_address=192.168.10.3
 
 Save and exit
 
-3. Enter a generic hostname:
+### Configure generic hostname
+
+Enter a generic hostname:
 
 ```
 sudo nano /etc/hostname
@@ -532,7 +593,7 @@ sudo nano /etc/hostname
 Change:
 
 ```
-head
+node0
 ```
 
 To:
@@ -543,7 +604,9 @@ nodeX
 
 Save and exit
 
-4. Edit hosts file:
+### Edit hosts file
+
+Edit hosts file:
 
 ```
 sudo nano /etc/hosts
@@ -552,7 +615,7 @@ sudo nano /etc/hosts
 Change:
 
 ```
-127.0.1.1                head
+127.0.1.1                node0
 ```
 
 To:
@@ -563,7 +626,11 @@ To:
 
 Save and exit
 
-5. Shutdown and create a new image of the SD:
+---
+
+### Save image of generic node (configured)
+
+Shutdown and create a new image of the SD:
 
 ```
 sudo shutdown -h now
@@ -579,9 +646,9 @@ compute_node_mpi_stage_2017_01_03
 
 ---
 
-### Setup Head Node
+### Head node setup
 
-## Mount USB flash drive/External drive for home directories
+### Mount USB flash drive/External drive for home directories on head node
 
 1. Plug the storage device into a USB port on the Raspberry Pi
 
@@ -595,10 +662,19 @@ sudo lsblk -o UUID,NAME,FSTYPE,SIZE,MOUNTPOINT,LABEL,MODEL
 
 Identify and save the following disk properties:
 
-- UUID (unique identifier for the device: 28b98a23-1d12-4fbc-b205-e5ff225bd06a)
-- Name (possibly _sda1_)
+- UUID (unique identifier for the device: 28b98a23-1d12-4fbc-b205-e5ff225bd06a; will be different for your device)
+- Name (possibly _sda1_; used in the following steps; may differ on your configuration)
 - FSTYPE (ext4)
-- Mount the drive
+
+4. Format the drive:
+
+Replace _sda1_ as needed for your configuration on the following steps.
+
+```
+sudo mkfs.ext4 /dev/sda1
+```
+
+4. Mount the drive
 
 ```
 sudo mount /dev/sda1 /nfs_share
@@ -613,47 +689,371 @@ sudo nano /etc/fstab
 Add the following line, being sure to add your UUID from step 4:
 
 ```
-UUID=28b98a23-1d12-4fbc-b205-e5ff225bd06a /nfs_share ext4 defaults,auto,rw,nofail 0 0
+UUID=28b98a23-1d12-4fbc-b205-e5ff225bd06a /nfs_share nfs defaults,auto,rw,nofail 0 0
 ```
 
 ---
 
-### Install NFS server (Head node)
+### Install NFS server on head node
 
-1. Install NFS server package
+1. Install NFS server package:
 
 ```
 sudo apt install nfs-kernel-server -y
 ```
 
-2. Create export filesystem:
+2. Create share folders:
 
 ```
 cd /nfs_share
 
-sudo mkdir users data
+sudo mkdir data users
 ```
 
-3. Mount and bind users directory
+3. Take ownership of /nfs_share folder:
+
+```
+sudo chown -R pi:hpc /nfs_share
+```
+
+4. Mount and bind users directory:
 
 ```
 sudo mount --bind /hpc/users /nfs_share/users
 ```
 
-4. Add reboot persistance
+5. Add reboot persistance:
 
-Add the following to the end of the /etc/fstab file:
+Open _/etc/fstab_ file:
+
+```
+sudo nano /etc/fstab
+```
+
+Add file information to the end of the file:
 
 ```
 /hpc/users     /nfs_share/users   none      bind 0    0
 /hpc/data     /nfs_share/data     none      bind 0    0
 ```
 
+6. Add the share folders to _/etc/exports_ file:
+
+Open _/etc/exports_ file:
+
+```
+sudo nano /etc/exports
+```
+
+Add share information to the end of the file:
+
+```
+/nfs_share              192.168.10.0/24(rw,fsid=0,no_subtree_check,sync)
+/nfs_share/users        192.168.10.0/24(rw,nohide,insecure,no_subtree_check,sync)
+/nfs_share/data         192.168.10.0/24(rw,nohide,insecure,no_subtree_check,sync)
+```
+
+Enable new shares from NFS server:
+
+```
+sudo exportfs -ra
+```
+
+7. Restart the service:
+
+```
+sudo service nfs-kernel-server restart
+```
+
+8. Check that share folders are correct and shared:
+
+```
+showmount -e
+```
+
+Output:
+
+```
+Export list for head:
+/nfs_share/data  192.168.10.0/24
+/nfs_share/users 192.168.10.0/24
+/nfs_share       192.168.10.0/24
+```
+
+References:
+
+https://help.ubuntu.com/community/NFSv4Howto
+
+https://linuxize.com/post/how-to-mount-and-unmount-file-systems-in-linux/
+
 ---
 
-### Setup Generic Node image (Compute Node)
+### Install NTP on head node
 
-[Raspbian Install Guides](https://www.raspberrypi.org/documentation/installation/installing-images/)
+NTP is used to keep the cluster time close together using outside NTP servers to sync with the head node. All computer nodes will sync with the head node.
+
+Reference: <http://raspberrypi.tomasgreno.cz/ntp-client-and-server.html> <http://www.pool.ntp.org/zone/north-america>
+
+Install NTP:
+
+```
+sudo apt install ntp -y
+```
+
+Edit the _/etc/ntp.conf_:
+
+```
+sudo nano /etc/ntp.conf
+```
+
+Change:
+
+```
+pool 0.debian.pool.ntp.org iburst
+pool 1.debian.pool.ntp.org iburst
+pool 2.debian.pool.ntp.org iburst
+pool 3.debian.pool.ntp.org iburst
+```
+
+To:
+
+```
+server 0.north-america.pool.ntp.org
+server 1.north-america.pool.ntp.org
+server 2.north-america.pool.ntp.org
+server 3.north-america.pool.ntp.org
+```
+
+Restart NTP:
+
+```
+sudo /etc/init.d/ntp restart
+```
+
+---
+
+### Install Slurm on head node (node0)
+
+1. Install Slurm
+
+```
+sudo apt install slurm-wlm -y
+```
+
+2. Add configuration file
+
+Create the new Slurm configuration file _/etc/slurm-llnl/slurm.conf_:
+
+```
+sudo nano /etc/slurm-llnl/slurm.conf
+```
+
+Add the following to the file and save:
+
+```
+# Cluster configuration
+ControlMachine=node0
+AuthType=auth/munge
+CacheGroups=0
+CryptoType=crypto/munge
+JobCheckpointDir=/var/lib/slurm-llnl/checkpoint
+MpiDefault=none
+ProctrackType=proctrack/pgid
+ReturnToService=1
+SlurmctldPidFile=/var/run/slurm-llnl/slurmctld.pid
+SlurmctldPort=6817
+SlurmdPidFile=/var/run/slurm-llnl/slurmd.pid
+SlurmdPort=6818
+SlurmdSpoolDir=/var/lib/slurm-llnl/slurmd
+SlurmUser=slurm
+StateSaveLocation=/var/lib/slurm-llnl/slurmctld
+SwitchType=switch/none
+TaskPlugin=task/none
+InactiveLimit=0
+KillWait=30
+MinJobAge=300
+SlurmctldTimeout=300
+SlurmdTimeout=300
+Waittime=0
+FastSchedule=1
+SchedulerType=sched/backfill
+SchedulerPort=7321
+SelectType=select/linear
+AccountingStorageType=accounting_storage/none
+ClusterName=picluster
+JobCompType=jobcomp/none
+JobAcctGatherFrequency=30
+JobAcctGatherType=jobacct_gather/none
+SlurmctldDebug=3
+SlurmctldLogFile=/var/log/slurm-llnl/slurmctld.log
+SlurmdDebug=3
+SlurmdLogFile=/var/log/slurm-llnl/slurmd.log
+NodeName=node0 Procs=4 State=UNKNOWN
+PartitionName=picluster Nodes=node0 Default=YES MaxTime=INFINITE State=UP
+```
+
+Take ownership of configuration folder:
+
+```
+sudo chown -R slurm:slurm /etc/slurm-llnl/
+```
+
+3. Enable Munge service:
+
+```
+systemctl enable munge
+
+munge -n
+```
+
+4. Test Munge:
+
+```
+sudo munge -n | unmunge
+```
+
+Output:
+
+```
+STATUS:           Success (0)
+ENCODE_HOST:      node0 (127.0.1.1)
+ENCODE_TIME:      2020-12-21 10:28:35 -0600 (1608568115)
+DECODE_TIME:      2020-12-21 10:28:35 -0600 (1608568115)
+TTL:              300
+CIPHER:           aes128 (4)
+MAC:              sha256 (5)
+ZIP:              none (0)
+UID:              root (0)
+GID:              root (0)
+LENGTH:           0
+```
+
+5. Correct Slurm configuration issues:
+
+Create _/var/run/slurm-llnl_ folder and take ownership:
+
+```
+sudo mkdir /var/run/slurm-llnl
+
+sudo chown -R slurm:slurm /var/run/slurm-llnl
+```
+
+Edit systemd file for slurmd:
+
+```
+sudo nano /usr/lib/systemd/system/slurmd.service
+```
+
+Change the following line:
+
+```
+PIDFile=/run/slurmd.pid
+```
+
+to
+
+```
+PIDFile=/var/run/slurm-llnl/slurmd.pid
+```
+
+Edit systemd file for slurmctld:
+
+```
+sudo nano /usr/lib/systemd/system/slurmctld.service
+```
+
+Change the following line:
+
+```
+PIDFile=/run/slurmctld.pid
+```
+
+to
+
+```
+PIDFile=/var/run/slurm-llnl/slurmctld.pid
+```
+
+Reload daemon units:
+
+```
+sudo systemctl daemon-reload
+```
+
+Start Slurm controller service:
+
+```
+sudo service slurmctld start
+```
+
+Check if Slurm controller is running:
+
+```
+scontrol show daemons
+```
+
+Output:
+
+```
+slurmctld slurmd
+```
+
+5. Create folder _/var/run/slurm-llnl_ and assign permissions:
+
+```
+sudo mkdir /var/run/slurm-llnl
+
+sudo chown -R slurm:slurm /var/run/slurm-llnl
+```
+
+6. Start Slurm controller service:
+
+```
+sudo service slurmctld start
+
+sudo service slurmd restart
+```
+
+Verify Slurm controller is running:
+
+```
+sinfo
+```
+
+Check Slurm status:
+
+```
+sinfo
+```
+
+Output:
+
+```
+PARTITION  AVAIL  TIMELIMIT  NODES  STATE NODELIST
+picluster*    up   infinite      1   idle node0
+```
+
+References:
+
+https://stackoverflow.com/questions/56553665/how-to-fix-slurmd-service-cant-open-pid-file-error-in-slurm
+
+[Troubleshooting node issues](https://www.eidos.ic.i.u-tokyo.ac.jp/~tau/lecture/parallel_distributed/2016/html/fix_broken_slurm.html)
+
+---
+
+### Save image of head node (node0)
+
+**INSERT INSTRUCTIONS HERE**
+
+_**NOTE:**_ Insert as appendix at end of file
+
+---
+
+### Generic node setup
+
+### Configure NFS client on generic node
+
+### Mount NFS shares
 
 1. Copy generic node image created earlier to an SD card
 
@@ -710,7 +1110,7 @@ static ip_address=192.168.10.3
 To:
 
 ```
-static ip_address=192.168.10.100
+static ip_address=192.168.10.101
 ```
 
 Save and exit
@@ -730,7 +1130,7 @@ Change:
 To:
 
 ```
-127.0.1.1                node0
+127.0.1.1                node1
 ```
 
 Save and exit
@@ -746,7 +1146,7 @@ sudo apt install nfs-common
 Mount the NFS share to local folder
 
 ```
-sudo mount -t nfs -o proto=tcp,port=2049 192.168.10.5:/nfs_share /hpc/users
+sudo mount -t nfs -o proto=tcp,port=2049 192.168.10.100:/nfs_share /hpc/users
 ```
 
 7. Expand Filesystem
@@ -778,7 +1178,7 @@ Issue the following command from the head node for each node in the cluster:
 Only run this command once the node is restarted with a node number.
 
 ```
-rsync -a --rsync-path="sudo rsync" ~/.ssh/authorized_keys pi@node0:~/.ssh/authorized_keys
+rsync -a --rsync-path="sudo rsync" ~/.ssh/authorized_keys pi@node1:~/.ssh/authorized_keys
 ```
 
 _**Note:**_ At this point you will just do this once to develop a compute node image with Slurm installed. After that is complete you will create a new generic image of the compute node. Once that is complete you can use that image to finish deploying your compute nodes for the rest of your cluster.
@@ -797,50 +1197,6 @@ sudo reboot
 
 ---
 
-### Install NTP
-
-NTP is used to keep the cluster time close together using outside NTP servers to sync with the head node. All computer nodes will sync with the head node.
-
-Reference: <http://raspberrypi.tomasgreno.cz/ntp-client-and-server.html> <http://www.pool.ntp.org/zone/north-america>
-
-> ##### Head Node
-
-> Install NTP:
-
-```
-sudo apt install ntp
-```
-
-Edit the _/etc/ntp.conf_:
-
-```
-sudo nano /etc/ntp.conf
-```
-
-Change:
-
-```
-pool 0.debian.pool.ntp.org iburst
-pool 1.debian.pool.ntp.org iburst
-pool 2.debian.pool.ntp.org iburst
-pool 3.debian.pool.ntp.org iburst
-```
-
-To:
-
-```
-server 0.north-america.pool.ntp.org
-server 1.north-america.pool.ntp.org
-server 2.north-america.pool.ntp.org
-server 3.north-america.pool.ntp.org
-```
-
-Restart NTP:
-
-```
-sudo /etc/init.d/ntp restart
-```
-
 > ##### Compute Node
 
 SSH in to compute node:
@@ -849,13 +1205,11 @@ SSH in to compute node:
 ssh pi@node0
 ```
 
-Install NTP on comput node:
+Install NTP on compute node:
 
 ```
 sudo apt install ntp
 ```
-
-Set Head Node as NTP server.
 
 Edit _/etc/ntp.conf_:
 
@@ -897,157 +1251,11 @@ exit
 
 ---
 
-## Install Slurm on Head Node
-
-> #### Step 1 - Install Slurm
-
-```
-sudo apt install slurm-wlm slurmctld
-```
-
-> #### Step 2 - Add configuration file
-
-Create the new Slurm configuration file _/etc/slurm-llnl/slurm.conf_:
-
-```
-sudo nano /etc/slurm-llnl/slurm.conf
-```
-
-Add the following to the file and save:
-
-```
-# slurm.conf file generated by configurator easy.html.
-# Put this file on all nodes of your cluster.
-# See the slurm.conf man page for more information.
-#
-ControlMachine=head
-ControlAddr=192.168.10.5
-#
-#MailProg=/bin/mail
-MpiDefault=none
-#MpiParams=ports=#-#
-ProctrackType=proctrack/pgid
-ReturnToService=2
-SlurmctldPidFile=/var/run/slurm-llnl/slurmctld.pid
-#SlurmctldPort=6817
-SlurmdPidFile=/var/run/slurm-llnl/slurmd.pid
-#SlurmdPort=6818
-SlurmdSpoolDir=/var/lib/slurm/slurmd
-SlurmUser=slurm
-#SlurmdUser=root
-StateSaveLocation=/var/lib/slurm/slurmctld
-SwitchType=switch/none
-TaskPlugin=task/none
-#
-#
-# TIMERS
-#KillWait=30
-#MinJobAge=300
-#SlurmctldTimeout=120
-#SlurmdTimeout=300
-#
-#
-# SCHEDULING
-FastSchedule=1
-SchedulerType=sched/backfill
-#SchedulerPort=7321
-SelectType=select/linear
-#
-#
-# LOGGING AND ACCOUNTING
-AccountingStorageType=accounting_storage/none
-ClusterName=raspi3
-#JobAcctGatherFrequency=30
-JobAcctGatherType=jobacct_gather/none
-#SlurmctldDebug=3
-SlurmctldLogFile=/var/log/slurm/slurmctld.log
-#SlurmdDebug=3
-SlurmdLogFile=/var/log/slurm/slurmd.log
-#
-#
-# COMPUTE NODES
-NodeName=node[0-6] Procs=1 RealMemory=768 State=UNKNOWN
-
-PartitionName=raspi3 Default=YES  Nodes=node[0-6] State=UP MaxTime=INFINITE
-```
-
-Check if Slurm controller is running:
-
-```
-scontrol show daemons
-```
-
-Output:
-
-```
-slurmctld
-```
-
-> #### Step 3 - Create Munge key
-
-```
-sudo /usr/sbin/create-munge-key
-```
-
-Agree to overwrite.
-
-> #### Step 4 - Create log folder and take ownership
-
-```
-sudo mkdir /var/log/slurm
-
-sudo chown -R slurm:slurm /var/log/slurm/
-```
-
-> #### Step 5 - Finish installs and start services
-
-```
-sudo systemctl enable slurmctld.service
-sudo ln -s /var/lib/slurm-llnl /var/lib/slurm
-sudo systemctl start slurmctld.service
-sudo systemctl enable munge.service
-```
-
-Verify Slurm controller is running:
-
-```
-sudo systemctl status slurmctld.service
-```
-
-Will return feedback to the screen. Verify _Active_ line states: _**active (running)**_.
-
-Verify Munge is running:
-
-```
-sudo systemctl status munge.service
-```
-
-Will return feedback to the screen. Verify _Active_ line states: _**active (running)**_.
-
-> #### Step 6 - Add user to Slurm group
-
-```
-sudo adduser pi slurm
-```
-
-Check Slurm status:
-
-```
-sinfo
-```
-
-Output:
-
-```
-PARTITION AVAIL  TIMELIMIT  NODES  STATE NODELIST
-raspi2*      up   infinite      7   unk* node[0-6]
-```
-
 ---
 
 ## Install Slurm on Compute Node
 
-> #### Step 1 - Copy Slurm configuration and Munge files from _Head Node_
+1. Copy Slurm configuration and Munge files from _Head Node_
 
 **On _head node_:**
 
@@ -1089,7 +1297,7 @@ Exit back to head node:
 exit
 ```
 
-> #### Step 2 - Install Slurm daemon
+2. Install Slurm daemon
 
 **Execute on _node0_:**
 
@@ -1175,7 +1383,7 @@ sudo systemctl status munge.service
 
 Will return feedback to the screen. Verify _Active_ line states: _**active (running)**_.
 
-> #### Step 3 - Add user to Slurm group
+3. Add user to Slurm group
 
 ```
 sudo adduser pi slurm
@@ -1195,7 +1403,7 @@ sinfo
 
 This should show all nodes in an idle state.
 
-SLURM references:
+**SLURM references:**
 
 <http://www.feacluster.com/pi_slurm_cluster.php>
 
