@@ -1,16 +1,20 @@
 # Raspberry Pi Cluster Setup Guide
 
---------------------------------------------------------------------------------
+---
 
-## Considerations to Consider before starting
+### Considerations to Consider before starting
 
-### USB cable power throughput
+**USB cable power throughput**
 
 Lower quality USB cables can restrict power throughput causing undervolt situations when the cluster is underload.
 
---------------------------------------------------------------------------------
+**SD card size**
 
-## Overview of process
+Starting off with smaller SD cards will ensure that images are limited to a smaller size when saving to an external PC. It will also ensure that the images can be written to larger SD cards once configuration is completed.
+
+---
+
+### Overview of process
 
 1. A base image will be created with minimal software and MPI. Settings will be configured for the head node.
 2. The base image will be modified with generic settings for ease of deployment to compute nodes.
@@ -19,9 +23,9 @@ Lower quality USB cables can restrict power throughput causing undervolt situati
 5. Software is installed and configured for head node.
 6. Software is installed and configured for computer nodes.
 
---------------------------------------------------------------------------------
+---
 
-### Head Node
+**Head Node**
 
 Hardware:
 
@@ -32,7 +36,7 @@ Hardware:
 - Power cable mini-USB x 1
 - 128GB or larger flash drive/external hard drive/external SSD drive
 
-### Compute nodes
+**Compute nodes**
 
 Hardware:
 
@@ -41,22 +45,23 @@ Hardware:
 - Ethernet cable x 7
 - Power cable mini-USB x 7
 
-### Additional Hardware
+**Additional Hardware**
 
 - 10 Port USB hub for power
 - 16 Port gigabit switch
+- 2 4GB SD cards
 
---------------------------------------------------------------------------------
+---
 
-## Setup, Installation, and Testing
+### Setup, Installation, and Testing
 
-### Install operating systems
+**Install operating systems**
 
 Install Raspberry Pi OS Lite on SD card for head unit(s) and each compute node
 
---------------------------------------------------------------------------------
+---
 
-### Initial Head Node Setup
+### Configure Raspberry Pi
 
 Setup the locale settings to make sure the correct keyboard, language, timezone, etc are set. This will ensure we are able to enter the correct symbols while working on the command line.
 
@@ -70,7 +75,7 @@ Start the Raspberry Pi configuration tool:
 sudo raspi-config
 ```
 
-### Setup System Options:
+Setup System Options:
 
 Select **1 System Options**
 
@@ -90,7 +95,7 @@ Select **1 System Options**
   - Enter **head** for the hostname
   - Press **Enter**
 
-### Setup Interfacing Options:
+Setup Interfacing Options:
 
 Select **3 Interfacing Options**
 
@@ -100,7 +105,7 @@ Select **3 Interfacing Options**
   - Select **Ok**
   - Press **Enter**
 
-### Setup Performance Options:
+Setup Performance Options:
 
 - Select **4 Performance Options**
 
@@ -109,7 +114,7 @@ Select **3 Interfacing Options**
     - Enter **16**
     - Press **Enter**
 
-### Setup Localisation Options:
+Setup Localisation Options:
 
 - Select **5 Localisation Options**
 
@@ -140,7 +145,7 @@ Select **3 Interfacing Options**
     - Select **No compose key**
     - Press **Enter**
 
-### Setup Advanced Options:
+Setup Advanced Options:
 
 - Select **6 Advanced Options**
 
@@ -151,11 +156,11 @@ _Tab_ to **Finish**
 
 Select **No** when asked to reboot
 
---------------------------------------------------------------------------------
+---
 
-## Configure Network Settings
+### Configure Wired Network
 
-### 1\. Setup _eth0_ static ip address:
+Setup _eth0_ static ip address:
 
 Edit _/etc/dhcpcd.conf_:
 
@@ -181,13 +186,17 @@ sudo reboot
 
 At this point you can connect via the network using puTTY or similar SSH utility.
 
-### 2\. Update the system
+---
+
+### Update the system
 
 ```
 sudo apt update && sudo apt upgrade -y
 ```
 
-### 3\. Create hosts file
+---
+
+### Create hosts file
 
 Update _/etc/hosts_ file by adding the following to the end of the file:
 
@@ -221,13 +230,9 @@ Reboot:
 sudo reboot
 ```
 
---------------------------------------------------------------------------------
+---
 
-## Install MPICH-3.3.2
-
-Install prerequisite _Fortran_ which wil be required for compiling MPICH. All other dependencies are already installed.
-
-### 1\. Create _/hpc_ folder and subfolders:
+### Create NFS and HPC folder structure
 
 Create hpc group:
 
@@ -261,148 +266,27 @@ cd /hpc
 mkdir users data lib
 ```
 
-### 2\. Install Fortran
+Create _/nfs_share_ folder:
 
 ```
-sudo apt install gfortran -y
+sudo mkdir /nfs_share
 ```
 
-### 3\. Install and Setup MPICH3
-
-Download Mpich-3.3.2 and untar:
-
-Create build and install directory inside mpich3 directory:
+Set ownership of _/nfs_share_ folder:
 
 ```
-cd /hpc/lib
-
-mkdir mpich_3.3.2
-
-cd mpich_3.3.2
-
-mkdir build install
+sudo chown -R pi:hpc /nfs_share
 ```
 
-Download mpich3 and untar:
+Set permissions of _/nfs_share_ folder:
 
 ```
-wget http://www.mpich.org/static/downloads/3.3.2/mpich-3.3.2.tar.gz
-
-tar xvfz mpich-3.3.2.tar.gz
+sudo chmod 777 -R /nfs_share
 ```
 
-Compile and install mpich3:
+---
 
-```
-cd build
-
-/hpc/lib/mpich_3.3.2/mpich-3.3.2/configure --prefix=/hpc/lib/mpich_3.3.2/install
-
-make
-
-make install
-```
-
-Activate environment variable:
-
-```
-export PATH=/hpc/lib/mpich_3.3.2/install/bin:$PATH
-```
-
-Add path to environment variables for persistance:
-
-```
-sudo nano ~/.bashrc
-```
-
-Add the following to the end of the file:
-
-```
-# MPICH-3.3.2
-export PATH="/hpc/lib/mpich_3.3.2/install/bin:$PATH"
-```
-
-Save and exit.
-
-### 4\. Create list of nodes for MPI:
-
-This list of nodes will need to be updated as you add nodes later. Initially you will only have the head node.
-
-Create node list:
-
-```
-cd ~
-nano nodelist
-```
-
-Add the head node ip address to the list:
-
-```
-192.168.10.5
-```
-
-_**Note:**_ Anytime you need to add a node to the cluster make sure to add it here as well as _/etc/hosts_ file.
-
-### 5\. Test MPI
-
-**Test 1 - Hostname Test**
-
-Enter on command line:
-
-```
-cd ~
-
-mpiexec -f nodelist hostname
-```
-
-Output:
-
-```
-head
-```
-
-**Test 2 - Calculate Pi**
-
-Enter on command line:
-
-```
-mpiexec -f nodelist -n 2 /hpc/lib/mpich_3.3.2/build/examples/cpi
-```
-
-Output:
-
-```
-Process 0 of 2 is on head
-Process 1 of 2 is on head
-pi is approximately 3.1415926544231318, Error is 0.0000000008333387
-wall clock time = 0.003250
-```
-
-### 6\. Setup SSH keys
-
-_**Note:**_ _Must be executed from head node as pi user_
-
-Generate SSH key:
-
-```
-cd ~
-
-ssh-keygen -t rsa -C "<username>@swosubta" -f ~/.ssh/id_rsa
-```
-
-Press 'Enter' for passphrase
-
-Press 'Enter' for same passphrase
-
-Transfer the key to the authorized_keys file:
-
-```
-cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
-```
-
---------------------------------------------------------------------------------
-
-## Create a second user account
+### Move _pi_ user to new home directory
 
 This account is used to move the home directory of the pi user since that users home directory can't be moved while signed in. This is account creation is temporary and will be removed at the end. Additional accounts can be added once configuration is completed to include moving of home directories to the new _/hpc/users/_ folder.
 
@@ -437,15 +321,162 @@ Remove the _tempuser_ account and directories:
 sudo userdel -r tempuser
 ```
 
---------------------------------------------------------------------------------
+---
 
-## Create image duplicate (backup)
+### Install MPICH
+
+Install prerequisite _Fortran_ which wil be required for compiling MPICH. All other dependencies are already installed.
+
+1. Install Fortran
+
+```
+sudo apt install gfortran -y
+```
+
+2. Create build and install directory inside mpich3 directory:
+
+```
+cd /hpc/lib
+
+mkdir mpich_3.3.2
+
+cd mpich_3.3.2
+
+mkdir build install
+```
+
+3. Download mpich3 and unzip:
+
+```
+wget http://www.mpich.org/static/downloads/3.3.2/mpich-3.3.2.tar.gz
+
+tar xvfz mpich-3.3.2.tar.gz
+```
+
+4. Compile and install mpich3:
+
+```
+cd build
+
+/hpc/lib/mpich_3.3.2/mpich-3.3.2/configure --prefix=/hpc/lib/mpich_3.3.2/install
+
+make
+
+make install
+```
+
+5. Activate environment variable:
+
+```
+export PATH=/hpc/lib/mpich_3.3.2/install/bin:$PATH
+```
+
+6. Add path to environment variables for persistance:
+
+```
+sudo nano ~/.bashrc
+```
+
+Add the following to the end of the file:
+
+```
+# MPICH-3.3.2
+export PATH="/hpc/lib/mpich_3.3.2/install/bin:$PATH"
+```
+
+Save and exit.
+
+7. Create list of nodes for MPI:
+
+This list of nodes will need to be updated as you add nodes later. Initially you will only have the head node.
+
+Create node list:
+
+```
+cd ~
+nano nodelist
+```
+
+Add the head node ip address to the list:
+
+```
+192.168.10.5
+```
+
+_**Note:**_ Anytime you need to add a node to the cluster make sure to add it here as well as _/etc/hosts_ file.
+
+8. Test MPI
+
+**Test 1 - Hostname Test**
+
+Enter on command line:
+
+```
+cd ~
+
+mpiexec -f nodelist hostname
+```
+
+Output:
+
+```
+head
+```
+
+**Test 2 - Calculate Pi**
+
+Enter on command line:
+
+```
+mpiexec -f nodelist -n 2 /hpc/lib/mpich_3.3.2/build/examples/cpi
+```
+
+Output:
+
+```
+Process 0 of 2 is on head
+Process 1 of 2 is on head
+pi is approximately 3.1415926544231318, Error is 0.0000000008333387
+wall clock time = 0.003250
+```
+
+---
+
+### Generate SSH key
+
+_**Note:**_ _Must be executed from head node as pi user_
+
+Generate SSH key:
+
+```
+cd ~
+
+ssh-keygen -t rsa -C "<username>@swosubta" -f ~/.ssh/id_rsa
+```
+
+Press 'Enter' for passphrase
+
+Press 'Enter' for same passphrase
+
+Transfer the key to the authorized_keys file:
+
+```
+cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
+```
+
+---
+
+## Save image of head node
 
 At this point you will want to save an image of the head node. This will give you a fall back point if you make mistakes moving forward. You will also use this image to begin your node image.
 
---------------------------------------------------------------------------------
+**INSERT INSTRUCTIONS HERE**
 
-## Create Node image using dd
+---
+
+**REVIEW**
+
+### Create Node image using dd
 
 The overview of this process:
 
@@ -458,21 +489,21 @@ At this point you have a copy of both the _head node_ and _generic comput node_ 
 
 This will be a repeatable process when completed. You will setup an initial _compute node_ image using your saved _head node_ image. You will go in and change specific settings to _generic settings_. Doing this will allow you to always access your _generic compute node_ image at the same IP address and hostname. You will then be able to set up the compute node image to a specific IP address and hostname. Following this process will allow for prompt and efficient deployment of a cluster.
 
-[Raspbian Install Guides](https://www.raspberrypi.org/documentation/installation/installing-images/)
+---
 
---------------------------------------------------------------------------------
+**REVIEW**
 
-## Create Generic Node image
+### Configure generic node
 
 This will be a repeatable process when completed. You will setup an initial _compute node_ image using your saved _head node_ image. You will go in and change specific settings to _generic settings_. Doing this will allow you to always access your _generic compute node_ image at the same IP address and hostname. You will then be able to set up the compute node image to a specific IP address and hostname. Following this process will allow for prompt and efficient deployment of a cluster.
 
 _**NOTE:**_ This image will have to be booted from the head node to remove previously configured systems. These systems will be replaced with client systems for the compute nodes.
 
-> #### Step 1 - Boot image and login
+1. Boot image and login:
 
 Log in with username: **pi** and password **raspberry**
 
-> #### Step 2 - Enter a generic ip address
+2. Enter a generic ip address:
 
 ```
 sudo nano /etc/dhcpcd.conf
@@ -492,7 +523,7 @@ static ip_address=192.168.10.3
 
 Save and exit
 
-> #### Step 3 - Enter a generic hostname
+3. Enter a generic hostname:
 
 ```
 sudo nano /etc/hostname
@@ -512,7 +543,7 @@ nodeX
 
 Save and exit
 
-> #### Step 4 - Edit hosts file
+4. Edit hosts file:
 
 ```
 sudo nano /etc/hosts
@@ -532,7 +563,7 @@ To:
 
 Save and exit
 
-> #### Step 5 - Shutdown and create a new image of the SD
+5. Shutdown and create a new image of the SD:
 
 ```
 sudo shutdown -h now
@@ -546,29 +577,11 @@ Sample name for SD image:
 compute_node_mpi_stage_2017_01_03
 ```
 
---------------------------------------------------------------------------------
+---
 
-## Setup Head Node
+### Setup Head Node
 
 ## Mount USB flash drive/External drive for home directories
-
-Create _/nfs_share_ folder:
-
-```
-sudo mkdir /nfs_share
-```
-
-Set ownership of _/nfs_share_ folder:
-
-```
-sudo chown -R pi:hpc /nfs_share
-```
-
-Set permissions of _/nfs_share_ folder:
-
-```
-sudo chmod 777 -R /nfs_share
-```
 
 1. Plug the storage device into a USB port on the Raspberry Pi
 
@@ -578,7 +591,7 @@ sudo chmod 777 -R /nfs_share
 sudo lsblk -o UUID,NAME,FSTYPE,SIZE,MOUNTPOINT,LABEL,MODEL
 ```
 
-1. Identify the disk properties
+3. Identify the disk properties
 
 Identify and save the following disk properties:
 
@@ -591,7 +604,7 @@ Identify and save the following disk properties:
 sudo mount /dev/sda1 /nfs_share
 ```
 
-1. Setup automatic mounting on Raspberry Pi boot
+4. Setup automatic mounting on Raspberry Pi boot
 
 ```
 sudo nano /etc/fstab
@@ -603,17 +616,17 @@ Add the following line, being sure to add your UUID from step 4:
 UUID=28b98a23-1d12-4fbc-b205-e5ff225bd06a /nfs_share ext4 defaults,auto,rw,nofail 0 0
 ```
 
---------------------------------------------------------------------------------
+---
 
-## Install NFS server (Head node)
+### Install NFS server (Head node)
 
-> Step 1 - Install NFS server package
+1. Install NFS server package
 
 ```
 sudo apt install nfs-kernel-server -y
 ```
 
-> Step 2 - Create export filesystem:
+2. Create export filesystem:
 
 ```
 cd /nfs_share
@@ -621,13 +634,13 @@ cd /nfs_share
 sudo mkdir users data
 ```
 
-> Step 3 - Mount and bind users directory
+3. Mount and bind users directory
 
 ```
 sudo mount --bind /hpc/users /nfs_share/users
 ```
 
-> Step 4 - Add reboot persistance
+4. Add reboot persistance
 
 Add the following to the end of the /etc/fstab file:
 
@@ -636,15 +649,15 @@ Add the following to the end of the /etc/fstab file:
 /hpc/data     /nfs_share/data     none      bind 0    0
 ```
 
---------------------------------------------------------------------------------
+---
 
-## Setup Generic Node image (Compute Node)
+### Setup Generic Node image (Compute Node)
 
 [Raspbian Install Guides](https://www.raspberrypi.org/documentation/installation/installing-images/)
 
-> #### Step 1 - Copy generic node image created earlier to an SD card
+1. Copy generic node image created earlier to an SD card
 
-> #### Step 2 - Boot and login to your system
+2. Boot and login to your system
 
 Log in with username: **pi** and password **raspberry**
 
@@ -660,7 +673,7 @@ Verify you are logged in:
 
 Command prompt should read `pi@nodeX:~ $`
 
-> #### Step 3 - Adjust _/etc/hostname_ file
+3. Adjust _/etc/hostname_ file
 
 ```
 sudo nano /etc/hostname
@@ -682,7 +695,7 @@ Save and exit
 
 _**Note:**_ This number will increment by one each time you add a node and must be unique on your cluster.
 
-> #### Step 4 - Adjust _/etc/dhcpcd.conf_
+4. Adjust _/etc/dhcpcd.conf_
 
 ```
 sudo nano /etc/dhcpcd.conf
@@ -702,7 +715,7 @@ static ip_address=192.168.10.100
 
 Save and exit
 
-> #### Step 5 - Edit hosts file
+5. Edit hosts file
 
 ```
 sudo nano /etc/hosts
@@ -722,7 +735,7 @@ To:
 
 Save and exit
 
-> #### Step 6 - Configure NFS
+6. Configure NFS
 
 Install nfs-common:
 
@@ -736,7 +749,7 @@ Mount the NFS share to local folder
 sudo mount -t nfs -o proto=tcp,port=2049 192.168.10.5:/nfs_share /hpc/users
 ```
 
-> #### Step 7 - Expand Filesystem
+7. Expand Filesystem
 
 Open configuration tool:
 
@@ -756,9 +769,9 @@ Select **Yes**
 
 All settings should take effect on reboot
 
---------------------------------------------------------------------------------
+---
 
-## Deploy Head Node SSH Key
+### Deploy Head Node SSH Key
 
 Issue the following command from the head node for each node in the cluster:
 
@@ -782,9 +795,9 @@ Reboot the node:
 sudo reboot
 ```
 
---------------------------------------------------------------------------------
+---
 
-## Install NTP
+### Install NTP
 
 NTP is used to keep the cluster time close together using outside NTP servers to sync with the head node. All computer nodes will sync with the head node.
 
@@ -882,7 +895,7 @@ Exit to head node:
 exit
 ```
 
---------------------------------------------------------------------------------
+---
 
 ## Install Slurm on Head Node
 
@@ -1030,7 +1043,7 @@ PARTITION AVAIL  TIMELIMIT  NODES  STATE NODELIST
 raspi2*      up   infinite      7   unk* node[0-6]
 ```
 
---------------------------------------------------------------------------------
+---
 
 ## Install Slurm on Compute Node
 
@@ -1186,13 +1199,13 @@ SLURM references:
 
 <http://www.feacluster.com/pi_slurm_cluster.php>
 
---------------------------------------------------------------------------------
+---
 
 ## Deploying the Rest of the Cluster
 
 By now you have developed a head node image that contains both MPI and Slurm. You have also developed a compute node image that contains both MPI and Slurm as well. Now you should go back to the instructions for "Create Node Image" to save both images and then use the compute node image to finish deploying your cluster. Saving these images at each stage gives you different configurations that you can easily deploy in the future and also allows you to have a checkpoint in case something goes wrong. You can write the saved node image to your SD and start from that point rather then starting from the beginning.
 
---------------------------------------------------------------------------------
+---
 
 ## Add an ethernet adapter
 
@@ -1263,7 +1276,7 @@ sudo reboot
 
 Now all traffic for the cluster is routed through eth0 and out eth1 to the internet. Any returning traffic or downloads come in via eth1 and through eth0 to the cluster unless its meant for the head node.
 
---------------------------------------------------------------------------------
+---
 
 ## Scripts
 
@@ -1343,7 +1356,7 @@ fi
 
 ### Push the entire /software folder to all compute nodes
 
---------------------------------------------------------------------------------
+---
 
 ## Troubleshooting Section
 
@@ -1490,7 +1503,7 @@ On many occasions, certain nodes fail to work because of a software/hardware mal
 
 -For Pi 2 Clusters: A Wi-Pi adapter is a tested solution for establishing a wireless connection with a Raspberry Pi model 2\. Using other wireless adapters could result in incompatible drivers or other various issues. The head node can also be connected to the Internet via an Ethernet cable.
 
---------------------------------------------------------------------------------
+---
 
 ## Network Diagrams
 
@@ -1510,7 +1523,7 @@ On many occasions, certain nodes fail to work because of a software/hardware mal
 
 <img src="images\Raspberry_Pi_Cluster_Network_Configuration_-_Physical_and_Logical_Layers.png"></center>
 
---------------------------------------------------------------------------------
+---
 
 ## References
 
