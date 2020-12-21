@@ -421,7 +421,7 @@ sudo usermod -aG hpc tempuser
 sudo usermod -aG sudo tempuser
 ```
 
-Close this terminal and login as the new _tempuser_ account.
+Reboot the Raspberry Pi and login as the new _tempuser_ account.
 
 Move the _pi_ user home directory:
 
