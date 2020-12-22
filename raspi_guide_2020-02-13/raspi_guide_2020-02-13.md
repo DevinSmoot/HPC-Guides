@@ -689,7 +689,7 @@ sudo nano /etc/fstab
 Add the following line, being sure to add your UUID from step 4:
 
 ```
-UUID=28b98a23-1d12-4fbc-b205-e5ff225bd06a /nfs_share nfs defaults,auto,rw,nofail 0 0
+/dev/sda1 /nfs_share nfs defaults,auto,rw,nofail 0 0
 ```
 
 ---
@@ -1011,7 +1011,7 @@ sudo chown -R slurm:slurm /var/run/slurm-llnl
 ```
 sudo service slurmctld start
 
-sudo service slurmd restart
+sudo service slurmd start
 ```
 
 Verify Slurm controller is running:
@@ -1053,157 +1053,70 @@ _**NOTE:**_ Insert as appendix at end of file
 
 ### Configure NFS client on generic node
 
-### Mount NFS shares
-
-1. Copy generic node image created earlier to an SD card
-
-2. Boot and login to your system
-
-Log in with username: **pi** and password **raspberry**
-
-SSH into the new node:
+SSH into generic node from head node:
 
 ```
 ssh pi@nodeX
 ```
 
-Enter **yes** to accept the key
-
-Verify you are logged in:
-
-Command prompt should read `pi@nodeX:~ $`
-
-3. Adjust _/etc/hostname_ file
-
-```
-sudo nano /etc/hostname
-```
-
-Change:
-
-```
-nodeX
-```
-
-To:
-
-```
-node0
-```
-
-Save and exit
-
-_**Note:**_ This number will increment by one each time you add a node and must be unique on your cluster.
-
-4. Adjust _/etc/dhcpcd.conf_
-
-```
-sudo nano /etc/dhcpcd.conf
-```
-
-Change the _eth0_ ip address from:
-
-```
-static ip_address=192.168.10.3
-```
-
-To:
-
-```
-static ip_address=192.168.10.101
-```
-
-Save and exit
-
-5. Edit hosts file
-
-```
-sudo nano /etc/hosts
-```
-
-Change:
-
-```
-127.0.1.1                nodeX
-```
-
-To:
-
-```
-127.0.1.1                node1
-```
-
-Save and exit
-
-6. Configure NFS
-
-Install nfs-common:
+Install NFS software:
 
 ```
 sudo apt install nfs-common
 ```
 
-Mount the NFS share to local folder
+Remove file to resolve issues:
 
 ```
-sudo mount -t nfs -o proto=tcp,port=2049 192.168.10.100:/nfs_share /hpc/users
+sudo rm /usr/lib/systemd/system/nfs-common.service
 ```
 
-7. Expand Filesystem
-
-Open configuration tool:
+Reload the daemon:
 
 ```
-sudo raspi-config
+sudo systemctl daemon-reload
 ```
 
-Select **7 Advanced Options**
-
-Select **A1 Expand Filesystem**
-
-Select **Ok**
-
-_Tab_ to Select **Finish**
-
-Select **Yes**
-
-All settings should take effect on reboot
-
----
-
-### Deploy Head Node SSH Key
-
-Issue the following command from the head node for each node in the cluster:
-
-Only run this command once the node is restarted with a node number.
+Start _nfs-common_ service:
 
 ```
-rsync -a --rsync-path="sudo rsync" ~/.ssh/authorized_keys pi@node1:~/.ssh/authorized_keys
+sudo systemctl start nfs-common
 ```
 
-_**Note:**_ At this point you will just do this once to develop a compute node image with Slurm installed. After that is complete you will create a new generic image of the compute node. Once that is complete you can use that image to finish deploying your compute nodes for the rest of your cluster.
-
-SSH in to the new node:
+Confirm _nfs-common_ is running:
 
 ```
-ssh pi@nodeX
+sudo systemctl status nfs-common
 ```
 
-Reboot the node:
+Output:
 
 ```
-sudo reboot
+* nfs-common.service - LSB: NFS support files common to client and server
+   Loaded: loaded (/etc/init.d/nfs-common; generated)
+   Active: active (running) since Mon 2020-12-21 17:16:40 CST; 6s ago
+     Docs: man:systemd-sysv-generator(8)
+  Process: 818 ExecStart=/etc/init.d/nfs-common start (code=exited, status=0/SUCCESS)
+    Tasks: 1 (limit: 2182)
+   CGroup: /system.slice/nfs-common.service
+           `-839 /usr/sbin/rpc.idmapd
 ```
 
----
-
-> ##### Compute Node
-
-SSH in to compute node:
+Mount NFS shares from head node:
 
 ```
-ssh pi@node0
+sudo mount -t nfs4 -o proto=tcp,port=2049 192.168.10.100:/nfs_share/users /hpc/users
+sudo mount -t nfs4 -o proto=tcp,port=2049 192.168.10.100:/nfs_share/data /hpc/data
 ```
+
+Configure mounts in _etc/fstab_ file:
+
+```
+192.168.10.100:/nfs_share/users   /hpc/users     nfs4 _netdev,auto 0 0
+192.168.10.100:/nfs_share/data    /hpc/data      nfs4 _netdev,auto 0 0
+```
+
+### Configure NTP client on generic node
 
 Install NTP on compute node:
 
@@ -1217,7 +1130,7 @@ Edit _/etc/ntp.conf_:
 sudo nano /etc/ntp.conf
 ```
 
-Under `restrict ::1` add:
+Under _restrict ::1_ add:
 
 ```
 restrict 192.168.10.0 mask 255.255.255.0
@@ -1243,58 +1156,148 @@ Restart NTP service:
 sudo /etc/init.d/ntp restart
 ```
 
-Exit to head node:
+### Configure Slurm on generic node
+
+Install slurm client software:
+
+```
+sudo apt install slurmd slurm-client -y
+```
+
+Copy Slurm configuration from head not to generic node:
 
 ```
 exit
+
+rsync --rsync-path="sudo rsync" /etc/slurm-llnl/slurm.conf nodeX:/etc/slurm-llnl/slurm.conf
 ```
 
----
+Enable munge on generic node:
 
----
+```
+ssh pi@nodeX
 
-## Install Slurm on Compute Node
+sudo systemctl enable munge
+```
 
-1. Copy Slurm configuration and Munge files from _Head Node_
+Prepare folder permissions for on generic node for _munge.key_ file transfer:
 
-**On _head node_:**
+```
+sudo chmod -R 0777 /etc/munge/
+```
+
+Add _pi_ user to _munge_ group temporarily:
+
+```
+sudo usermod -aG munge pi
+
+exit
+```
+
+Prepare folder permissions on head node for _munge.key_ file transfer:
+
+```
+sudo chmod -R 0777 /etc/munge/
+```
+
+Add _pi_ user to _munge_ group temporarily:
+
+```
+sudo usermod -aG munge pi
+```
+
+Copy munge key to generic node:
+
+```
+rsync --rsync-path="sudo rsync" /etc/munge/munge.key nodeX:/etc/munge/munge.key
+```
+
+Restore permissions for head node _munge_ folder and files:
+
+```
+sudo chmod 400 /etc/munge/munge.key
+
+sudo chmod 700 /etc/munge
+```
+
+Restore permissions for generic node _munge_ folder and files:
+
+```
+ssh pi@nodeX
+
+sudo chmod 400 /etc/munge/munge.key
+
+sudo chmod 700 /etc/munge
+
+exit
+```
+
+Remote test munge:
+
+```
+
+munge -n | ssh nodeX unmunge
+
+```
+
+Output:
+
+```
+
+```
+
+SSH to generic node:
+
+```
+
+ssh pi@nodeX
+
+```
+
+Start Slurm on generic node:
+
+```
+
+sudo service slurmd start
+
+```
+
+Check node status:
+
+```
+
+sinfo
+
+```
+
+Output:
+
+```
+
+```
 
 Give rsync proper permission to run:
 
 ```
+
 sudo visudo
+
 ```
 
 Add the following to the end of the file:
 
 ```
-<username> ALL=NOPASSWD: /usr/bin/rsync *
-```
 
-**On _compute node_:**
+<username> ALL=NOPASSWD: /usr/bin/rsync \*
 
-SSH in to compute node:
-
-```
-ssh pi@node0
-```
-
-Give rsync proper permission to run:
-
-```
-sudo visudo
-```
-
-Add the following to the end of the file:
-
-```
-<username> ALL=NOPASSWD: /usr/bin/rsync *
 ```
 
 Exit back to head node:
 
 ```
+
 exit
+
 ```
 
 2. Install Slurm daemon
@@ -1304,34 +1307,44 @@ exit
 SSH in to _node0_:
 
 ```
+
 ssh pi@node0
+
 ```
 
 Install Slurm daemon and Slurm client:
 
 ```
+
 sudo apt install slurmd slurm-client
 sudo ln -s /var/lib/slurm-llnl /var/lib/slurm
+
 ```
 
 Create log folders and take ownership:
 
 ```
+
 sudo mkdir -p /var/log/slurm
 
 sudo chown -R slurm:slurm /var/log/slurm
+
 ```
 
 Take ownership of Slurm run folder:
 
 ```
+
 sudo chown -R slurm:slurm /var/run/slurm-llnl
+
 ```
 
 Exit to head node:
 
 ```
+
 exit
+
 ```
 
 **On _head node_:**
@@ -1339,9 +1352,11 @@ exit
 Copy Munge and Slurm configuration files from head node to compute node:
 
 ```
+
 rsync -a --rsync-path="sudo rsync" /etc/munge/munge.key pi@node0:/etc/munge/munge.key
 
 rsync -a --rsync-path="sudo rsync" /etc/slurm-llnl/slurm.conf pi@node0:/etc/slurm-llnl/slurm.conf
+
 ```
 
 **On _compute node_:**
@@ -1349,28 +1364,36 @@ rsync -a --rsync-path="sudo rsync" /etc/slurm-llnl/slurm.conf pi@node0:/etc/slur
 SSH in to _node0_:
 
 ```
+
 ssh pi@node0
+
 ```
 
 Take ownership of _munge.key_ file:
 
 ```
+
 sudo chown munge:munge /etc/munge/munge.key
+
 ```
 
 Finish install and start Slurm and Munge:
 
 ```
+
 sudo systemctl enable slurmd.service
 sudo systemctl restart slurmd.service
 sudo systemctl enable munge.service
 sudo systemctl restart munge.service
+
 ```
 
 Verify Slurm daemon is running:
 
 ```
+
 sudo systemctl status slurmd.service
+
 ```
 
 Will return feedback to the screen. Verify _Active_ line states: _**active (running)**_.
@@ -1378,7 +1401,9 @@ Will return feedback to the screen. Verify _Active_ line states: _**active (runn
 Verify Munge is running:
 
 ```
+
 sudo systemctl status munge.service
+
 ```
 
 Will return feedback to the screen. Verify _Active_ line states: _**active (running)**_.
@@ -1386,26 +1411,226 @@ Will return feedback to the screen. Verify _Active_ line states: _**active (runn
 3. Add user to Slurm group
 
 ```
+
 sudo adduser pi slurm
+
 ```
 
 Execute on _head node_:
 
 ```
+
 sudo scontrol reconfigure
+
 ```
 
 Check node status:
 
 ```
+
 sinfo
+
 ```
 
 This should show all nodes in an idle state.
 
 **SLURM references:**
 
-<http://www.feacluster.com/pi_slurm_cluster.php>
+https://moc-documents.readthedocs.io/en/latest/hpc/Slurm.html#slurm-installation
+
+http://www.feacluster.com/pi_slurm_cluster.php
+
+---
+
+### Configure generic node to compute node
+
+1. Copy generic node image created earlier to an SD card
+
+2. Boot and login to your system
+
+Log in with username: **pi** and password **raspberry**
+
+SSH into the new node:
+
+```
+
+ssh pi@nodeX
+
+```
+
+Enter **yes** to accept the key
+
+Verify you are logged in:
+
+Command prompt should read `pi@nodeX:~ $`
+
+3. Adjust _/etc/hostname_ file
+
+```
+
+sudo nano /etc/hostname
+
+```
+
+Change:
+
+```
+
+nodeX
+
+```
+
+To:
+
+```
+
+node0
+
+```
+
+Save and exit
+
+_**Note:**_ This number will increment by one each time you add a node and must be unique on your cluster.
+
+4. Adjust _/etc/dhcpcd.conf_
+
+```
+
+sudo nano /etc/dhcpcd.conf
+
+```
+
+Change the _eth0_ ip address from:
+
+```
+
+static ip_address=192.168.10.3
+
+```
+
+To:
+
+```
+
+static ip_address=192.168.10.101
+
+```
+
+Save and exit
+
+5. Edit hosts file
+
+```
+
+sudo nano /etc/hosts
+
+```
+
+Change:
+
+```
+
+127.0.1.1 nodeX
+
+```
+
+To:
+
+```
+
+127.0.1.1 node1
+
+```
+
+Save and exit
+
+6. Configure NFS
+
+Install nfs-common:
+
+```
+
+sudo apt install nfs-common
+
+```
+
+Mount the NFS share to local folder
+
+```
+
+sudo mount -t nfs -o proto=tcp,port=2049 192.168.10.100:/nfs_share /hpc/users
+
+```
+
+7. Expand Filesystem
+
+Open configuration tool:
+
+```
+
+sudo raspi-config
+
+```
+
+Select **7 Advanced Options**
+
+Select **A1 Expand Filesystem**
+
+Select **Ok**
+
+_Tab_ to Select **Finish**
+
+Select **Yes**
+
+All settings should take effect on reboot
+
+---
+
+### Deploy Head Node SSH Key
+
+Issue the following command from the head node for each node in the cluster:
+
+Only run this command once the node is restarted with a node number.
+
+```
+
+rsync -a --rsync-path="sudo rsync" ~/.ssh/authorized_keys pi@node1:~/.ssh/authorized_keys
+
+```
+
+_**Note:**_ At this point you will just do this once to develop a compute node image with Slurm installed. After that is complete you will create a new generic image of the compute node. Once that is complete you can use that image to finish deploying your compute nodes for the rest of your cluster.
+
+SSH in to the new node:
+
+```
+
+ssh pi@nodeX
+
+```
+
+Reboot the node:
+
+```
+
+sudo reboot
+
+```
+
+---
+
+> ##### Compute Node
+
+SSH in to compute node:
+
+```
+
+ssh pi@node0
+
+```
+
+---
+
+---
 
 ---
 
@@ -1422,42 +1647,54 @@ By now you have developed a head node image that contains both MPI and Slurm. Yo
 > Edit _/etc/network/interfaces_ file:
 
 ```
+
 sudo nano /etc/network/interfaces
+
 ```
 
 Add below eth0 section:
 
 ```
+
 iface eth1 inet manual
+
 ```
 
 Add to the end of the file:
 
 ```
+
 pre-up iptables-restore < /etc/iptables_wired.rules
+
 ```
 
 Flush old iptables rules:
 
 ```
+
 sudo iptables -F
+
 ```
 
 Create new iptables rules:
 
 ```
+
 sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 sudo iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
 
 sudo bash -c "iptables-save > /etc/iptables.wired"
+
 ```
 
 Refresh _eth1_ connection:
 
 ```
+
 sudo ifdown eth1
 
 sudo ifup eth1
+
 ```
 
 > #### Disable _wlan0_:
@@ -1465,7 +1702,9 @@ sudo ifup eth1
 Edit _/etc/wpa_supplicant/wpa_supplicant.conf_ file:
 
 ```
+
 sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
+
 ```
 
 Comment out the `network={ connection information }` section (all lines)
@@ -1473,13 +1712,17 @@ Comment out the `network={ connection information }` section (all lines)
 Disable eth1 adapter:
 
 ```
+
 sudo ifconfig eth1 down
+
 ```
 
 Reboot:
 
 ```
+
 sudo reboot
+
 ```
 
 Now all traffic for the cluster is routed through eth0 and out eth1 to the internet. Any returning traffic or downloads come in via eth1 and through eth0 to the cluster unless its meant for the head node.
@@ -1491,22 +1734,29 @@ Now all traffic for the cluster is routed through eth0 and out eth1 to the inter
 Create a _/software/scripts_ folder:
 
 ```
+
 mkdir -p /software/scripts
 mkdir -p /software/code
 mkdir -p /software/data
+
 ```
 
 Edit _.bashrc_ file:
 
 ```
+
 nano ~/.bashrc
+
 ```
 
 Add to the end of the file:
 
 ```
+
 # SCRIPTS
-export PATH="/software/scripts:$PATH"
+
+export PATH="/software/scripts:\$PATH"
+
 ```
 
 Add scripts to the _/software/scripts_ folder to use as commands system wide.
@@ -1518,29 +1768,32 @@ This script will deploy files to all nodes to a folder defined by the user.
 Create _/software/scripts/deploy_file_ file:
 
 ```
+
 sudo nano /software/scripts/deploy_file
+
 ```
 
 Add the following:
 
 ```
+
 #!/bin/bash
 
 if [ "$1" == "-help" ] || [ "$1" == "" ]; then
-    echo -e "Command    \tExample"
-    echo "----------------------------------------------------------"
-    echo "deploy_file   deploy_file <filename> <option> <destination folder>"
-    echo -e "\t\tNote:Default destination folder is '/software/files'"
-    echo "Help          deploy -help"
-    exit
+echo -e "Command \tExample"
+echo "----------------------------------------------------------"
+echo "deploy_file deploy_file <filename> <option> <destination folder>"
+echo -e "\t\tNote:Default destination folder is '/software/files'"
+echo "Help deploy -help"
+exit
 fi
 
 case "$1"
 if [ "$1" != "" ]; then
-  if [ "$2" == "" ]; then
-        filelocation=/software/data
-  else
-        filelocation=$2
+if [ "$2" == "" ]; then
+filelocation=/software/data
+else
+filelocation=$2
   fi
     echo "Transferring file: $1 to node0:$filelocation"
     rsync -ar $1 pi@node0:$filelocation
@@ -1555,11 +1808,12 @@ if [ "$1" != "" ]; then
     echo "Transferring file: $1 to node5:$filelocation"
     rsync -ar $1 pi@node5:$filelocation
     echo "Transferring file: $1 to node6:$filelocation"
-    rsync -ar $1 pi@node6:$filelocation
+    rsync -ar $1 pi@node6:\$filelocation
 else
-    echo "All nodes are already defined in the script"
-    echo "Please enter a filename and destination folder: ie. deploy_file <filename> <destination folder>"
+echo "All nodes are already defined in the script"
+echo "Please enter a filename and destination folder: ie. deploy_file <filename> <destination folder>"
 fi
+
 ```
 
 ### Push the entire /software folder to all compute nodes
@@ -1573,7 +1827,9 @@ fi
 > Enter the command:
 
 ```
+
 bash
+
 ```
 
 > #### NETWORK UNREACHABLE:
@@ -1583,26 +1839,34 @@ bash
 1. Flush the iptables in Memory
 
 ```
+
 sudo iptables --flush
+
 ```
 
 1. Delete the rules file
 
 ```
+
 sudo rm -rf /etc/iptables.rules
+
 ```
 
 1. Rebuild the rules and file Repeat the IP tables section of the guide, starting with the commands:
 
 ```
+
 sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 sudo iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
+
 ```
 
 1. Save the iptables.rules file:
 
 ```
+
 sudo bash -c "iptables-save > /etc/iptables.rules"
+
 ```
 
 1. Check for the iptable rules in the _/etc/network/interfaces file_:
@@ -1610,7 +1874,9 @@ sudo bash -c "iptables-save > /etc/iptables.rules"
 Make sure that the line below is present and not commented out:
 
 ```
+
 pre-up iptables-restore < /etc/iptables.rules
+
 ```
 
 If it is missing then add it to the end of the file. Save and exit.
@@ -1626,13 +1892,17 @@ If having trouble with using rsync commands:
 Edit the /etc/sudoers file:
 
 ```
+
 sudo visudo
+
 ```
 
 Add this line to the end of the file:
 
 ```
-<username> ALL=NOPASSWD: /usr/bin/rsync *
+
+<username> ALL=NOPASSWD: /usr/bin/rsync \*
+
 ```
 
 > #### MPI ISSUES
@@ -1650,13 +1920,17 @@ If the Pi is displaying SSH errors when running the mpiexec command: Check the p
 Check the file by going to the SSH directory:
 
 ```
+
 cd ~/.ssh
+
 ```
 
 Now check the file information for _authorized_keys_ file:
 
 ```
+
 ls -ls
+
 ```
 
 The filesize is listed after the owner and group names.
@@ -1664,7 +1938,9 @@ The filesize is listed after the owner and group names.
 These file should be identical in length, if not redistribute the head node's authorized_keys file to the compute node using the following command:
 
 ```
+
 rsync -a --rsync-path="sudo rsync" ~/.ssh/authorized_keys pi@nodeX:~/.ssh/authorized_keys
+
 ```
 
 > #### COMMANDS TO CHECK SERVICE STATUSES
@@ -1672,11 +1948,13 @@ rsync -a --rsync-path="sudo rsync" ~/.ssh/authorized_keys pi@nodeX:~/.ssh/author
 These commands do the same thing, just with a different syntax:
 
 ```
+
 sudo systemctl [start,stop,restart,status] <service name>
 
 sudo service <service name> [start,stop,restart,status]
 
 sudo /etc/init.d/<service name> [start,stop,restart,status]
+
 ```
 
 > #### ENABLING/DISABLING NETWORK INTERFACE CONNECTIONS
@@ -1686,13 +1964,17 @@ This is a quick way to bring down and bring back up network interfaces without r
 Disable the specified connection
 
 ```
+
 sudo ifdown <connection name>
+
 ```
 
 Enable the specified connection
 
 ```
+
 sudo ifup <connection name>
+
 ```
 
 > #### SLURM ISSUES
@@ -1784,3 +2066,7 @@ On many occasions, certain nodes fail to work because of a software/hardware mal
 <https://raseshmori.wordpress.com/2012/10/14/install-hadoop-nextgen-yarn-multi-node-cluster/>
 
 <https://www.packtpub.com/hardware-and-creative/raspberry-pi-super-cluster>
+
+```
+
+```
