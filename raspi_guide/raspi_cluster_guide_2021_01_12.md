@@ -21,4 +21,13 @@ Download and install Raspberry Pi OS Lite. The easiest way to do this is by usin
 
 Use this tool to install the Raspberry Pi OS Lite image directly to your microSD card for your head node. Instructions are provided on the above linked page.
 
+Now navigate to the microSD card and create an empty file named `ssh` with no extension. This can be done in Windows using Notepad or Notepad++. This will allow SSH to be enabled and allow us to connect to the Raspberry Pi node without needing to use a monitor and keyboard.
+
 ---
+
+### Initial configuration
+
+SSH into the Pi with puTTY using the IP address of the Raspberry Pi.
+
+Default username: `pi`
+Default password: `raspberry`
