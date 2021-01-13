@@ -192,50 +192,6 @@ Modify or add the following lines to the file:
 
 ---
 
-### Create NFS and HPC folder structure
-
-This will create a folder structure that will be shared across the nodes using NFS. This will allow all data files, compiled software libraries, and user files to be shared across the cluster from the head node.
-
-Create hpc group:
-
-```
-sudo groupadd hpc
-```
-
-Add pi user to hpc group:
-
-```
-sudo usermod -aG hpc pi
-```
-
-Create hpc directory in root:
-
-```
-sudo mkdir /hpc
-```
-
-Take ownership of _/hpc_:
-
-```
-sudo chown -R pi:hpc /hpc
-```
-
-Create hpc subdirectories:
-
-```
-cd /hpc
-
-mkdir users data lib
-```
-
-Set permissions of _/hpc_ folder:
-
-```
-sudo chmod 777 -R /hpc
-```
-
----
-
 ### Reboot
 
 ```
@@ -346,7 +302,7 @@ sudo mkfs.ext4 /dev/sda1
 To mount our flash drive on boot, we need to find the UUID. To do this, run `blkid` and make note of the UUID from `/dev/sda1` like so:
 
 ```
-UUID="7d3847aa-7950-49ef-a5bb-adeb10f90e7c"
+UUID="23b86a23-3c56-47bd-b3b9-f5bdd2ad3931"
 ```
 
 Now, edit `fstab` to mount the drive on boot:
@@ -358,7 +314,7 @@ sudo nano /etc/fstab
 Add the following line to the end of the file:
 
 ```
-UUID=7d3847aa-7950-49ef-a5bb-adeb10f90e7c /hpc ext4 defaults 0 2
+UUID=23b86a23-3c56-47bd-b3b9-f5bdd2ad3931 /hpc ext4 defaults 0 2
 ```
 
 Finally, mount the drive:
@@ -391,6 +347,50 @@ Run the following command to update the NFS kernel server:
 
 ```
 sudo exportfs -a
+```
+
+---
+
+### Create NFS and HPC folder structure
+
+This will create a folder structure that will be shared across the nodes using NFS. This will allow all data files, compiled software libraries, and user files to be shared across the cluster from the head node.
+
+Create hpc group:
+
+```
+sudo groupadd hpc
+```
+
+Add pi user to hpc group:
+
+```
+sudo usermod -aG hpc pi
+```
+
+Create hpc directory in root:
+
+```
+sudo mkdir /hpc
+```
+
+Take ownership of _/hpc_:
+
+```
+sudo chown -R pi:hpc /hpc
+```
+
+Create hpc subdirectories:
+
+```
+cd /hpc
+
+mkdir users data lib
+```
+
+Set permissions of _/hpc_ folder:
+
+```
+sudo chmod 777 -R /hpc
 ```
 
 ---
@@ -478,14 +478,14 @@ ClusterName=swosucluster
 Add the following to the end of the file:
 
 ```
-NodeName=node0 192.168.10.100 CPUs=4 State=UNKNOWN
-NodeName=node1 192.168.10.101 CPUs=4 State=UNKNOWN
-NodeName=node2 192.168.10.102 CPUs=4 State=UNKNOWN
-NodeName=node3 192.168.10.103 CPUs=4 State=UNKNOWN
-NodeName=node4 192.168.10.104 CPUs=4 State=UNKNOWN
-NodeName=node5 192.168.10.105 CPUs=4 State=UNKNOWN
-NodeName=node6 192.168.10.106 CPUs=4 State=UNKNOWN
-NodeName=node7 192.168.10.107 CPUs=4 State=UNKNOWN
+NodeName=node0 NodeAddr=192.168.10.100 CPUs=4 State=UNKNOWN
+NodeName=node1 NodeAddr=192.168.10.101 CPUs=4 State=UNKNOWN
+NodeName=node2 NodeAddr=192.168.10.102 CPUs=4 State=UNKNOWN
+NodeName=node3 NodeAddr=192.168.10.103 CPUs=4 State=UNKNOWN
+NodeName=node4 NodeAddr=192.168.10.104 CPUs=4 State=UNKNOWN
+NodeName=node5 NodeAddr=192.168.10.105 CPUs=4 State=UNKNOWN
+NodeName=node6 NodeAddr=192.168.10.106 CPUs=4 State=UNKNOWN
+NodeName=node7 NodeAddr=192.168.10.107 CPUs=4 State=UNKNOWN
 ```
 
 ##### Create a partition
