@@ -8,7 +8,7 @@ Parts of this guide were developed using an article by Garrett Mills titled [Bui
 
 - 8 x Raspberry Pi 3 Model B (7 for compute nodes and 1 for head node)
 - 8 x MicroSD cards
-- 8 x micro-USB power cables
+- 8 x Micro-USB power cables
 - 1 x 8-port 10/100/1000 network switch
 - 1 x 10-port USB power-supply
 - 1 x 128GB USB flash drive
@@ -20,8 +20,6 @@ Parts of this guide were developed using an article by Garrett Mills titled [Bui
 Download and install Raspberry Pi OS Lite. The easiest way to do this is by using the new Raspberry Pi Imager tool provided [here](https://www.raspberrypi.org/software/).
 
 Use this tool to install the Raspberry Pi OS Lite image directly to your microSD card for your head node. Instructions are provided on the above linked page.
-
-Now navigate to the microSD card and create an empty file named `ssh` with no extension. This can be done in Windows using Notepad or Notepad++. This will allow SSH to be enabled and allow us to connect to the Raspberry Pi node without needing to use a monitor and keyboard.
 
 ---
 
@@ -232,39 +230,10 @@ sudo chmod 777 -R /hpc
 
 ---
 
-### Move _pi_ user to the new home directory
-
-This account is used to move the home directory of the pi user since that users home directory can't be moved while signed in. This is account creation is temporary and will be removed at the end. Additional accounts can be added once configuration is completed to include moving of home directories to the new _/hpc/users/_ folder.
-
-Create a new user account:
+### Reboot
 
 ```
-sudo adduser --home /hpc/users/tempuser tempuser
-```
-
-Set the password for the user and save it. No other settings required.
-
-Give need group permissions:
-
-```
-sudo usermod -aG hpc tempuser
-sudo usermod -aG sudo tempuser
-```
-
-Reboot the Raspberry Pi and login as the new _**tempuser**_ account using puTTY.
-
-Move the _pi_ user home directory:
-
-```
-sudo usermod -m -d /hpc/users/pi pi
-```
-
-Close this terminal and login as _**pi**_ account again.
-
-Remove the _tempuser_ account and directories:
-
-```
-sudo userdel -r tempuser
+sudo reboot
 ```
 
 ---
@@ -311,6 +280,34 @@ Using puTTY login to the head node using the ip address `192.168.10.3`.
 
 ---
 
+### Configure head node
+
+##### Change the hostname
+
+```
+sudo nano /etc/hostname
+```
+
+Change `nodeX` to `node0`.
+
+##### Change the ip address
+
+```
+sudo nano /etc/dhcpcd.conf
+```
+
+Change `192.168.10.3/24` to `192.168.10.100/24`.
+
+##### Change the hosts file
+
+```
+sudo nano /etc/hosts
+```
+
+Change `127.0.1.1 nodeX` to `127.0.0.1 node0`.
+
+---
+
 ### Connect and Mount Flash Drive
 
 ##### Find the drive identifier
@@ -318,7 +315,12 @@ Using puTTY login to the head node using the ip address `192.168.10.3`.
 Plug the flash drive into on of the USB ports on the head node. To figure out its device location use the `lsblk` command.
 
 ```
-<insert code snippet from using lsblk command here>
+NAME        MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+sda           8:0    1 115.7G  0 disk
+`-sda1        8:1    1 115.7G  0 part
+mmcblk0     179:0    0   3.8G  0 disk
+|-mmcblk0p1 179:1    0   256M  0 part /boot
+`-mmcblk0p2 179:2    0   3.5G  0 part /
 ```
 
 In this case, the main partition of the flash drive is at `/dev/sda1`.
@@ -338,7 +340,7 @@ sudo mkfs.ext4 /dev/sda1
 To mount our flash drive on boot, we need to find the UUID. To do this, run `blkid` and make note of the UUID from `/dev/sda1` like so:
 
 ```
-UUID="65077e7a-4bd6-47ea-8014-01e0655cc31"
+UUID="7d3847aa-7950-49ef-a5bb-adeb10f90e7c"
 ```
 
 Now, edit `fstab` to mount the drive on boot:
@@ -350,7 +352,7 @@ sudo nano /etc/fstab
 Add the following line to the end of the file:
 
 ```
-UUID=65077e7a-4bd6-47ea-8014-01e0655cc31 /hpc ext4 defaults 0 2
+UUID=7d3847aa-7950-49ef-a5bb-adeb10f90e7c /hpc ext4 defaults 0 2
 ```
 
 Finally, mount the drive:
@@ -368,5 +370,185 @@ Now we need to export the mounted drive as a network file system share so the ot
 ##### Install the NFS server
 
 ```
-sudo apt install
+sudo apt install nfs-kernel-server -y
 ```
+
+##### Export the NFS share
+
+Edit `/etc/exports` and add the following line:
+
+```
+/hpc 192.168.10.0/24(rw,sync,no_root_squash,no_subtree_check)
+```
+
+Run the following command to update the NFS kernel server:
+
+```
+sudo exportfs -a
+```
+
+---
+
+### Move _pi_ user to the new home directory
+
+This account is used to move the home directory of the pi user since that users home directory can't be moved while signed in. This is account creation is temporary and will be removed at the end. Additional accounts can be added once configuration is completed to include moving of home directories to the new _/hpc/users/_ folder.
+
+Create a new user account:
+
+```
+sudo adduser --home /hpc/users/tempuser tempuser
+```
+
+Set the password for the user and save it. No other settings required.
+
+Give need group permissions:
+
+```
+sudo usermod -aG hpc tempuser
+sudo usermod -aG sudo tempuser
+```
+
+Logout of the _pi_ user:
+
+```
+exit
+```
+
+Login as the new _**tempuser**_ account using puTTY.
+
+Move the _pi_ user home directory:
+
+```
+sudo usermod -m -d /hpc/users/pi pi
+```
+
+Close this terminal and login as _**pi**_ account again.
+
+Remove the _tempuser_ account and directories:
+
+```
+sudo userdel -r tempuser
+```
+
+---
+
+### Install SLURM Controller Packages
+
+```
+sudo apt install slurm-wlm -y
+```
+
+### Slurm Configuration
+
+```
+cd /etc/slurm-llnl
+sudo cp /usr/share/doc/slurm-client/examples/slurm.conf.simple.gz .
+sudo gzip -d slurm.conf.simple.gz
+sudo mv slurm.conf.simple slurm.conf
+```
+
+##### Set the control machine info
+
+```
+sudo nano /etc/slurm-llnl/slurm.conf
+```
+
+Set the _SlurmctldHost_ line to the ip address of the head node:
+
+```
+SlurmctldHost=node0
+```
+
+##### Set the cluster name
+
+Set the _ClusterName_ field:
+
+```
+ClusterName=swosucluster
+```
+
+##### Add the nodes
+
+Add the following to the end of the file:
+
+```
+NodeName=node0 192.168.10.100 CPUs=4 State=UNKNOWN
+NodeName=node1 192.168.10.101 CPUs=4 State=UNKNOWN
+NodeName=node2 192.168.10.102 CPUs=4 State=UNKNOWN
+NodeName=node3 192.168.10.103 CPUs=4 State=UNKNOWN
+NodeName=node4 192.168.10.104 CPUs=4 State=UNKNOWN
+NodeName=node5 192.168.10.105 CPUs=4 State=UNKNOWN
+NodeName=node6 192.168.10.106 CPUs=4 State=UNKNOWN
+NodeName=node7 192.168.10.107 CPUs=4 State=UNKNOWN
+```
+
+##### Create a partition
+
+```
+PartitionName=swosucluster Nodes=node[0-7] Default=YES MaxTime=INFINITE State=UP
+```
+
+##### Configure cgroups support
+
+Create _/etc/slurm-llnl/cgroup.conf_ file and add the following lines:
+
+```
+CgroupMountpoint="/sys/fs/cgroup"
+CgroupAutomount=yes
+CgroupReleaseAgentDir="/etc/slurm-llnl/cgroup"
+AllowedDevicesFile="/etc/slurm-llnl/cgroup_allowed_devices_file.conf"
+ConstrainCores=no
+TaskAffinity=no
+ConstrainRAMSpace=yes
+ConstrainSwapSpace=no
+ConstrainDevices=no
+AllowedRamSpace=100
+AllowedSwapSpace=0
+MaxRAMPercent=100
+MaxSwapPercent=100
+MinRAMSpace=30
+```
+
+Whitelist system devices by creating the file _/etc/slurm-llnl/cgroup_allowed_devices_file.conf_:
+
+```
+/dev/null
+/dev/urandom
+/dev/zero
+/dev/sda*
+/dev/cpu/*/*
+/dev/pts/*
+/hpc*
+```
+
+### Copy the Configuration Files to Shared Storage
+
+```
+sudo cp slurm.conf cgroup.conf cgroup_allowed_devices_file.conf /hpc
+sudo cp /etc/munge/munge.key /hpc
+```
+
+### Enable and Start SLURM Control Service
+
+Munge:
+
+```
+sudo systemctl enable munge
+sudo systemctl start munge
+```
+
+The SLURM daemon:
+
+```
+sudo systemctl enable slurmd
+sudo systemctl start slurmd
+```
+
+The control daemon:
+
+```
+sudo systemctl enable slurmctld
+sudo systemctl start slurmctld
+```
+
+---
