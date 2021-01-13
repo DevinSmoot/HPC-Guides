@@ -4,6 +4,12 @@ Parts of this guide were developed using an article by Garrett Mills titled [Bui
 
 ---
 
+### A note on microSD card sizes
+
+I will generally used 4GB microSD cards to build my images. Once I am satisfied with my final head node and compute node image I will put them on a larger microSD card such as a 16GB, 32GB, or 64GB card and expand the filesystem using `raspi-config`. This allows for a much smaller image files on your hard drive plus faster read and write times when working with imaging software.
+
+---
+
 ### Parts List
 
 - 8 x Raspberry Pi 3 Model B (7 for compute nodes and 1 for head node)
