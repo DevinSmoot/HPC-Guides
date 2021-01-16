@@ -31,7 +31,7 @@ Use this tool to install the Raspberry Pi OS Lite image directly to your microSD
 
 ### Initial configuration
 
-SSH into the Pi with puTTY using the IP address of the Raspberry Pi.
+Using a keyboard and monitor you can complete the initial configuration.
 
 Default username: `pi`
 Default password: `raspberry`
