@@ -1,6 +1,6 @@
 ## Raspberry Pi Cluster Guide
 
-Parts of this guide were developed using an article by Garrett Mills titled [Building a Raspberry Pi Cluster](https://glmdev.medium.com/building-a-raspberry-pi-cluster-784f0df9afbd) on Medium.com. Please see this article for further detailed information. The below guide gets right to the deployment instructions. This guide does deviate greatly at points to follow a more linear path for faster deployment and less back and forth between nodes. Also used is MPICH3 instead of OpenMPI.
+Parts of this guide were developed using an article by Garrett Mills titled [Building a Raspberry Pi Cluster](https://glmdev.medium.com/building-a-raspberry-pi-cluster-784f0df9afbd) on Medium.com. Please see this article for further detailed information. The below guide gets right to the deployment instructions. This guide does deviate greatly at points to follow a more linear path for faster deployment and less back and forth between nodes. Also used is MPICH3 instead of OpenMPI. I create images along the way to the final product to give a fallback point in case of needing to change how an image is build without having to completely start from scratch. It also allows building individually different generic images, such as head node and compute node.
 
 ---
 
