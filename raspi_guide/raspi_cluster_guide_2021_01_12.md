@@ -1,6 +1,6 @@
 ## Raspberry Pi Cluster Guide
 
-Parts of this guide were developed using an article by Garrett Mills titled [Building a Raspberry Pi Cluster](https://glmdev.medium.com/building-a-raspberry-pi-cluster-784f0df9afbd) on Medium.com. Please see this article for further detailed information. The below guide gets right to the deployment instructions. This guide does deviate greatly at points to follow a more linear path for faster deployment and less back and forth between nodes.
+Parts of this guide were developed using an article by Garrett Mills titled [Building a Raspberry Pi Cluster](https://glmdev.medium.com/building-a-raspberry-pi-cluster-784f0df9afbd) on Medium.com. Please see this article for further detailed information. The below guide gets right to the deployment instructions. This guide does deviate greatly at points to follow a more linear path for faster deployment and less back and forth between nodes. Also used is MPICH3 instead of OpenMPI.
 
 ---
 
@@ -925,3 +925,13 @@ Refresh the state of the node by running the below command with the desired node
 ```
 sudo scontrol update nodename=node1 state=resume
 ```
+
+---
+
+## Section 7 - References
+
+Much of this guide was combined from my own configuration but also from Garrett Mills guide listed below.
+
+- [Building a Raspberry Pi Cluster: Part 1 - The Basics](https://glmdev.medium.com/building-a-raspberry-pi-cluster-784f0df9afbd)
+- [Building a Raspberry Pi Cluster: Part 2 - Some Simple Jobs](https://glmdev.medium.com/building-a-raspberry-pi-cluster-aaa8d1f3d2ca)
+- [Building a Raspberry Pi Cluster: Part 3 - OpenMPI, Python, and Parallel Jobs](https://glmdev.medium.com/building-a-raspberry-pi-cluster-f5f2446702e8)
