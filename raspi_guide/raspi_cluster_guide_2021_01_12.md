@@ -317,17 +317,26 @@ We're first going to format the flash drive to use the `ext4` filesystem:
 sudo mkfs.ext4 /dev/sda1
 ```
 
+_**Note:**_ The UUID listed when creating the filesystem will be needed for automatically mounting the drive. Take note of the UUID field in the output message similar to what is below.
+
+```
+Creating filesystem with 30326780 4k blocks and 7585792 inodes
+Filesystem UUID: 512f2ef6-727d-4d54-8580-ca965da3af38
+Superblock backups stored on blocks:
+        32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632, 2654208,
+        4096000, 7962624, 11239424, 20480000, 23887872
+
+Allocating group tables: done
+Writing inode tables: done
+Creating journal (131072 blocks): done
+Writing superblocks and filesystem accounting information: done
+```
+
 ---
 
 ### Setup automatic flash drive mounting
 
-To mount our flash drive on boot, we need to find the UUID. To do this, run `blkid` and make note of the UUID from `/dev/sda1` like so:
-
-```
-UUID="4453dc4c-7012-4b39-b38c-b3cc6abbad35"
-```
-
-Now, edit `fstab` to mount the drive on boot:
+Edit `/etc/fstab` to mount the drive on boot:
 
 ```
 sudo nano /etc/fstab
@@ -336,7 +345,7 @@ sudo nano /etc/fstab
 Add the following line to the end of the file:
 
 ```
-UUID=4453dc4c-7012-4b39-b38c-b3cc6abbad35 /hpc ext4 defaults 0 2
+UUID=512f2ef6-727d-4d54-8580-ca965da3af38 /hpc ext4 defaults 0 2
 ```
 
 Finally, mount the drive:
@@ -540,6 +549,7 @@ Whitelist system devices by creating the file _/etc/slurm-llnl/cgroup_allowed_de
 
 ```
 sudo cp slurm.conf cgroup.conf cgroup_allowed_devices_file.conf /hpc
+
 sudo cp /etc/munge/munge.key /hpc
 ```
 
@@ -598,10 +608,10 @@ mkdir build install
 ```
 wget http://www.mpich.org/static/downloads/3.3.2/mpich-3.3.2.tar.gz
 
-tar xvfz mpich-3.3.2.tar.gz
+tar xfz mpich-3.3.2.tar.gz
 ```
 
-4. Compile and install mpich3:
+4. Compile and install MPICH3:
 
 ```
 cd build
