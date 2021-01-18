@@ -29,16 +29,18 @@ Use this tool to install the Raspberry Pi OS Lite image directly to your microSD
 
 ---
 
-### Initial configuration
+> ### Step 1 - Generic node configuration
 
 Using a keyboard and monitor you can complete the initial configuration.
 
 Default username: `pi`
 Default password: `raspberry`
 
+### 1.1 Initial Configuration
+
 Setup the locale settings to make sure the correct keyboard, language, timezone, etc are set. This will ensure we are able to enter the correct symbols while working on the command line.
 
-Configure Locale:
+##### 1.1.1 Configure Locale:
 
 Log in with username: **pi** and password **raspberry**
 
@@ -66,7 +68,7 @@ Select `1 System Options`
   - Enter `nodeX` for the hostname
   - Press `Enter`
 
-Setup Interfacing Options:
+##### 1.1.2 Configure Interfacing Options:
 
 Select `3 Interfacing Options`
 
@@ -75,14 +77,14 @@ Select `3 Interfacing Options`
   - Select `Ok`
   - Press `Enter`
 
-Setup Performance Options:
+##### 1.1.3 Configure Performance Options:
 
 - Select `4 Performance Options`
   - Select `P2 GPU Memory`
     - Enter `16`
     - Press `Enter`
 
-Setup Localisation Options:
+##### 1.1.4 Configure Localisation Options:
 
 - Select `5 Localisation Options`
 
@@ -110,7 +112,7 @@ Setup Localisation Options:
     - Select `No compose key`
     - Press `Enter`
 
-Setup Advanced Options:
+##### 1.1.5 Configure Advanced Options:
 
 - Select `6 Advanced Options`
   - Select `A1 Expand Filesystem`
@@ -122,7 +124,7 @@ Select `No` when asked to reboot
 
 ---
 
-### Configure Wired Network
+### 1.2 Configure Wired Network
 
 Setup _eth0_ static ip address:
 
@@ -144,7 +146,7 @@ Save and exit
 
 ---
 
-### Update the system
+### 1.3 Update the system
 
 ```
 sudo apt update && sudo apt upgrade -y
@@ -152,7 +154,7 @@ sudo apt update && sudo apt upgrade -y
 
 ---
 
-### Create hosts file
+### 1.4 Create hosts file
 
 Update _/etc/hosts_ file by adding the following to the end of the file:
 
@@ -182,7 +184,7 @@ Modify or add the following lines to the file:
 
 ---
 
-### Shutdown Raspberry Pi and create generic node image
+### 1.5 Shutdown Raspberry Pi and create generic node image
 
 Shutdown the Raspberry Pi node:
 
@@ -204,7 +206,9 @@ Click `Read`. Win32DiskImager will now read the microSD card and write the an im
 
 ---
 
-### Create another microSD card using the generic node image
+> ## Step 2 - Configure Head Node
+
+### 2.1 Create another microSD card using the generic node image
 
 This will be the head or master node (_node0_).
 
@@ -218,15 +222,15 @@ Click `Write` to write the image to the microSD card.
 
 ---
 
-### Login to the head node
+### 2.2 Login to the head node
 
 Using puTTY login to the head node using the ip address `192.168.10.3` or the WiFi ip address from your local router.
 
 ---
 
-### Configure head node
+### 2.3 Configure head node
 
-##### Install NTP
+##### 2.3.1 Install NTP
 
 This will ensure that the system time is synced and for the SLURM scheduler and Munge authentication.
 
@@ -234,7 +238,7 @@ This will ensure that the system time is synced and for the SLURM scheduler and 
 sudo apt install ntpdate -y
 ```
 
-##### Change the hostname
+##### 2.3.2 Change the hostname
 
 Change hostname for persistence (only changes after restart):
 
@@ -250,7 +254,7 @@ Change the hostname for current session (avoids needing to restart until later):
 sudo hostname node0
 ```
 
-##### Change the ip address
+##### 2.3.3 Change the ip address
 
 ```
 sudo nano /etc/dhcpcd.conf
@@ -258,7 +262,7 @@ sudo nano /etc/dhcpcd.conf
 
 Change `192.168.10.3/24` to `192.168.10.100/24`.
 
-##### Change the hosts file
+##### 2.3.4 Change the hosts file
 
 ```
 sudo nano /etc/hosts
@@ -268,7 +272,7 @@ Change `127.0.1.1 nodeX` to `127.0.0.1 node0`.
 
 ---
 
-### Create shared folder
+### 2.4 Create shared folder
 
 This will create a folder structure that will be shared across the nodes using NFS. This will allow all data files, compiled software libraries, and user files to be shared across the cluster from the head node.
 
@@ -292,9 +296,9 @@ sudo mkdir /hpc
 
 ---
 
-### Connect and Mount Flash Drive
+### 2.5 Connect and Mount Flash Drive
 
-##### Find the drive identifier
+##### 2.5.1 Find the drive identifier
 
 Plug the flash drive into on of the USB ports on the head node. To figure out its device location use the `lsblk` command.
 
@@ -309,7 +313,7 @@ mmcblk0     179:0    0   3.8G  0 disk
 
 In this case, the main partition of the flash drive is at `/dev/sda1`.
 
-##### Format the drive
+##### 2.5.2 Format the drive
 
 We're first going to format the flash drive to use the `ext4` filesystem:
 
@@ -334,7 +338,7 @@ Writing superblocks and filesystem accounting information: done
 
 ---
 
-### Setup automatic flash drive mounting
+### 2.6 Setup automatic flash drive mounting
 
 Edit `/etc/fstab` to mount the drive on boot:
 
@@ -356,17 +360,17 @@ sudo mount -a
 
 ---
 
-### Export the NFS share
+### 2.7 Export the NFS share
 
 Now we need to export the mounted drive as a network file system share so the other nodes can access it.
 
-##### Install the NFS server
+##### 2.7.1 Install the NFS server
 
 ```
 sudo apt install nfs-kernel-server -y
 ```
 
-##### Export the NFS share
+##### 2.7.2 Export the NFS share
 
 Edit `/etc/exports` and add the following line:
 
@@ -404,7 +408,7 @@ sudo chmod 777 -R /hpc
 
 ---
 
-### Move _pi_ user to the new home directory
+### 2.8 Move _pi_ user to the new home directory
 
 This account is used to move the home directory of the pi user since that users home directory can't be moved while signed in. This is account creation is temporary and will be removed at the end. Additional accounts can be added once configuration is completed to include moving of home directories to the new _/hpc/users/_ folder.
 
@@ -447,13 +451,13 @@ sudo userdel -r tempuser
 
 ---
 
-### Install SLURM Controller Packages
+### 2.9 Install SLURM Controller Packages
 
 ```
 sudo apt install slurm-wlm -y
 ```
 
-### Slurm Configuration
+##### 2.9.1 Slurm Configuration
 
 Change to the Slurm configuration folder and copy over the provided configuration file:
 
@@ -467,7 +471,7 @@ sudo gzip -d slurm.conf.simple.gz
 sudo mv slurm.conf.simple slurm.conf
 ```
 
-##### Set the control machine info
+##### 2.9.2 Set the control machine info
 
 Open the Slurm configuration file:
 
@@ -481,7 +485,7 @@ Set the _SlurmctldHost_ line to the ip address of the head node:
 SlurmctldHost=node0
 ```
 
-##### Set the cluster name
+##### 2.9.3 Set the cluster name
 
 Set the _ClusterName_ field:
 
@@ -489,7 +493,7 @@ Set the _ClusterName_ field:
 ClusterName=swosucluster
 ```
 
-##### Add the nodes
+##### 2.9.4 Add the nodes
 
 Remove any lines beginning with `NodeName=` or `PartitionName=`.
 
@@ -506,13 +510,13 @@ NodeName=node6 NodeAddr=192.168.10.106 CPUs=4 State=UNKNOWN
 NodeName=node7 NodeAddr=192.168.10.107 CPUs=4 State=UNKNOWN
 ```
 
-##### Create a partition
+##### 2.9.5 Create a partition
 
 ```
 PartitionName=swosucluster Nodes=node[0-7] Default=YES MaxTime=INFINITE State=UP
 ```
 
-##### Configure cgroups support
+##### 2.9.6 Configure cgroups support
 
 Create _/etc/slurm-llnl/cgroup.conf_ file and add the following lines:
 
@@ -545,7 +549,9 @@ Whitelist system devices by creating the file _/etc/slurm-llnl/cgroup_allowed_de
 /hpc*
 ```
 
-### Copy the Configuration Files to Shared Storage
+---
+
+### 2.10 Copy the Configuration Files to Shared Storage
 
 ```
 sudo cp slurm.conf cgroup.conf cgroup_allowed_devices_file.conf /hpc
@@ -553,7 +559,9 @@ sudo cp slurm.conf cgroup.conf cgroup_allowed_devices_file.conf /hpc
 sudo cp /etc/munge/munge.key /hpc
 ```
 
-### Enable and Start SLURM Control Service
+---
+
+### 2.11 Enable and Start SLURM Control Service
 
 Munge:
 
@@ -581,7 +589,15 @@ sudo systemctl start slurmctld
 
 ---
 
-### Install MPICH
+### 2.12 Reboot
+
+```
+sudo reboot
+```
+
+---
+
+### 2.13 Install MPICH
 
 Install prerequisite _Fortran_ which wil be required for compiling MPICH. All other dependencies are already installed.
 
@@ -699,3 +715,213 @@ wall clock time = 0.003250
 ```
 
 ---
+
+> ## Step 3 - Configure Compute Node
+
+In this step we will configure a single compute node using the previously generated generic image. With a new microSD card write the "generic image" using Raspberry Pi Imager and the "Custom Image" option.
+
+### 3.1 Connect and configure the generic compute node image
+
+Using puTTY connect to the head node. Using SSH connect from the head node to the generic image node running on a compute node.
+
+```
+ssh pi@nodeX
+```
+
+_**Yes**_ to accept the key.
+
+Use the default `raspberry` password.
+
+---
+
+### 3.2 Install NFS client
+
+```
+sudo apt install nfs-common -y
+```
+
+##### 3.2.1 Add hpc group and assign _pi_ user to group
+
+```
+sudo groupadd hpc
+
+sudo usermod -aG hpc pi
+```
+
+##### 3.2.2 Create mount folder
+
+```
+sudo mkdir /hpc
+
+sudo chown -R pi:hpc /hpc
+
+sudo chmod -R 777 /hpc
+```
+
+##### 3.2.3 Setup automatic mounting
+
+Edit the `/etc/fstab` file:
+
+```
+sudo nano /etc/fstab
+```
+
+Add the following to the end of the file:
+
+```
+192.168.10.100:/hpc     /hpc   nfs   defaults 0 0
+```
+
+Now mount the share:
+
+```
+sudo mount -a
+```
+
+---
+
+### 3.3 Install SLURM client
+
+```
+sudo apt install slurmd slurm-client -y
+```
+
+##### 3.3.1 Copy the configuration files
+
+```
+sudo cp /hpc/munge.key /etc/munge/munge.key
+sudo cp /hpc/slurm.conf /etc/slurm-llnl/slurm.conf
+sudo cp /hpc/cgroup* /etc/slurm-llnl
+```
+
+---
+
+### 3.4 Configure Munge
+
+##### 3.4.1 Enable and start Munge
+
+```
+sudo systemctl enable munge
+
+sudo systemctl start munge
+```
+
+##### 3.4.2 Test Munge
+
+This is run on the client/compute node:
+
+```
+ssh pi@nodeX munge -n | unmunge
+```
+
+---
+
+### 3.5 Start the SLURM Daemon
+
+The start command will through an error. This will be corrected once the node is renamed to its final hostname once deployed.
+
+```
+sudo systemctl enable slurmd
+
+sudo systemctl start slurmd
+```
+
+---
+
+### 3.6 Shutdown the node
+
+```
+sudo shutdown -h now
+```
+
+---
+
+> ## Step 4 - Generate Generic Compute Node Image
+
+Use Win32DiskImager to Read the image to a file. Name the file something similar to "generic_compute_node_2021_01_17.img". Click the `Read` button and wait for the program to read the microSD card and write the image file.
+
+---
+
+> ## Step 5 - Deploy Compute Nodes
+
+In this step we will configure a single compute node using the previously generated generic image. With a new microSD card write the "generic image" using Raspberry Pi Imager and the "Custom Image" option.
+
+### 5.1 Connect and configure the generic compute node image
+
+Using puTTY connect to the head node. Using SSH connect from the head node to the generic image node running on a compute node.
+
+_**Note:**_ On the below instructions `node1` will increment with the deployment of each new node. As will the ip address 192.168.10.**101**.
+
+```
+ssh pi@nodeX
+```
+
+_**Yes**_ to accept the key if asked.
+
+Use the default `raspberry` password.
+
+##### 5.1.1 Change the hostname
+
+Edit `/etc/hostname` file:
+
+```
+sudo nano /etc/hostname
+```
+
+Change `nodeX` to `node1`.
+
+##### 5.1.2 Change the ip address
+
+```
+sudo nano /etc/dhcpcd.conf
+```
+
+Change `192.168.10.3/24` to `192.168.10.101/24`.
+
+##### 5.1.3 Change the hosts file
+
+```
+sudo nano /etc/hosts
+```
+
+Change `127.0.1.1 nodeX` to `127.0.0.1 node1`.
+
+##### 5.1.4 Restart for changes to take effect
+
+```
+sudo reboot
+```
+
+---
+
+### 5.2 Generate SSH key on head node
+
+```
+ssh-keygen
+```
+
+Press `Enter` on each selection.
+
+---
+
+### 5.3 Copy the SSH key to each node:
+
+```
+ssh-copy-id pi@node1
+```
+
+Enter the default `raspberry` password when prompted.
+
+Replace `node1` with each nodes number and repeat the process to distribute the key to the entire cluster.
+
+---
+
+## Section 6 - Troubleshooting
+
+##### 6.1 Node not in idle state:
+
+Refresh the state of the node by running the below command with the desired nodename. Nodename node1 is used for the exampel below:
+
+```
+sudo scontrol update nodename=node1 state=resume
+```
