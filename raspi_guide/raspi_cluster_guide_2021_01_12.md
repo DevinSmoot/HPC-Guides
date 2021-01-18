@@ -144,16 +144,6 @@ Save and exit
 
 ---
 
-### Install NTP
-
-This will ensure that the system time is synced and for the SLURM scheduler and Munge authentication.
-
-```
-sudo apt install ntpdate -y
-```
-
----
-
 ### Update the system
 
 ```
@@ -192,14 +182,6 @@ Modify or add the following lines to the file:
 
 ---
 
-### Reboot
-
-```
-sudo reboot
-```
-
----
-
 ### Shutdown Raspberry Pi and create generic node image
 
 Shutdown the Raspberry Pi node:
@@ -224,7 +206,7 @@ Click `Read`. Win32DiskImager will now read the microSD card and write the an im
 
 ### Create another microSD card using the generic node image
 
-This will be the head or master node.
+This will be the head or master node (_node0_).
 
 Using the Raspberry Pi Imager software click `Choose OS`. Scroll down the list to the bottom option `Use custom`.
 
@@ -238,19 +220,35 @@ Click `Write` to write the image to the microSD card.
 
 ### Login to the head node
 
-Using puTTY login to the head node using the ip address `192.168.10.3`.
+Using puTTY login to the head node using the ip address `192.168.10.3` or the WiFi ip address from your local router.
 
 ---
 
 ### Configure head node
 
+##### Install NTP
+
+This will ensure that the system time is synced and for the SLURM scheduler and Munge authentication.
+
+```
+sudo apt install ntpdate -y
+```
+
 ##### Change the hostname
+
+Change hostname for persistence (only changes after restart):
 
 ```
 sudo nano /etc/hostname
 ```
 
 Change `nodeX` to `node0`.
+
+Change the hostname for current session (avoids needing to restart until later):
+
+```
+sudo hostname node0
+```
 
 ##### Change the ip address
 
@@ -267,6 +265,30 @@ sudo nano /etc/hosts
 ```
 
 Change `127.0.1.1 nodeX` to `127.0.0.1 node0`.
+
+---
+
+### Create shared folder
+
+This will create a folder structure that will be shared across the nodes using NFS. This will allow all data files, compiled software libraries, and user files to be shared across the cluster from the head node.
+
+Create hpc group:
+
+```
+sudo groupadd hpc
+```
+
+Add pi user to hpc group:
+
+```
+sudo usermod -aG hpc pi
+```
+
+Create hpc directory in root:
+
+```
+sudo mkdir /hpc
+```
 
 ---
 
@@ -297,12 +319,12 @@ sudo mkfs.ext4 /dev/sda1
 
 ---
 
-### Setup automatic mounting
+### Setup automatic flash drive mounting
 
 To mount our flash drive on boot, we need to find the UUID. To do this, run `blkid` and make note of the UUID from `/dev/sda1` like so:
 
 ```
-UUID="23b86a23-3c56-47bd-b3b9-f5bdd2ad3931"
+UUID="4453dc4c-7012-4b39-b38c-b3cc6abbad35"
 ```
 
 Now, edit `fstab` to mount the drive on boot:
@@ -314,7 +336,7 @@ sudo nano /etc/fstab
 Add the following line to the end of the file:
 
 ```
-UUID=23b86a23-3c56-47bd-b3b9-f5bdd2ad3931 /hpc ext4 defaults 0 2
+UUID=4453dc4c-7012-4b39-b38c-b3cc6abbad35 /hpc ext4 defaults 0 2
 ```
 
 Finally, mount the drive:
@@ -350,28 +372,6 @@ sudo exportfs -a
 ```
 
 ---
-
-### Create NFS and HPC folder structure
-
-This will create a folder structure that will be shared across the nodes using NFS. This will allow all data files, compiled software libraries, and user files to be shared across the cluster from the head node.
-
-Create hpc group:
-
-```
-sudo groupadd hpc
-```
-
-Add pi user to hpc group:
-
-```
-sudo usermod -aG hpc pi
-```
-
-Create hpc directory in root:
-
-```
-sudo mkdir /hpc
-```
 
 Take ownership of _/hpc_:
 
@@ -446,14 +446,21 @@ sudo apt install slurm-wlm -y
 
 ### Slurm Configuration
 
+Change to the Slurm configuration folder and copy over the provided configuration file:
+
 ```
 cd /etc/slurm-llnl
+
 sudo cp /usr/share/doc/slurm-client/examples/slurm.conf.simple.gz .
+
 sudo gzip -d slurm.conf.simple.gz
+
 sudo mv slurm.conf.simple slurm.conf
 ```
 
 ##### Set the control machine info
+
+Open the Slurm configuration file:
 
 ```
 sudo nano /etc/slurm-llnl/slurm.conf
@@ -474,6 +481,8 @@ ClusterName=swosucluster
 ```
 
 ##### Add the nodes
+
+Remove any lines beginning with `NodeName=` or `PartitionName=`.
 
 Add the following to the end of the file:
 
@@ -540,6 +549,7 @@ Munge:
 
 ```
 sudo systemctl enable munge
+
 sudo systemctl start munge
 ```
 
@@ -547,6 +557,7 @@ The SLURM daemon:
 
 ```
 sudo systemctl enable slurmd
+
 sudo systemctl start slurmd
 ```
 
@@ -554,7 +565,127 @@ The control daemon:
 
 ```
 sudo systemctl enable slurmctld
+
 sudo systemctl start slurmctld
+```
+
+---
+
+### Install MPICH
+
+Install prerequisite _Fortran_ which wil be required for compiling MPICH. All other dependencies are already installed.
+
+1. Install Fortran
+
+```
+sudo apt install gfortran -y
+```
+
+2. Create build and install directory inside mpich3 directory:
+
+```
+cd /hpc/lib
+
+mkdir mpich_3.3.2
+
+cd mpich_3.3.2
+
+mkdir build install
+```
+
+3. Download mpich3 and unzip:
+
+```
+wget http://www.mpich.org/static/downloads/3.3.2/mpich-3.3.2.tar.gz
+
+tar xvfz mpich-3.3.2.tar.gz
+```
+
+4. Compile and install mpich3:
+
+```
+cd build
+
+/hpc/lib/mpich_3.3.2/mpich-3.3.2/configure --prefix=/hpc/lib/mpich_3.3.2/install
+
+make
+
+make install
+```
+
+5. Activate environment variable:
+
+```
+export PATH=/hpc/lib/mpich_3.3.2/install/bin:$PATH
+```
+
+6. Add path to environment variables for persistance:
+
+```
+sudo nano ~/.bashrc
+```
+
+Add the following to the end of the file:
+
+```
+# MPICH-3.3.2
+export PATH="/hpc/lib/mpich_3.3.2/install/bin:$PATH"
+```
+
+Save and exit.
+
+7. Create list of nodes for MPI:
+
+This list of nodes will need to be updated as you add nodes later. Initially you will only have the head node.
+
+Create node list:
+
+```
+cd ~
+nano nodelist
+```
+
+Add the head node ip address to the list:
+
+```
+192.168.10.100
+```
+
+_**Note:**_ Anytime you need to add a node to the cluster make sure to add it here as well as _/etc/hosts_ file.
+
+8. Test MPI
+
+Test 1 - Hostname Test
+
+Enter on command line:
+
+```
+cd ~
+
+mpiexec -f nodelist hostname
+```
+
+Output:
+
+```
+node0
+```
+
+Test 2 - Calculate Pi
+
+Enter on command line:
+
+```
+mpiexec -f nodelist -n 2 /hpc/lib/mpich_3.3.2/build/examples/cpi
+```
+
+Output:
+
+```
+Process 0 of 2 is on node0
+Process 1 of 2 is on node0
+pi is approximately 3.1415926544231318, Error is 0.0000000008333387
+wall clock time = 0.003250
 ```
 
 ---
