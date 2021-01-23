@@ -9,14 +9,6 @@ Raspberry Pi Guide:
 - Raspberry Pi boards - Model 3b
 - Operating system - Raspberry Pi OS Lite (32-bit) 2020-08-20
 
-Ubuntu Server guide:
-
-- Operating system:
-
-VM Ubuntu Server guide:
-
-- Operating system:
-
 ## Upcoming improvments
 
 - NFS for image sharing between nodes
