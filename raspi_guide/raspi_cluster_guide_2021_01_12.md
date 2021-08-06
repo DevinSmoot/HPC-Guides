@@ -1,10 +1,10 @@
-## Raspberry Pi Cluster Guide
+# Raspberry Pi Cluster Guide
 
 Parts of this guide were developed using an article by Garrett Mills titled [Building a Raspberry Pi Cluster](https://glmdev.medium.com/building-a-raspberry-pi-cluster-784f0df9afbd) on Medium.com. Please see this article for further detailed information. The below guide gets right to the deployment instructions. This guide does deviate greatly at points to follow a more linear path for faster deployment and less back and forth between nodes. Also used is MPICH3 instead of OpenMPI. I create images along the way to the final product to give a fallback point in case of needing to change how an image is build without having to completely start from scratch. It also allows building individually different generic images, such as head node and compute node.
 
 ---
 
-### A note on microSD card sizes
+## A note on microSD card sizes
 
 I will generally use 4GB microSD cards to build my images. Once I am satisfied with my final head node and compute node image I will put them on a larger microSD card such as a 16GB, 32GB, or 64GB card and expand the filesystem using `raspi-config`. This allows for a much smaller image files on your hard drive plus faster read and write times when working with imaging software.
 
@@ -21,7 +21,7 @@ I will generally use 4GB microSD cards to build my images. Once I am satisfied w
 
 ---
 
-### Before starting:
+### Before starting
 
 Download and install Raspberry Pi OS Lite. The easiest way to do this is by using the new Raspberry Pi Imager tool provided [here](https://www.raspberrypi.org/software/).
 
@@ -29,7 +29,7 @@ Use this tool to install the Raspberry Pi OS Lite image directly to your microSD
 
 ---
 
-> ### Step 1 - Generic node configuration
+## Step 1 - Generic node configuration
 
 Using a keyboard and monitor you can complete the initial configuration.
 
@@ -40,13 +40,13 @@ Default password: `raspberry`
 
 Setup the locale settings to make sure the correct keyboard, language, timezone, etc are set. This will ensure we are able to enter the correct symbols while working on the command line.
 
-##### 1.1.1 Configure Locale:
+#### 1.1.1 Configure Locale
 
 Log in with username: **pi** and password **raspberry**
 
 Start the Raspberry Pi configuration tool:
 
-```
+```text
 sudo raspi-config
 ```
 
@@ -68,7 +68,7 @@ Select `1 System Options`
   - Enter `nodeX` for the hostname
   - Press `Enter`
 
-##### 1.1.2 Configure Interfacing Options:
+#### 1.1.2 Configure Interfacing Options
 
 Select `3 Interfacing Options`
 
@@ -77,14 +77,14 @@ Select `3 Interfacing Options`
   - Select `Ok`
   - Press `Enter`
 
-##### 1.1.3 Configure Performance Options:
+#### 1.1.3 Configure Performance Options
 
 - Select `4 Performance Options`
   - Select `P2 GPU Memory`
     - Enter `16`
     - Press `Enter`
 
-##### 1.1.4 Configure Localisation Options:
+#### 1.1.4 Configure Localisation Options
 
 - Select `5 Localisation Options`
 
@@ -112,7 +112,7 @@ Select `3 Interfacing Options`
     - Select `No compose key`
     - Press `Enter`
 
-##### 1.1.5 Configure Advanced Options:
+#### 1.1.5 Configure Advanced Options
 
 - Select `6 Advanced Options`
   - Select `A1 Expand Filesystem`
@@ -130,13 +130,13 @@ Setup _eth0_ static ip address:
 
 Edit _/etc/dhcpcd.conf_:
 
-```
+```text
 sudo nano /etc/dhcpcd.conf
 ```
 
 Add to the end of the file:
 
-```
+```text
 interface eth0
 static ip_address=192.168.10.3/24
 static domain_name_servers=1.1.1.1
@@ -148,7 +148,7 @@ Save and exit
 
 ### 1.3 Update the system
 
-```
+```text
 sudo apt update && sudo apt upgrade -y
 ```
 
@@ -162,13 +162,13 @@ _**Note:**_ At this point you want to assign and name all of your nodes that **W
 
 Edit _/etc/hosts_ file:
 
-```
+```text
 sudo nano /etc/hosts
 ```
 
 Modify or add the following lines to the file:
 
-```
+```text
 127.0.1.1          nodeX
 
 192.168.10.3       nodeX
@@ -188,7 +188,7 @@ Modify or add the following lines to the file:
 
 Shutdown the Raspberry Pi node:
 
-```
+```text
 sudo shutdown -h now
 ```
 
@@ -206,9 +206,9 @@ Click `Read`. Win32DiskImager will now read the microSD card and write the an im
 
 ---
 
-> ## Step 2 - Configure Head Node
+### Configure Head Node
 
-### 2.1 Create another microSD card using the generic node image
+#### Create another microSD card using the generic node image
 
 This will be the head or master node (_node0_).
 
@@ -222,27 +222,27 @@ Click `Write` to write the image to the microSD card.
 
 ---
 
-### 2.2 Login to the head node
+#### Login to the head node
 
 Using puTTY login to the head node using the ip address `192.168.10.3` or the WiFi ip address from your local router.
 
 ---
 
-### 2.3 Configure head node
+### Configure head node
 
-##### 2.3.1 Install NTP
+#### Install NTP
 
 This will ensure that the system time is synced and for the SLURM scheduler and Munge authentication.
 
-```
+```text
 sudo apt install ntpdate -y
 ```
 
-##### 2.3.2 Change the hostname
+#### Change the hostname
 
 Change hostname for persistence (only changes after restart):
 
-```
+```text
 sudo nano /etc/hostname
 ```
 
@@ -250,21 +250,21 @@ Change `nodeX` to `node0`.
 
 Change the hostname for current session (avoids needing to restart until later):
 
-```
+```text
 sudo hostname node0
 ```
 
-##### 2.3.3 Change the ip address
+#### Change the ip address
 
-```
+```text
 sudo nano /etc/dhcpcd.conf
 ```
 
 Change `192.168.10.3/24` to `192.168.10.100/24`.
 
-##### 2.3.4 Change the hosts file
+#### Change the hosts file
 
-```
+```text
 sudo nano /etc/hosts
 ```
 
@@ -272,37 +272,37 @@ Change `127.0.1.1 nodeX` to `127.0.0.1 node0`.
 
 ---
 
-### 2.4 Create shared folder
+### Create shared folder
 
 This will create a folder structure that will be shared across the nodes using NFS. This will allow all data files, compiled software libraries, and user files to be shared across the cluster from the head node.
 
 Create hpc group:
 
-```
+```text
 sudo groupadd hpc
 ```
 
 Add pi user to hpc group:
 
-```
+```text
 sudo usermod -aG hpc pi
 ```
 
 Create hpc directory in root:
 
-```
+```text
 sudo mkdir /hpc
 ```
 
 ---
 
-### 2.5 Connect and Mount Flash Drive
+### Connect and Mount Flash Drive
 
-##### 2.5.1 Find the drive identifier
+#### Find the drive identifier
 
 Plug the flash drive into on of the USB ports on the head node. To figure out its device location use the `lsblk` command.
 
-```
+```text
 NAME        MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
 sda           8:0    1 115.7G  0 disk
 `-sda1        8:1    1 115.7G  0 part
@@ -313,17 +313,17 @@ mmcblk0     179:0    0   3.8G  0 disk
 
 In this case, the main partition of the flash drive is at `/dev/sda1`.
 
-##### 2.5.2 Format the drive
+#### Format the drive
 
 We're first going to format the flash drive to use the `ext4` filesystem:
 
-```
+```text
 sudo mkfs.ext4 /dev/sda1
 ```
 
 _**Note:**_ The UUID listed when creating the filesystem will be needed for automatically mounting the drive. Take note of the UUID field in the output message similar to what is below.
 
-```
+```text
 Creating filesystem with 30326780 4k blocks and 7585792 inodes
 Filesystem UUID: 512f2ef6-727d-4d54-8580-ca965da3af38
 Superblock backups stored on blocks:
@@ -338,35 +338,35 @@ Writing superblocks and filesystem accounting information: done
 
 ---
 
-### 2.6 Setup automatic flash drive mounting
+### Setup automatic flash drive mounting
 
 Edit `/etc/fstab` to mount the drive on boot:
 
-```
+```text
 sudo nano /etc/fstab
 ```
 
 Add the following line to the end of the file:
 
-```
+```text
 UUID=512f2ef6-727d-4d54-8580-ca965da3af38 /hpc ext4 defaults 0 2
 ```
 
 Finally, mount the drive:
 
-```
+```text
 sudo mount -a
 ```
 
 ---
 
-### 2.7 Export the NFS share
+### Export the NFS share
 
 Now we need to export the mounted drive as a network file system share so the other nodes can access it.
 
-##### 2.7.1 Install the NFS server
+#### Install the NFS server
 
-```
+```text
 sudo apt install nfs-kernel-server -y
 ```
 
@@ -374,13 +374,13 @@ sudo apt install nfs-kernel-server -y
 
 Edit `/etc/exports` and add the following line:
 
-```
+```text
 /hpc 192.168.10.0/24(rw,sync,no_root_squash,no_subtree_check)
 ```
 
 Run the following command to update the NFS kernel server:
 
-```
+```text
 sudo exportfs -a
 ```
 
@@ -388,13 +388,13 @@ sudo exportfs -a
 
 Take ownership of _/hpc_:
 
-```
+```text
 sudo chown -R pi:hpc /hpc
 ```
 
 Create hpc subdirectories:
 
-```
+```text
 cd /hpc
 
 mkdir users data lib
@@ -402,19 +402,19 @@ mkdir users data lib
 
 Set permissions of _/hpc_ folder:
 
-```
+```text
 sudo chmod 777 -R /hpc
 ```
 
 ---
 
-### 2.8 Move _pi_ user to the new home directory
+### Move _pi_ user to the new home directory
 
 This account is used to move the home directory of the pi user since that users home directory can't be moved while signed in. This is account creation is temporary and will be removed at the end. Additional accounts can be added once configuration is completed to include moving of home directories to the new _/hpc/users/_ folder.
 
 Create a new user account:
 
-```
+```text
 sudo adduser --home /hpc/users/tempuser tempuser
 ```
 
@@ -422,14 +422,14 @@ Set the password for the user and save it. No other settings required.
 
 Give need group permissions:
 
-```
+```text
 sudo usermod -aG hpc tempuser
 sudo usermod -aG sudo tempuser
 ```
 
 Logout of the _pi_ user:
 
-```
+```text
 exit
 ```
 
@@ -437,7 +437,7 @@ Login as the new _**tempuser**_ account using puTTY.
 
 Move the _pi_ user home directory:
 
-```
+```text
 sudo usermod -m -d /hpc/users/pi pi
 ```
 
@@ -445,23 +445,23 @@ Close this terminal and login as _**pi**_ account again.
 
 Remove the _tempuser_ account and directories:
 
-```
+```text
 sudo userdel -r tempuser
 ```
 
 ---
 
-### 2.9 Install SLURM Controller Packages
+### Install SLURM Controller Packages
 
-```
+```text
 sudo apt install slurm-wlm -y
 ```
 
-##### 2.9.1 Slurm Configuration
+#### Slurm Configuration
 
 Change to the Slurm configuration folder and copy over the provided configuration file:
 
-```
+```text
 cd /etc/slurm-llnl
 
 sudo cp /usr/share/doc/slurm-client/examples/slurm.conf.simple.gz .
@@ -471,35 +471,35 @@ sudo gzip -d slurm.conf.simple.gz
 sudo mv slurm.conf.simple slurm.conf
 ```
 
-##### 2.9.2 Set the control machine info
+#### Set the control machine info
 
 Open the Slurm configuration file:
 
-```
+```text
 sudo nano /etc/slurm-llnl/slurm.conf
 ```
 
 Set the _SlurmctldHost_ line to the ip address of the head node:
 
-```
+```text
 SlurmctldHost=node0
 ```
 
-##### 2.9.3 Set the cluster name
+#### Set the cluster name
 
 Set the _ClusterName_ field:
 
-```
+```text
 ClusterName=swosucluster
 ```
 
-##### 2.9.4 Add the nodes
+#### Add the nodes
 
 Remove any lines beginning with `NodeName=` or `PartitionName=`.
 
 Add the following to the end of the file:
 
-```
+```text
 NodeName=node0 NodeAddr=192.168.10.100 CPUs=4 State=UNKNOWN
 NodeName=node1 NodeAddr=192.168.10.101 CPUs=4 State=UNKNOWN
 NodeName=node2 NodeAddr=192.168.10.102 CPUs=4 State=UNKNOWN
@@ -510,17 +510,17 @@ NodeName=node6 NodeAddr=192.168.10.106 CPUs=4 State=UNKNOWN
 NodeName=node7 NodeAddr=192.168.10.107 CPUs=4 State=UNKNOWN
 ```
 
-##### 2.9.5 Create a partition
+#### Create a partition
 
-```
+```text
 PartitionName=swosucluster Nodes=node[0-7] Default=YES MaxTime=INFINITE State=UP
 ```
 
-##### 2.9.6 Configure cgroups support
+#### Configure cgroups support
 
 Create _/etc/slurm-llnl/cgroup.conf_ file and add the following lines:
 
-```
+```text
 CgroupMountpoint="/sys/fs/cgroup"
 CgroupAutomount=yes
 CgroupReleaseAgentDir="/etc/slurm-llnl/cgroup"
@@ -539,7 +539,7 @@ MinRAMSpace=30
 
 Whitelist system devices by creating the file _/etc/slurm-llnl/cgroup_allowed_devices_file.conf_:
 
-```
+```text
 /dev/null
 /dev/urandom
 /dev/zero
@@ -551,9 +551,9 @@ Whitelist system devices by creating the file _/etc/slurm-llnl/cgroup_allowed_de
 
 ---
 
-### 2.10 Copy the Configuration Files to Shared Storage
+#### Copy the Configuration Files to Shared Storage
 
-```
+```text
 sudo cp slurm.conf cgroup.conf cgroup_allowed_devices_file.conf /hpc
 
 sudo cp /etc/munge/munge.key /hpc
@@ -561,11 +561,11 @@ sudo cp /etc/munge/munge.key /hpc
 
 ---
 
-### 2.11 Enable and Start SLURM Control Service
+#### Enable and Start SLURM Control Service
 
 Munge:
 
-```
+```text
 sudo systemctl enable munge
 
 sudo systemctl start munge
@@ -573,7 +573,7 @@ sudo systemctl start munge
 
 The SLURM daemon:
 
-```
+```text
 sudo systemctl enable slurmd
 
 sudo systemctl start slurmd
@@ -581,7 +581,7 @@ sudo systemctl start slurmd
 
 The control daemon:
 
-```
+```text
 sudo systemctl enable slurmctld
 
 sudo systemctl start slurmctld
@@ -589,134 +589,134 @@ sudo systemctl start slurmctld
 
 ---
 
-### 2.12 Reboot
+#### Reboot
 
-```
+```text
 sudo reboot
 ```
 
 ---
 
-### 2.13 Install MPICH
+### Install MPICH
 
 Install prerequisite _Fortran_ which wil be required for compiling MPICH. All other dependencies are already installed.
 
 1. Install Fortran
 
-```
-sudo apt install gfortran -y
-```
+   ```text
+   sudo apt install gfortran -y
+   ```
 
 2. Create build and install directory inside mpich3 directory:
 
-```
-cd /hpc/lib
+   ```text
+   cd /hpc/lib
 
-mkdir mpich_3.3.2
+   mkdir mpich_3.3.2
 
-cd mpich_3.3.2
+   cd mpich_3.3.2
 
-mkdir build install
-```
+   mkdir build install
+   ```
 
 3. Download mpich3 and unzip:
 
-```
-wget http://www.mpich.org/static/downloads/3.3.2/mpich-3.3.2.tar.gz
+   ```text
+   wget http://www.mpich.org/static/downloads/3.3.2/mpich-3.3.2.tar.gz
 
-tar xfz mpich-3.3.2.tar.gz
-```
+   tar xfz mpich-3.3.2.tar.gz
+   ```
 
 4. Compile and install MPICH3:
 
-```
-cd build
+   ```text
+   cd build
 
-/hpc/lib/mpich_3.3.2/mpich-3.3.2/configure --prefix=/hpc/lib/mpich_3.3.2/install
+   /hpc/lib/mpich_3.3.2/mpich-3.3.2/configure --prefix=/hpc/lib/mpich_3.3.2/install
 
-make
+   make
 
-make install
-```
+   make install
+   ```
 
 5. Activate environment variable:
 
-```
-export PATH=/hpc/lib/mpich_3.3.2/install/bin:$PATH
-```
+   ```text
+   export PATH=/hpc/lib/mpich_3.3.2/install/bin:$PATH
+   ```
 
 6. Add path to environment variables for persistance:
 
-```
-sudo nano ~/.bashrc
-```
+   ```text
+   sudo nano ~/.bashrc
+   ```
 
-Add the following to the end of the file:
+   Add the following to the end of the file:
 
-```
-# MPICH-3.3.2
-export PATH="/hpc/lib/mpich_3.3.2/install/bin:$PATH"
-```
+   ```text
+   # MPICH-3.3.2
+   export PATH="/hpc/lib/mpich_3.3.2/install/bin:$PATH"
+   ```
 
-Save and exit.
+   Save and exit.
 
 7. Create list of nodes for MPI:
 
-This list of nodes will need to be updated as you add nodes later. Initially you will only have the head node.
+   This list of nodes will need to be updated as you add nodes later. Initially you will only have the head node.
 
-Create node list:
+   Create node list:
 
-```
-cd ~
-nano nodelist
-```
+   ```text
+   cd ~
+   nano nodelist
+   ```
 
-Add the head node ip address to the list:
+   Add the head node ip address to the list:
 
-```
-192.168.10.100
-```
+   ```text
+   192.168.10.100
+   ```
 
-_**Note:**_ Anytime you need to add a node to the cluster make sure to add it here as well as _/etc/hosts_ file.
+   _**Note:**_ Anytime you need to add a node to the cluster make sure to add it here as well as _/etc/hosts_ file.
 
 8. Test MPI
 
-Test 1 - Hostname Test
+   Test 1 - Hostname Test
 
-Enter on command line:
+   Enter on command line:
 
-```
-cd ~
+   ```text
+   cd ~
 
-mpiexec -f nodelist hostname
-```
+   mpiexec -f nodelist hostname
+   ```
 
-Output:
+   Output:
 
-```
-node0
-```
+   ```text
+   node0
+   ```
 
-Test 2 - Calculate Pi
+   Test 2 - Calculate Pi
 
-Enter on command line:
+   Enter on command line:
 
-```
-mpiexec -f nodelist -n 2 /hpc/lib/mpich_3.3.2/build/examples/cpi
-```
+   ```text
+   mpiexec -f nodelist -n 2 /hpc/lib/mpich_3.3.2/build/examples/cpi
+   ```
 
-Output:
+   Output:
 
-```
-Process 0 of 2 is on node0
-Process 1 of 2 is on node0
-pi is approximately 3.1415926544231318, Error is 0.0000000008333387
-wall clock time = 0.003250
-```
+   ```text
+   Process 0 of 2 is on node0
+   Process 1 of 2 is on node0
+   pi is approximately 3.1415926544231318, Error is 0.0000000008333387
+   wall clock time = 0.003250
+   ```
 
 ---
 
-> ## Step 3 - Configure Compute Node
+## Step 3 - Configure Compute Node
 
 In this step we will configure a single compute node using the previously generated generic image. With a new microSD card write the "generic image" using Raspberry Pi Imager and the "Custom Image" option.
 
@@ -724,7 +724,7 @@ In this step we will configure a single compute node using the previously genera
 
 Using puTTY connect to the head node. Using SSH connect from the head node to the generic image node running on a compute node.
 
-```
+```text
 ssh pi@nodeX
 ```
 
@@ -736,13 +736,13 @@ Use the default `raspberry` password.
 
 ### 3.2 Install NFS client
 
-```
+```text
 sudo apt install nfs-common -y
 ```
 
-##### 3.2.1 Add hpc group and assign _pi_ user to group
+#### 3.2.1 Add hpc group and assign _pi_ user to group
 
-```
+```text
 sudo groupadd hpc
 
 sudo usermod -aG hpc pi
@@ -750,7 +750,7 @@ sudo usermod -aG hpc pi
 
 ##### 3.2.2 Create mount folder
 
-```
+```text
 sudo mkdir /hpc
 
 sudo chown -R pi:hpc /hpc
@@ -762,19 +762,19 @@ sudo chmod -R 777 /hpc
 
 Edit the `/etc/fstab` file:
 
-```
+```text
 sudo nano /etc/fstab
 ```
 
 Add the following to the end of the file:
 
-```
+```text
 192.168.10.100:/hpc     /hpc   nfs   defaults 0 0
 ```
 
 Now mount the share:
 
-```
+```text
 sudo mount -a
 ```
 
@@ -782,13 +782,13 @@ sudo mount -a
 
 ### 3.3 Install SLURM client
 
-```
+```text
 sudo apt install slurmd slurm-client -y
 ```
 
-##### 3.3.1 Copy the configuration files
+#### 3.3.1 Copy the configuration files
 
-```
+```text
 sudo cp /hpc/munge.key /etc/munge/munge.key
 sudo cp /hpc/slurm.conf /etc/slurm-llnl/slurm.conf
 sudo cp /hpc/cgroup* /etc/slurm-llnl
@@ -798,19 +798,19 @@ sudo cp /hpc/cgroup* /etc/slurm-llnl
 
 ### 3.4 Configure Munge
 
-##### 3.4.1 Enable and start Munge
+#### 3.4.1 Enable and start Munge
 
-```
+```text
 sudo systemctl enable munge
 
 sudo systemctl start munge
 ```
 
-##### 3.4.2 Test Munge
+#### 3.4.2 Test Munge
 
 This is run on the client/compute node:
 
-```
+```text
 ssh pi@nodeX munge -n | unmunge
 ```
 
@@ -820,7 +820,7 @@ ssh pi@nodeX munge -n | unmunge
 
 The start command will through an error. This will be corrected once the node is renamed to its final hostname once deployed.
 
-```
+```text
 sudo systemctl enable slurmd
 
 sudo systemctl start slurmd
@@ -830,19 +830,19 @@ sudo systemctl start slurmd
 
 ### 3.6 Shutdown the node
 
-```
+```text
 sudo shutdown -h now
 ```
 
 ---
 
-> ## Step 4 - Generate Generic Compute Node Image
+## Step 4 - Generate Generic Compute Node Image
 
 Use Win32DiskImager to Read the image to a file. Name the file something similar to "generic_compute_node_2021_01_17.img". Click the `Read` button and wait for the program to read the microSD card and write the image file.
 
 ---
 
-> ## Step 5 - Deploy Compute Nodes
+## Step 5 - Deploy Compute Nodes
 
 In this step we will configure a single compute node using the previously generated generic image. With a new microSD card write the "generic image" using Raspberry Pi Imager and the "Custom Image" option.
 
@@ -852,7 +852,7 @@ Using puTTY connect to the head node. Using SSH connect from the head node to th
 
 _**Note:**_ On the below instructions `node1` will increment with the deployment of each new node. As will the ip address 192.168.10.**101**.
 
-```
+```text
 ssh pi@nodeX
 ```
 
@@ -860,35 +860,35 @@ _**Yes**_ to accept the key if asked.
 
 Use the default `raspberry` password.
 
-##### 5.1.1 Change the hostname
+#### 5.1.1 Change the hostname
 
 Edit `/etc/hostname` file:
 
-```
+```text
 sudo nano /etc/hostname
 ```
 
 Change `nodeX` to `node1`.
 
-##### 5.1.2 Change the ip address
+#### 5.1.2 Change the ip address
 
-```
+```text
 sudo nano /etc/dhcpcd.conf
 ```
 
 Change `192.168.10.3/24` to `192.168.10.101/24`.
 
-##### 5.1.3 Change the hosts file
+#### 5.1.3 Change the hosts file
 
-```
+```text
 sudo nano /etc/hosts
 ```
 
 Change `127.0.1.1 nodeX` to `127.0.0.1 node1`.
 
-##### 5.1.4 Restart for changes to take effect
+#### 5.1.4 Restart for changes to take effect
 
-```
+```text
 sudo reboot
 ```
 
@@ -896,7 +896,7 @@ sudo reboot
 
 ### 5.2 Generate SSH key on head node
 
-```
+```text
 ssh-keygen
 ```
 
@@ -904,9 +904,9 @@ Press `Enter` on each selection.
 
 ---
 
-### 5.3 Copy the SSH key to each node:
+### 5.3 Copy the SSH key to each node
 
-```
+```text
 ssh-copy-id pi@node1
 ```
 
@@ -918,11 +918,11 @@ Replace `node1` with each nodes number and repeat the process to distribute the 
 
 ## Section 6 - Troubleshooting
 
-##### 6.1 Node not in idle state:
+### 6.1 Node not in idle state
 
 Refresh the state of the node by running the below command with the desired nodename. Nodename node1 is used for the exampel below:
 
-```
+```text
 sudo scontrol update nodename=node1 state=resume
 ```
 
