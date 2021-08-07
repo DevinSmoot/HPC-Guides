@@ -23,9 +23,13 @@ I will generally use 4GB microSD cards to build my images. Once I am satisfied w
 
 ### Before starting
 
-Download and install Raspberry Pi OS Lite. The easiest way to do this is by using the new Raspberry Pi Imager tool provided [here](https://www.raspberrypi.org/software/).
+Install Raspberry Pi OS Lite using the Raspberry Pi Imager software. The easiest way to do this is by using the new Raspberry Pi Imager tool provided [here](https://www.raspberrypi.org/software/).
 
-Use this tool to install the Raspberry Pi OS Lite image directly to your microSD card for your head node. Instructions are provided on the above linked page.
+Instructions are provided on the above linked page.
+
+Once completed access the `boot` drive that was created on your USB. Create a folder in the root of the drive named `ssh`. This will enable SSH access one the initial boot.
+
+Identify the devices IP address on the router or firewall on your network. Use puTTY to access the device using SSH.
 
 ---
 
@@ -38,9 +42,9 @@ Default password: `raspberry`
 
 ### 1.1 Initial Configuration
 
-Setup the locale settings to make sure the correct keyboard, language, timezone, etc are set. This will ensure we are able to enter the correct symbols while working on the command line.
+Setup the locale settings to make sure the language, timezone, etc are set. This will ensure we are able to enter the correct symbols while working on the command line.
 
-#### 1.1.1 Configure Locale
+#### 1.1.1 Configure System
 
 Log in with username: **pi** and password **raspberry**
 
@@ -54,27 +58,9 @@ Setup System Options:
 
 Select `1 System Options`
 
-- Select `S1 Wireless LAN`
-  - Select `US United States`
-  - Select `Ok`
-  - Enter the SSID
-  - Enter the passphrase
-  - Select `Ok`
-
-Select `1 System Options`
-
 - Select `S4 Hostname`
   - Select `Ok`
   - Enter `nodeX` for the hostname
-  - Press `Enter`
-
-#### 1.1.2 Configure Interfacing Options
-
-Select `3 Interfacing Options`
-
-- Select `P2 SSH`
-  - Select `Yes`
-  - Select `Ok`
   - Press `Enter`
 
 #### 1.1.3 Configure Performance Options
@@ -89,8 +75,8 @@ Select `3 Interfacing Options`
 - Select `5 Localisation Options`
 
   - Select Locale `L1 Change Locale`
-    - Unselect `en_GB.UTF-8 UTF-8`
-    - Select `en_US ISO-8859-1`
+    - Unselect `en_US.UTF-8 UTF-8`
+    - Select `en_US.UTF-8`
     - Press `Enter`
     - Select `en_US`
 
@@ -99,18 +85,6 @@ Select `3 Interfacing Options`
   - Select `L2 Change Timezone`
     - Select `US` (or appropriate country)
     - Select `Central` (or appropriate local timezone)
-
-- Select `5 Localisation Options`
-
-  - Select `L3 Change Keyboard Layout`
-    - Use the default selected Keyboard
-    - Press `Enter`
-    - Select `Other`
-    - Select `English (US)`
-    - Select `English (US)`
-    - Select `The default for the keyboard layout`
-    - Select `No compose key`
-    - Press `Enter`
 
 #### 1.1.5 Configure Advanced Options
 
@@ -204,11 +178,13 @@ Select the device from the `Device` dropdown box.
 
 Click `Read`. Win32DiskImager will now read the microSD card and write the an image to the location and filename you entered in the steps above.
 
+_`Note:`_ Plug in USB ethernet adapter or turn on WiFi.
+
 ---
 
-### Configure Head Node
+## Create Head Node
 
-#### Create another microSD card using the generic node image
+### Create another microSD card using the generic node image
 
 This will be the head or master node (_node0_).
 
@@ -612,9 +588,9 @@ Install prerequisite _Fortran_ which wil be required for compiling MPICH. All ot
    ```text
    cd /hpc/lib
 
-   mkdir mpich_3.3.2
+   mkdir mpich_3.4.2
 
-   cd mpich_3.3.2
+   cd mpich_3.4.2
 
    mkdir build install
    ```
@@ -622,9 +598,9 @@ Install prerequisite _Fortran_ which wil be required for compiling MPICH. All ot
 3. Download mpich3 and unzip:
 
    ```text
-   wget http://www.mpich.org/static/downloads/3.3.2/mpich-3.3.2.tar.gz
+   wget http://www.mpich.org/static/downloads/3.4.2/mpich-3.4.2.tar.gz
 
-   tar xfz mpich-3.3.2.tar.gz
+   tar xfz mpich-3.4.2.tar.gz
    ```
 
 4. Compile and install MPICH3:
@@ -632,7 +608,7 @@ Install prerequisite _Fortran_ which wil be required for compiling MPICH. All ot
    ```text
    cd build
 
-   /hpc/lib/mpich_3.3.2/mpich-3.3.2/configure --prefix=/hpc/lib/mpich_3.3.2/install
+   /hpc/lib/mpich_3.4.2/mpich-3.4.2/configure --prefix=/hpc/lib/mpich_3.4.2/install --with-device=ch3
 
    make
 
@@ -642,7 +618,7 @@ Install prerequisite _Fortran_ which wil be required for compiling MPICH. All ot
 5. Activate environment variable:
 
    ```text
-   export PATH=/hpc/lib/mpich_3.3.2/install/bin:$PATH
+   export PATH=/hpc/lib/mpich_3.4.2/install/bin:$PATH
    ```
 
 6. Add path to environment variables for persistance:
@@ -654,8 +630,8 @@ Install prerequisite _Fortran_ which wil be required for compiling MPICH. All ot
    Add the following to the end of the file:
 
    ```text
-   # MPICH-3.3.2
-   export PATH="/hpc/lib/mpich_3.3.2/install/bin:$PATH"
+   # MPICH-3.4.2
+   export PATH="/hpc/lib/mpich_3.4.2/install/bin:$PATH"
    ```
 
    Save and exit.
@@ -702,7 +678,7 @@ Install prerequisite _Fortran_ which wil be required for compiling MPICH. All ot
    Enter on command line:
 
    ```text
-   mpiexec -f nodelist -n 2 /hpc/lib/mpich_3.3.2/build/examples/cpi
+   mpiexec -f nodelist -n 2 /hpc/lib/mpich_3.4.2/build/examples/cpi
    ```
 
    Output:
